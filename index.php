@@ -1,0 +1,1 @@
+<?php header( "refresh: 0; url=/Surathai01/login.php" ); exit(0); ?>
