@@ -14,7 +14,7 @@ switch($fn){
 				$DB = new exDB;
 				switch($_POST["job"]){
 					case 1: //โรงงาน
-							$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, suName, faIssueDate, faAddress FROM `Factory`,`SuraType` WHERE faSuraType = SuraTypeID AND ? IN (0,faProvince) LIMIT 6",array("i",$province));
+							$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, suName, faIssueDate, faAddress FROM `Factory`,`SuraType` WHERE faSuraType = SuraTypeID AND ? IN (0,faProvince) LIMIT 3",array("i",$province));
 
 							$TitleShow = array("ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน");
 
@@ -34,7 +34,7 @@ switch($fn){
 							}
 					case 2: //คดี
 					case 3: //แสตมป์
-							$DB->GetData("SELECT ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM (SELECT SaleStampID, ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM `SaleStamp`,`Factory` WHERE FactoryID = ssFactoryID ORDER BY ssBuyDate DESC,SaleStampID LIMIT 6) AS X ORDER BY ssBuyDate");
+							$DB->GetData("SELECT ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM (SELECT SaleStampID, ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM `SaleStamp`,`Factory` WHERE FactoryID = ssFactoryID ORDER BY ssBuyDate DESC,SaleStampID LIMIT 3) AS X ORDER BY ssBuyDate");
 
 							$TitleShow = array("วันที่","เลขที่แสตมป์เริ่มต้น","เลขสแตมป์สิ้นสุด","จำนวนดวง","โรงงาน");
 							
@@ -59,7 +59,7 @@ switch($fn){
 					case 1: //โรงงาน
 							$data = new exFactory;
 							$data->Init(5,50);
-							$sdata = $DB->GetDataOneRow("SELECT `FactoryID`, `faProvince`, `faRegion`, `faCapital`, `faWorker`, `faHP`, `faLat`, `faLong`, `faIssueDate`, `faLicenseNo`, `faRegistNo`, `faContact`, `faName`, `faAddress`, `pvName` FROM `Factory`,`Province` WHERE faProvince = ProvinceID AND ? IN (0,faProvince) AND ? IN (0,faRegion) AND FactoryID = ?",array("iii",$data->Province,$data->Region,$_POST["id"]));
+							$sdata = $DB->GetDataOneRow("SELECT `FactoryID`, `faProvince`, `faRegion`, `faCapital`, `faWorker`, `faHP`, `faLat`, `faLong`, `faIssueDate`, `faLicenseNo`, `faRegistNo`, `faContact`, `faName`, `faAddress`, `pvName`,`faSuraType` FROM `Factory`,`Province` WHERE faProvince = ProvinceID AND ? IN (0,faProvince) AND ? IN (0,faRegion) AND FactoryID = ?",array("iii",$data->Province,$data->Region,$_POST["id"]));
 //							$sdata["faIssueDate"] = "xxxxx";
 							$data->SaveData($sdata);
 						break;
@@ -120,17 +120,23 @@ switch($fn){
 							}
 						break;
 					case 2: //แสตมป์เต็มเล่ม
-					case 4: //แสตมป์เต็มเล่ม
 							$data = array();
         
 							$DB = new exDB;
-							$DB->GetData("SELECT StampRemainID FROM `StampRemain` WHERE srAmount = 100 AND srBranch = ? AND StampRemainID LIKE ? ORDER BY StampRemainID LIMIT 10",array("is",550101,$_POST["value"]."%"));
+							$DB->GetData("SELECT `FactoryID`, `faName` FROM `Factory` WHERE faName LIKE ? LIMIT 10",array("s","%".$_POST["value"]."%"));
         
 							while($fdata = $DB->FetchData()){
 								$sdata = new exItem;
-								$sdata->id = $fdata["StampRemainID"];
-								$sdata->value = $fdata["StampRemainID"];
-								$sdata->label = $fdata["StampRemainID"];
+								$sdata->id = $fdata["FactoryID"];
+								$sdata->value = $fdata["faName"];
+								$sdata->label = $fdata["faName"];
+								array_push($data,$sdata);
+							}
+							if(basename($_SERVER['HTTP_REFERER'])=='e_factory.php'){
+								$sdata = new exItem;
+								$sdata->id = 0;
+								$sdata->value = $_POST["value"];
+								$sdata->label = "เพิ่มโรงงานนี้";
 								array_push($data,$sdata);
 							}
 						break;
@@ -145,6 +151,20 @@ switch($fn){
 								$sdata->id = $fdata["StampRemainID"];
 								$sdata->value = $fdata["StampRemainID"];
 								$sdata->label = $fdata["StampRemainID"]." (".$fdata["srAmount"].")";
+								array_push($data,$sdata);
+							}
+						break;
+					case 4: //แสตมป์เต็มเล่ม
+							$data = array();
+        
+							$DB = new exDB;
+							$DB->GetData("SELECT StampRemainID FROM `StampRemain` WHERE srAmount = 100 AND srBranch = ? AND StampRemainID LIKE ? ORDER BY StampRemainID LIMIT 10",array("is",550101,$_POST["value"]."%"));
+        
+							while($fdata = $DB->FetchData()){
+								$sdata = new exItem;
+								$sdata->id = $fdata["StampRemainID"];
+								$sdata->value = $fdata["StampRemainID"];
+								$sdata->label = $fdata["StampRemainID"];
 								array_push($data,$sdata);
 							}
 						break;
@@ -203,7 +223,7 @@ switch($fn){
 									);
 									$DB->InsertData("SaleStamp",$idata);
 									if($cStamp == $data_array["CountStamp"]){
-										$DB->DeleteData("StampRemain","StampRemainID BETWEEN ? AND ? AND srAmount = 100",array("ss",$data_array["StartStampNumber"],$data_array["EndStampNumber"]));
+										$DB->DeleteData("StampRemain","StampRemainID = ? AND srAmount = ?",array("ss",$data_array["StartStampNumber"],$data_array["CountStamp"]));
 									}else{
 										$DB->UpdateData("StampRemain",array("srAmount" => ($cStamp - $data_array["CountStamp"])),"StampRemainID = ?",array("s",$data_array["StartStampNumber"]));
 									}

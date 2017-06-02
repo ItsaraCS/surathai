@@ -1,6 +1,6 @@
 <?php require('header.php'); ?>
 <?php require('nav.php'); ?>
-<!--Openlayer-->
+<!--OPEN LAYER-->
 <link href="css/popup.css" rel="stylesheet" type="text/css">
 <script src="js/getJson.js" type="text/javascript"></script>
 <script src="js/olmaplib.js" type="text/javascript"></script>
@@ -38,14 +38,111 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/mapAPI.php';
+        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/taxmapAPI.php';
         var params = {};
+		var year = $('.nav-menu #year').val() || '';
+        var region = $('.nav-menu #region').val() || 0;
+        var province = $('.nav-menu #province').val() || 0;
 
         //--Page load
+		setInit();
 
         //--Function
+		function setInit() {
+            params = {
+                fn: 'filter',
+                job: 1,
+                src: 0
+            };
+
+            factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
+                if(res != undefined){
+                    var data = JSON.parse(res);
+					console.log(data);
+
+                    $.each(data.year, function(index, item) {
+                        $('.nav-menu #year').append('<option value="'+ item.value +'">'+ item.label +'</option>');
+                    });
+
+                    $.each(data.region, function(index, item) {
+                        $('.nav-menu #region').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                    });
+                    
+                    $.each(data.province, function(index, item) {
+                        $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                    });
+                }
+            });
+        }
         
 		//--Event
+		$(document).on('change', '.nav-menu #year', function(e) {
+            e.preventDefault();
+            
+            $('.nav-menu #region').find('option:eq(0)').prop('selected', true);
+            $('.nav-menu #province option[value!=""]').remove();
+            
+            year = $('.nav-menu #year').val() || '';
+
+            if(year != '') {
+                $('.nav-menu #region').find('option:eq(1)').prop('selected', true);
+                region = $('.nav-menu #region').val() || 0;
+
+                if(region != '') {
+                    params = {
+                        fn: 'filter',
+                        job: 1,
+                        src: 1,
+                        value: region || 0
+                    };
+
+                    factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
+                        if(res != undefined){
+                            var data = JSON.parse(res);
+
+                            $.each(data, function(index, item) {
+                                $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                            });
+
+                            $('.nav-menu #province').find('option:eq(1)').prop('selected', true);
+                        }
+                    });
+                }
+            }
+        });
+
+        $(document).on('change', '.nav-menu #region', function(e) {
+            e.preventDefault();
+            
+            $('.nav-menu #province').find('option[value!=""]').remove();
+
+            region = $('.nav-menu #region').val() || 0;
+            
+            if(region != '') {
+                params = {
+                    fn: 'filter',
+                    job: 1,
+                    src: 1,
+                    value: region || 0
+                };
+            
+                factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
+                    if(res != undefined){
+                        var data = JSON.parse(res);
+
+                        $.each(data, function(index, item) {
+                            $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                        });
+
+                        $('.nav-menu #province').find('option:eq(1)').prop('selected', true);
+                    }
+                });
+            }
+        });
+
+        $(document).on('change', '.nav-menu #province', function(e) {
+            e.preventDefault();
+        });
 
 		//--Map API
 		var filer_region = null;

@@ -496,7 +496,7 @@ ul.ui-autocomplete li div {
   color: #FFFFFF; 
   font-weight: bold;
 }
-.search-detail-table tbody tr:not(.search-detail-total):not(:nth-last-child(1)):hover,
+.search-detail-table tbody tr:not(.search-detail-total):hover,
 .search-table tbody tr:hover {
   cursor: pointer;
   background-color: #d3e3f0;
@@ -547,4 +547,9 @@ ul.ui-autocomplete li div {
 .user-menu-detail-btn {
   background-color: #ECF0F5;
   padding: 10px;
+}
+.ui-autocomplete { 
+  height: 34vh;
+  overflow-x: hidden;
+  overflow-y: scroll; 
 }

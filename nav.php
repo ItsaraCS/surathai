@@ -24,7 +24,8 @@
                     <div class="btn-group" style="float: right;">
                         <a href="e_stamp.php" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"> Export <span class="caret"></span></a>
                         <ul class="dropdown-menu" style="min-width: 0;">
-                            <li><a href="#" class="export-file">Excel</a></li>
+                            <li><a href="#" class="export-file">PDF</a></li>
+                            <li><a href="#" class="export-file">PNG</a></li>
                         </ul>
                     </div>
                 </div>
@@ -43,16 +44,10 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-control input-sm" id="area">
+                    <select class="form-control input-sm" id="province">
                         <option value="" selected>เลือกพื้นที่</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <select class="form-control input-sm" id="branch">
-                        <option value="" selected>เลือกสาขา</option>
-                    </select>
-                </div>
-                <div class="col-sm-4"><a href="#" class="btn btn-danger btn-md">View</a></div>
             </div>
         </div>
     </div>
@@ -84,7 +79,8 @@
             <div class="row">
                 <a href="#" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"> Export <span class="caret"></span></a>&nbsp;
                 <ul class="dropdown-menu" style="min-width: 100px;">
-                    <li><a href="#" class="export-file">Excel</a></li>
+                    <li><a href="#" class="export-file">PDF</a></li>
+                    <li><a href="#" class="export-file">PNG</a></li>
                 </ul>
             </div>
         </div>
@@ -105,32 +101,6 @@
             <a href="search_stamp.php" class="btn btn-info btn-sm">ข้อมูลแสตมป์</a>
             <a href="search_factory.php" class="btn btn-info btn-sm">ข้อมูลโรงงาน</a>
             <a href="search_label.php" class="btn btn-info btn-sm">ฉลาก</a>
-        </div>
-    </div>
-</div>
-
-<?php
-            break;
-        case 'e_factory.php':
-        case 'e_illegal.php':
-        case 'e_stamp.php':
-?>
-
-<div class="nav">
-    <div class="container-fluid fixed nav-menu" style="margin-top: -5px; padding: 0;">
-        <div class="col-md-6 text-left">
-            <a href="e_factory.php" class="btn btn-info btn-sm">โรงงาน</a>
-            <a href="e_illegal.php" class="btn btn-info btn-sm">คดี</a>
-            <div class="btn-group">
-                <a href="e_stamp.php" class="btn btn-info btn-sm dropdown-toggle" data-stamp-type="<?php echo (isset($_GET['stamp-type'])) ? $_GET['stamp-type'] : 0; ?>" data-toggle="dropdown"> แสตมป์ <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="e_stamp.php?stamp-type=0" class="export-file">เต็มเล่ม</a></li>
-                    <li><a href="e_stamp.php?stamp-type=1" class="export-file">แบ่งขาย</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-md-6 text-right" style="margin-top: 5px;">
-            <span class="label label-success" id="Province" data-provice="0" style="padding: 0 15px; font-size: 18px; border-radius: 0;">อยู่ที่จังหวัด : <span id="ProvinceTXT"></span></span>
         </div>
     </div>
 </div>
@@ -163,6 +133,32 @@
                     <li><a href="#" class="export-file">Excel</a></li>
                 </ul>
             </div>
+        </div>
+    </div>
+</div>
+
+<?php
+            break;
+        case 'e_factory.php':
+        case 'e_illegal.php':
+        case 'e_stamp.php':
+?>
+
+<div class="nav">
+    <div class="container-fluid fixed nav-menu" style="margin-top: -5px; padding: 0;">
+        <div class="col-md-6 text-left">
+            <a href="e_factory.php" class="btn btn-info btn-sm">โรงงาน</a>
+            <a href="e_illegal.php" class="btn btn-info btn-sm">คดี</a>
+            <div class="btn-group">
+                <a href="e_stamp.php" class="btn btn-info btn-sm dropdown-toggle" data-stamp-type="<?php echo (isset($_GET['stamp-type'])) ? $_GET['stamp-type'] : 0; ?>" data-toggle="dropdown"> แสตมป์ <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="e_stamp.php?stamp-type=0" class="export-file">เต็มเล่ม</a></li>
+                    <li><a href="e_stamp.php?stamp-type=1" class="export-file">แบ่งขาย</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 text-right" style="margin-top: 5px;">
+            <span class="label label-success" id="Province" data-provice="0" style="padding: 0 15px; font-size: 18px; border-radius: 0;">อยู่ที่จังหวัด : <span id="ProvinceTXT"></span></span>
         </div>
     </div>
 </div>

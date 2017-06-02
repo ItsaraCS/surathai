@@ -8,16 +8,35 @@ $fn = isset($_GET["fn"])?$_GET["fn"]:"";
 
 switch($fn){
 	case "gettable" :
+				$province = 50;
 				$data = new exReport_Table;
-				$data->Init(1,10,10);
+				$data->Init(1,3,3);
+				$DB = new exDB;
 				switch($_GET["job"]){
 					case 1: //โรงงาน
+							$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, suName, faIssueDate, faAddress FROM `Factory`,`SuraType` WHERE faSuraType = SuraTypeID AND ? IN (0,faProvince) LIMIT 6",array("i",$province));
+
+							$TitleShow = array("ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน");
+
+							for($i=0;$i<count($TitleShow);$i++){
+								$data->AddLabel($TitleShow[$i]);
+							}
+
+							$etcObj = new exETC;
+							while($fdata = $DB->FetchData()){
+								$data->AddCell($fdata["faName"]);
+								$data->AddCell($fdata["FactoryID"]);
+								$data->AddCell($fdata["faContact"]);
+								$data->AddCell($fdata["faLicenseNo"],2);
+								$data->AddCell($fdata["suName"]);
+								$data->AddCell($etcObj->GetShortDate(exETC::C_TH,$fdata["faIssueDate"]));
+								$data->AddCell($fdata["faAddress"]);
+							}
 					case 2: //คดี
 					case 3: //แสตมป์
-							$DB = new exDB;
-							$DB->GetData("SELECT ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM (SELECT SaleStampID, ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM `SaleStamp`,`Factory` WHERE FactoryID = ssFactoryID ORDER BY ssBuyDate DESC,SaleStampID LIMIT 10) AS X ORDER BY ssBuyDate");
+							$DB->GetData("SELECT ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM (SELECT SaleStampID, ssBuyDate,ssStartNo,ssFinishNo,ssAmount,faName FROM `SaleStamp`,`Factory` WHERE FactoryID = ssFactoryID ORDER BY ssBuyDate DESC,SaleStampID LIMIT 6) AS X ORDER BY ssBuyDate");
 
-							$TitleShow = array("วันที่","เลขแสตป์เริ่ม","เลขสแตมป์สิ้นสุด","จำนวนดวง","โรงงาน");
+							$TitleShow = array("วันที่","เลขที่แสตมป์เริ่มต้น","เลขสแตมป์สิ้นสุด","จำนวนดวง","โรงงาน");
 							
 							for($i=0;$i<count($TitleShow);$i++){
 								$data->AddLabel($TitleShow[$i]);
@@ -40,7 +59,8 @@ switch($fn){
 					case 1: //โรงงาน
 							$data = new exFactory;
 							$data->Init(5,50);
-							$sdata = $DB->GetDataOneRow("SELECT `FactoryID`, `faProvince`, `faRegion`, `faCapital`, `faWorker`, `faHP`, `faLat`, `faLong`, `faIssueDate`, `faLicenseNo`, `faRegistNo`, `faContact`, `faName`, `faAddress`, `pvName` FROM `Factory`,`Province` WHERE faProvince = ProvinceID AND ? IN (0,faProvince) AND ? IN (0,faRegion) AND FactoryID = ?",array("iii",$data->Province,$data->Region,$_GET["id"]));
+							$sdata = $DB->GetDataOneRow("SELECT `FactoryID`, `faProvince`, `faRegion`, `faCapital`, `faWorker`, `faHP`, `faLat`, `faLong`, `faIssueDate`, `faLicenseNo`, `faRegistNo`, `faContact`, `faName`, `faAddress`, `pvName`,`faSuraType` FROM `Factory`,`Province` WHERE faProvince = ProvinceID AND ? IN (0,faProvince) AND ? IN (0,faRegion) AND FactoryID = ?",array("iii",$data->Province,$data->Region,$_GET["id"]));
+//							$sdata["faIssueDate"] = "xxxxx";
 							$data->SaveData($sdata);
 						break;
 					case 2: //คดี
@@ -100,6 +120,7 @@ switch($fn){
 							}
 						break;
 					case 2: //แสตมป์เต็มเล่ม
+					case 4: //แสตมป์เต็มเล่ม
 							$data = array();
         
 							$DB = new exDB;

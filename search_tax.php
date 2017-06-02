@@ -9,39 +9,13 @@
                 <div class="panel panel-default" style="border-radius: 0; border: 0;">
                     <div class="panel-body" style="padding: 0;">
                         <table class="table table-striped search-detail-table" style="margin-top: 0; margin-bottom: 0;">
-                            <thead>
-                                <tr>
-                                    <th class="text-center text-nowrap">รายการ</th>
-                                    <th class="text-center text-nowrap">ภาษี</th>
-                                </tr>
-                            </thead>
+                            <thead><tr></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                        <table class="table" style="margin-top: 0; margin-bottom: 0;">
                             <tbody>
                                 <tr>
-                                    <td class="col-md-5" style="padding: 0 10px !important;"><p>ก่อสร้าง</p></td>
-                                    <td class="col-md-7 text-center" style="padding: 0 10px !important;"><span id="Construction"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-5" style="padding: 0 10px !important;"><p>ผลิต</p></td>
-                                    <td class="col-md-7 text-center" style="padding: 0 10px !important;"><span id="Manufacture"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-5" style="padding: 0 10px !important;"><p>ขาย</p></td>
-                                    <td class="col-md-7 text-center" style="padding: 0 10px !important;"><span id="Sale"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-5" style="padding: 0 10px !important;"><p>ขน</p></td>
-                                    <td class="col-md-7 text-center" style="padding: 0 10px !important;"><span id="Transport"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-5" style="padding: 0 10px !important;"><p>สแตมป์</p></td>
-                                    <td class="col-md-7 text-center" style="padding: 0 10px !important;"><span id="Stamp"></span></td>
-                                </tr>
-                                <tr class="search-detail-total">
-                                    <td class="col-md-5 text-center"><p>รวมทั้งสิ้น</p></td>
-                                    <td class="col-md-7 text-center"><span id="Total"></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-12" colspan="2" style="padding: 10px !important;">
+                                    <td class="col-md-12" style="padding: 10px !important;">
                                         <input class="form-control input-sm" id="FactoryName" placeholder="ค้นหาชื่อโรงงาน">
                                     </td>
                                 </tr>
@@ -78,13 +52,13 @@
                     <h3>รายการข้อมูล</h3>
                 </div>
                 <div class="panel-body" style="padding: 0;">
-                    <div class="table-responsive" style="height: 20vh;">
+                    <div class="table-responsive" style="height: 18vh;">
                         <table class="table table-striped table-bordered search-table" style="margin-top: 0;"> 
                             <thead><tr></tr></thead>
                             <tbody></tbody>
                         </table>
                     </div>
-                    <div class="col-md-12 pagination"></div>
+                    <div class="col-md-12 pagination" style="padding: 0;"></div>
                 </div>
             </div>
         </div>
@@ -95,13 +69,11 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/reportAPI.php';
-        //var ajaxUrl = 'http://210.4.143.51/Surathai01/API/eformAPI.php';
-        //var ajaxUrl = 'http://210.4.143.51/Surathai01/API/searchAPI.php';
+        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/searchAPI.php';
         var params = {};
         var year = $('.nav-menu #year').val() || '';
-        var region = $('.nav-menu #region').val() || '';
-        var province = $('.nav-menu #province').val() || '';
+        var region = $('.nav-menu #region').val() || 0;
+        var province = $('.nav-menu #province').val() || 0;
 
         //--Page load
         getInit();
@@ -130,11 +102,10 @@
                         $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
                     });
 
-                    getTable();
+                    getMap();
+                    getTableAll();
                 }
             });
-
-            getMap();
         }
 
         function getMap() {
@@ -170,68 +141,190 @@
             map.getView().setZoom(6.0);
         }
 
-        function getTable() {
+        function getTable(params) {
             $('.search-table thead th, ' +
-                '.search-table tbody tr').remove();
+                '.search-table tbody tr, ' +
+                '.pagination div').remove();
+            
+            if(params == undefined) {
+                year = $('.nav-menu #year option:eq(1)').attr('value');
+                keyword = $('#FactoryName').val() || '';
 
-            year = $('.nav-menu #year').val() || '';
-            region = $('.nav-menu #region').val() || '';
-            province = $('.nav-menu #province').val() || '';
-
-            if(year != '') {
                 params = {
                     fn: 'gettable',
                     job: 1,
                     year: year,
-                    region: region || 0,
-                    province: province || 0
+                    region: 0,
+                    province: 0,
+                    menu: 0,
+                    page: 1,
+                    keyword: keyword
                 };
-                
-                factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                    if(res != undefined) {
-                        var data = JSON.parse(res);
-
-                        var theadContent = '';
-                        $.each(data.label, function(index, item) {
-                            theadContent += '<th class="text-center text-nowrap">' +
-                                    '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
-                                        '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
-                                    '</div>' +
-                                '</th>';
-                        });
-                        $('.search-table thead tr').append(theadContent);
-                        
-                        if(data.data.length != 0) {
-                            var row = (data.data.length / data.label.length);
-                            var tbodyContent = '';
-                            var alignContent = 0;
-                            var index = 0;
-
-                            for(var i=1; i<=row; i++) {
-                                tbodyContent = '<tr>';
-
-                                for(var j=1; j<=data.label.length; j++) {
-                                    tdAlign = ({
-                                        '0': 'text-left',
-                                        '1': 'text-right',
-                                        '2': 'text-center'
-                                    })[data.data[index].align];
-                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
-                                    index += 1;
-                                }
-
-                                tbodyContent += '</tr>';
-                                $('.search-table tbody').append(tbodyContent);
-                            }
-                        } else 
-                            $('.search-table tbody').append('<tr><td colspan="'+ data.label.length +'" style="text-align: center;">ไม่พบข้อมูล</td></tr>');
-                    }
-                });
             }
+            
+            factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
+                if(res != undefined) {
+                    var data = JSON.parse(res);
+
+                    var theadContent = '';
+                    $.each(data.label, function(index, item) {
+                        theadContent += '<th class="text-center text-nowrap">' +
+                                '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
+                                    '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
+                                '</div>' +
+                            '</th>';
+                    });
+                    $('.search-table thead tr').append(theadContent);
+                    
+                    if(data.data.length != 0) {
+                        var row = (data.data.length / data.label.length);
+                        var tbodyContent = '';
+                        var alignContent = 0;
+                        var index = 0;
+
+                        for(var i=1; i<=row; i++) {
+                            tbodyContent = '<tr data-id="'+ data.data[index].id +'">';
+
+                            for(var j=1; j<=data.label.length; j++) {
+                                tdAlign = ({
+                                    '0': 'text-left',
+                                    '1': 'text-right',
+                                    '2': 'text-center'
+                                })[data.data[index].align];
+                                tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+                                index += 1;
+                            }
+
+                            tbodyContent += '</tr>';
+                            $('.search-table tbody').append(tbodyContent);
+                        }
+
+                        getPagination({
+                            page: data.cur_page || 1,
+                            perPage: data.row_per_page || 5,
+                            splitPage: 3,
+                            total: data.sum_of_row|| 0
+                        });
+                    } else 
+                        $('.search-table tbody').append('<tr class="disabled"><td colspan="'+ data.label.length +'" style="text-align: center;">ไม่พบข้อมูล</td></tr>');
+                }
+            });
         }
 
-        function getPagination() {
-            //--pagination
+        function getTableAll(params) {
+            $('.search-detail-table thead th, ' +
+                '.search-detail-table tbody tr, ' +
+                '.search-table thead th, ' +
+                '.search-table tbody tr, ' +
+                '.pagination div').remove();
+            
+            if(params == undefined) {
+                year = $('.nav-menu #year option:eq(1)').attr('value');
+                keyword = $('#FactoryName').val() || '';
+
+                params = {
+                    fn: 'gettable',
+                    job: 1,
+                    year: year,
+                    region: 0,
+                    province: 0,
+                    menu: 0,
+                    page: 1,
+                    keyword: keyword
+                };
+            }
+            
+            factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
+                if(res != undefined) {
+                    var data = JSON.parse(res);
+
+                    var searchDetailTableContent = '';
+                    $.each(data.menu, function(index, item) {
+                        if(index == 0) {
+                            searchDetailTableContent += '<th class="text-center text-nowrap">'+ item.subject +'</th>' +
+                                '<th class="text-center text-nowrap">'+ item.value[0] +'</th>';
+                            $('.search-detail-table thead tr').append(searchDetailTableContent);
+                            searchDetailTableContent = '';
+                        }
+                        
+                        if(index == (data.menu.length - 1)) {
+                            searchDetailTableContent += '<tr class="search-detail-total">' +
+                                    '<td class="col-md-5 text-center"><p>'+ item.subject +'</p></td>' +
+                                    '<td class="col-md-7 text-center">'+ item.value[0] +'</td>' +
+                                '</tr>';
+                        } 
+                        
+                        if((index != 0) && (index != (data.menu.length - 1))) {
+                            searchDetailTableContent += '<tr>' +
+                                    '<td class="col-md-5" style="padding: 0 10px !important;"><p>'+ item.subject +'</p></td>' +
+                                    '<td class="col-md-7 text-center" style="padding: 0 10px !important;">'+ item.value[0] +'</td>' +
+                                '</tr>';
+                        }
+                    });
+                    $('.search-detail-table tbody').append(searchDetailTableContent);
+
+                    var theadContent = '';
+                    $.each(data.label, function(index, item) {
+                        theadContent += '<th class="text-center text-nowrap">' +
+                                '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
+                                    '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
+                                '</div>' +
+                            '</th>';
+                    });
+                    $('.search-table thead tr').append(theadContent);
+                    
+                    if(data.data.length != 0) {
+                        var row = (data.data.length / data.label.length);
+                        var tbodyContent = '';
+                        var alignContent = 0;
+                        var index = 0;
+
+                        for(var i=1; i<=row; i++) {
+                            tbodyContent = '<tr data-id="'+ data.data[index].id +'">';
+
+                            for(var j=1; j<=data.label.length; j++) {
+                                tdAlign = ({
+                                    '0': 'text-left',
+                                    '1': 'text-right',
+                                    '2': 'text-center'
+                                })[data.data[index].align];
+                                tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+                                index += 1;
+                            }
+
+                            tbodyContent += '</tr>';
+                            $('.search-table tbody').append(tbodyContent);
+                        }
+
+                        getPagination({
+                            page: data.cur_page || 1,
+                            perPage: data.row_per_page || 5,
+                            splitPage: 3,
+                            total: data.sum_of_row|| 0
+                        });
+                    } else 
+                        $('.search-table tbody').append('<tr class="disabled"><td colspan="'+ data.label.length +'" style="text-align: center;">ไม่พบข้อมูล</td></tr>');
+                }
+            });
+        }
+
+        function getPagination(params) {
+            $('.pagination div').remove();
+
+            if(params == undefined) {
+                params = {
+                    page: 1,
+                    perPage: 5,
+                    splitPage: 3,
+                    total: 0
+                };
+            }
+
+            factory.connectDBService.sendJSONStr('API/paginator.php', params).done(function(res) {
+                if(res != undefined){
+                    $('.pagination').append(res);
+                }
+            });
         }
 
         //--Event
@@ -241,12 +334,12 @@
             $('.nav-menu #region').find('option:eq(0)').prop('selected', true);
             $('.nav-menu #province option[value!=""]').remove();
             
-            year = $('.nav-menu #year').val() || '';
-            region = $('.nav-menu #region').val() || '';
+            year = $('.nav-menu #year').val() || 0;
 
             if(year != '') {
                 $('.nav-menu #region').find('option:eq(1)').prop('selected', true);
-
+                region = $('.nav-menu #region').val() || '';
+                
                 if(region != '') {
                     params = {
                         fn: 'filter',
@@ -269,7 +362,26 @@
                 }
             }
 
-            getTable();
+            $('.search-detail-table thead tr').attr('data-menu', 0);
+            $('#FactoryName').val('');
+
+            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+            region = $('.nav-menu #region').val() || 0;
+            province = $('.nav-menu #province').val() || 0;
+            menu = 0;
+            page = 1;
+            keyword = '';
+
+            getTableAll({
+                fn: 'gettable',
+                job: 1,
+                year: year,
+                region: region,
+                province: province,
+                menu: menu,
+                page: page,
+                keyword: keyword
+            });
         });
 
         $(document).on('change', '.nav-menu #region', function(e) {
@@ -277,7 +389,7 @@
             
             $('.nav-menu #province').find('option[value!=""]').remove();
 
-            region = $('.nav-menu #region').val() || '';
+            region = $('.nav-menu #region').val() || 0;
             
             if(region != '') {
                 params = {
@@ -300,31 +412,78 @@
                 });
             }
 
-            getTable();
+            $('.search-detail-table thead tr').attr('data-menu', 0);
+            $('#FactoryName').val('');
+
+            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+            region = $('.nav-menu #region').val() || 0;
+            province = $('.nav-menu #province').val() || 0;
+            menu = 0;
+            page = 1;
+            keyword = '';
+
+            getTableAll({
+                fn: 'gettable',
+                job: 1,
+                year: year,
+                region: region,
+                province: province,
+                menu: menu,
+                page: page,
+                keyword: keyword
+            });
         });
 
         $(document).on('change', '.nav-menu #province', function(e) {
             e.preventDefault();
 
-            getTable();
+            $('.search-detail-table thead tr').attr('data-menu', 0);
+            $('#FactoryName').val('');
+
+            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+            region = $('.nav-menu #region').val() || 0;
+            province = $('.nav-menu #province').val() || 0;
+            menu = 0;
+            page = 1;
+            keyword = '';
+
+            getTableAll({
+                fn: 'gettable',
+                job: 1,
+                year: year,
+                region: region,
+                province: province,
+                menu: menu,
+                page: page,
+                keyword: keyword
+            });
         });
 
-        $(document).on('click', '.search-detail-table tbody tr:not(.search-detail-total):not(:nth-last-child(1))', function(e) {
+        $(document).on('click', '.search-detail-table tbody tr:not(.search-detail-total)', function(e) {
             e.preventDefault();
 
-            year = $('.nav-menu #year').val() || '';
+            $(this).closest('tbody').find('tr').removeClass('search-active-table');
+            $(this).addClass('search-active-table');
 
-            if(year != '') {
-                $(this).closest('tbody').find('tr').removeClass('search-active-table');
-                $(this).addClass('search-active-table');
+            $('.search-detail-table thead tr').attr('data-menu', $(this)[0].rowIndex);
 
-                getTable();
-            } else {
-                Factory.prototype.utilityService.getPopup({
-                    infoMsg: 'กรุณาเลือกปีงบประมาณก่อนดูข้อมูล',
-                    btnMsg: 'ปิด'
-                });
-            } 
+            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+            region = $('.nav-menu #region').val() || 0;
+            province = $('.nav-menu #province').val() || 0;
+            menu = $(this)[0].rowIndex || 0;
+            page = 1;
+            keyword = $('#FactoryName').val() || '';
+
+            getTable({
+                fn: 'gettable',
+                job: 1,
+                year: year,
+                region: region,
+                province: province,
+                menu: menu,
+                page: page,
+                keyword: keyword
+            });
         });
 
         $(document).on('click', '.search-table tbody tr', function(e) {
@@ -333,9 +492,107 @@
             $(this).closest('tbody').find('tr').removeClass('search-active-table');
             $(this).addClass('search-active-table');
 
+            params = {
+                fn: 'getgeo',
+                job: 1,
+                id: $(this).attr('data-id') || 0
+            };
+
+            factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
+                if(res != undefined){
+                    var data = JSON.parse(res);
+                    console.log(data);
+                }
+            });
+
             Factory.prototype.utilityService.getPopup({
                 infoMsg: 'รอแผนที่ทำเสร็จก่อน, ข้อมูลที่คุณเลือกคือ : '+ $(this).find('td:eq(0)').html(),
                 btnMsg: 'ปิด'
+            });
+        });
+        
+        $(document).on('keyup', '#FactoryName', function(e) {
+            e.preventDefault();
+
+            if($(this).val() == '') {
+                year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+                region = $('.nav-menu #region').val() || 0;
+                province = $('.nav-menu #province').val() || 0;
+                menu = $('.search-detail-table thead tr').attr('data-menu') || 0;
+                page = 1;
+                keyword = $('#FactoryName').val() || '';
+
+                getTable({
+                    fn: 'gettable',
+                    job: 1,
+                    year: year,
+                    region: region,
+                    province: province,
+                    menu: menu,
+                    page: page,
+                    keyword: keyword
+                });
+            }
+        });
+
+        $(document).on('click', '.set-pagination', function(e) {
+            e.preventDefault();
+
+            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+            region = $('.nav-menu #region').val() || 0;
+            province = $('.nav-menu #province').val() || 0;
+            menu = $('.search-detail-table thead tr').attr('data-menu') || 0;
+            page = $(this).attr('data-page') || 1;
+            keyword = $('#FactoryName').val() || '';
+
+            getTable({
+                fn: 'gettable',
+                job: 1,
+                year: year,
+                region: region,
+                province: province,
+                menu: menu,
+                page: page,
+                keyword: keyword
+            });
+        });
+
+        $(document).on('keyup', '.page-go-to', function(e) {
+            e.preventDefault();
+
+            var regex = /[^\d\,]/;
+
+            if(regex.test($(this).val()))
+                $(this).val('');
+                
+            if(($(this).val() != '') && (e.which == 13)) {
+                year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+                region = $('.nav-menu #region').val() || 0;
+                province = $('.nav-menu #province').val() || 0;
+                menu = $('.search-detail-table thead tr').attr('data-menu') || 0;
+                page = ($(this).val()).replace(',', '') || 1;
+                keyword = $('#FactoryName').val() || '';
+
+                getTable({
+                    fn: 'gettable',
+                    job: 1,
+                    year: year,
+                    region: region,
+                    province: province,
+                    menu: menu,
+                    page: page,
+                    keyword: keyword
+                });
+            }
+        });
+
+        $(document).on('click', '.export-file', function(e) {
+            e.preventDefault();
+
+            $('.search-table').tableExport({
+                type: 'pdf',
+                escape: true,
+                htmlContent: true
             });
         });
 
@@ -355,17 +612,22 @@
 
                 $(this).val(ui.item.value);
 
-                params = {
-                    fn: 'getdata',
-                    data: 1,
-                    id: ui.item.id
-                };
+                year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
+                region = $('.nav-menu #region').val() || 0;
+                province = $('.nav-menu #province').val() || 0;
+                menu = $('.search-detail-table thead tr').attr('data-menu') || 0;
+                page = 1;
+                keyword = ui.item.value || '';
 
-                factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                    if(res != undefined){
-                        var data = JSON.parse(res);
-                        console.log(data);
-                    }
+                getTable({
+                    fn: 'gettable',
+                    job: 1,
+                    year: year,
+                    region: region,
+                    province: province,
+                    menu: menu,
+                    page: page,
+                    keyword: keyword
                 });
             }
         });

@@ -29,8 +29,8 @@
         var ajaxUrl = 'http://210.4.143.51/Surathai01/API/reportAPI.php';
         var params = {};
         var year = $('.nav-menu #year').val() || '';
-        var region = $('.nav-menu #region').val() || '';
-        var province = $('.nav-menu #province').val() || '';
+        var region = $('.nav-menu #region').val() || 0;
+        var province = $('.nav-menu #province').val() || 0;
         localStorage.setItem('mode', 0);
         var mode = localStorage.getItem('mode');
 
@@ -73,8 +73,8 @@
                 '.table-report tbody tr').remove();
 
             year = $('.nav-menu #year').val() || '';
-            region = $('.nav-menu #region').val() || '';
-            province = $('.nav-menu #province').val() || '';
+            region = $('.nav-menu #region').val() || 0;
+            province = $('.nav-menu #province').val() || 0;
             mode = localStorage.getItem('mode');
 
             if(year != '') {
@@ -140,8 +140,8 @@
                 yAxes: 'ใบ'
             };
             year = $('.nav-menu #year').val() || '';
-            region = $('.nav-menu #region').val() || '';
-            province = $('.nav-menu #province').val() || '';
+            region = $('.nav-menu #region').val() || 0;
+            province = $('.nav-menu #province').val() || 0;
             mode = localStorage.getItem('mode');
 
             chartReport(chartReportData);
@@ -178,10 +178,10 @@
             $('.nav-menu #province option[value!=""]').remove();
             
             year = $('.nav-menu #year').val() || '';
-            region = $('.nav-menu #region').val() || '';
 
             if(year != '') {
                 $('.nav-menu #region').find('option:eq(1)').prop('selected', true);
+                region = $('.nav-menu #region').val() || 0;
 
                 if(region != '') {
                     params = {
@@ -218,7 +218,7 @@
             
             $('.nav-menu #province').find('option[value!=""]').remove();
 
-            region = $('.nav-menu #region').val() || '';
+            region = $('.nav-menu #region').val() || 0;
             
             if(region != '') {
                 params = {

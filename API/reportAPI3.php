@@ -3,8 +3,8 @@
 	require_once("../class/util.class.php");
 	require_once("../class/report.class.php");
 
-$fn = isset($_POST["fn"])?$_POST["fn"]:"";
-$mode = isset($_POST["mode"])?$_POST["mode"]:0;
+$fn = isset($_GET["fn"])?$_GET["fn"]:"";
+$mode = isset($_GET["mode"])?$_GET["mode"]:0;
 
 				$title = array(
 					1 => array("เดือน","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา","ภาษีรวม"),
@@ -17,11 +17,11 @@ $mode = isset($_POST["mode"])?$_POST["mode"]:0;
 switch($fn){
 	case "gettable" :
 				$RPP = 5;
-				$year = isset($_POST["year"])?$_POST["year"]:2017;
-				$region = isset($_POST["region"])?$_POST["region"]:0;
-				$province = isset($_POST["province"])?$_POST["province"]:0;
-				$page = isset($_POST["page"])?$_POST["page"]-1:0;
-				$job = isset($_POST["job"])?intval($_POST["job"]):0;
+				$year = isset($_GET["year"])?$_GET["year"]:2017;
+				$region = isset($_GET["region"])?$_GET["region"]:0;
+				$province = isset($_GET["province"])?$_GET["province"]:0;
+				$page = isset($_GET["page"])?$_GET["page"]-1:0;
+				$job = isset($_GET["job"])?intval($_GET["job"]):0;
 				if(!in_array($job,array(1,2,3,4,5))) $job = 1;
 
 				$TitleShow = $title[$job];
@@ -354,12 +354,12 @@ switch($fn){
 			break;
 	case "filter" :
 				$DB = new exDB;
-				if($_POST["src"] == 0){
+				if($_GET["src"] == 0){
 					$data = new exFilter_Bar;
 					$data->year = array();
 					$data->region = array();
 					$data->province = array();
-					$data->job = isset($_POST["job"])?$_POST["job"]:1;
+					$data->job = isset($_GET["job"])?$_GET["job"]:1;
 
 
 					if($data->job == 1){
@@ -463,9 +463,9 @@ switch($fn){
 						}
 					}
 				}else{
-					$S_region = isset($_POST["value"])?intval($_POST["value"]):0;
+					$S_region = isset($_GET["value"])?intval($_GET["value"]):0;
 
-					if($_POST["job"] == 2){
+					if($_GET["job"] == 2){
 						$filterLabel = "ทุกพื้นที่";
 						$DB->GetData("SELECT `AreaID`, `arName` FROM `Area` WHERE ? IN (0,arRegion)",array("i",$S_region));
 					}else{
@@ -495,11 +495,11 @@ switch($fn){
 				}
 			break;
 	case "getgraph" :
-				$mode = isset($_POST["mode"])?$_POST["mode"]:0;
-				$job = isset($_POST["job"])?$_POST["job"]:0;
-				$year = isset($_POST["year"])?$_POST["year"]:date('Y');
-				$region = isset($_POST["region"])?$_POST["region"]:0;
-				$province = isset($_POST["province"])?$_POST["province"]:0;
+				$mode = isset($_GET["mode"])?$_GET["mode"]:0;
+				$job = isset($_GET["job"])?$_GET["job"]:0;
+				$year = isset($_GET["year"])?$_GET["year"]:date('Y');
+				$region = isset($_GET["region"])?$_GET["region"]:0;
+				$province = isset($_GET["province"])?$_GET["province"]:0;
 				
 				$ItemTitle= $title[$job];
 
@@ -524,8 +524,10 @@ switch($fn){
 					case 1 :
 							$tmpData = array(array());
 							if($mode==0){
-								$DB->GetData("SELECT ? AS Y, ? AS R, ? AS P,gmValue AS H,0 AS CS,0 AS PD,0 AS SL, 0 AS TP,(SELECT SUM(stTax) FROM (SELECT lbRegion, lbProvince, stTax, stReleaseDate FROM `Label`,`Stamp` WHERE LabelID = stLabel) AS ST WHERE MONTH(stReleaseDate) = gmValue AND R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = Y) FROM GovMonth",array("iii",$year,$region,$province));
+								$DB->GetData("SELECT ? AS Y, ? AS R, ? AS P,gmValue AS H,0 AS CS,0 AS PD,0 AS SL,0 AS TP,(SELECT SUM(stTax) FROM (SELECT lbRegion, lbProvince, stTax, stReleaseDate FROM `Label`,`Stamp` WHERE LabelID = stLabel) AS ST WHERE MONTH(stReleaseDate) = gmValue AND R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = Y) AS STAX FROM GovMonth",array("iii",$year,$region,$province));
 								while($fdata = $DB->FetchData()){
+										var_dump($fdata);
+										echo "<br/><br/>";
 									for($x=4;$x<=8;$x++){
 										$tmpData[$x-3][$fdata["H"]] = $fdata[$x];
 									}
@@ -533,17 +535,15 @@ switch($fn){
 									
 								}
 							}else{
-								$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,0,0,0,0,(SELECT SUM(stTax) FROM (SELECT lbRegion, lbProvince, stTax, stReleaseDate FROM `Label`,`Stamp` WHERE LabelID = stLabel) AS ST WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = Y) AS STAX ",array("iii",$Y,$region,$province));
 								for($Y=$year-4;$Y<=$year;$Y++){
-									$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,0 AS Construction,0 AS Production,0 AS Sale, 0 AS Transpot,(SELECT SUM(stTax) FROM (SELECT lbRegion, lbProvince, stTax, stReleaseDate FROM `Label`,`Stamp` WHERE LabelID = stLabel) AS ST WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = Y) AS STAX",array("iii",$Y,$region,$province));
+									$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,(SELECT COUNT(FactoryID) FROM `Factory` WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, 0 AS Transpot ",array("iii",$Y,$region,$province));
 
 
 									$tmpData[1][$Y] = $fdata["Construction"];
 									$tmpData[2][$Y] = $fdata["Production"];
 									$tmpData[3][$Y] = $fdata["Sale"];
 									$tmpData[4][$Y] = $fdata["Transpot"];
-									$tmpData[5][$Y] = $fdata["STAX"];
-									$tmpData[6][$Y] = $fdata["Construction"] + $fdata["Production"] + $fdata["Sale"] + $fdata["Transpot"] + $fdata["STAX"];
+									$tmpData[5][$Y] = $fdata["Construction"] + $fdata["Production"] + $fdata["Sale"] + $fdata["Transpot"];
 								}
 							}
 						break;

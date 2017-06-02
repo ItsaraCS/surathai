@@ -17,6 +17,13 @@
     <script src="lib/openlayer/ol.js" type="text/javascript"></script>
     <!--ChartJS-->
     <script src="lib/chartjs/Chart.min.js" type="text/javascript"></script>
+    <!--TableExport-->
+    <script src="lib/table-export/tableExport.js" type="text/javascript"></script>
+    <script src="lib/table-export/jquery.base64.js" type="text/javascript"></script>
+    <script src="lib/table-export/html2canvas.js" type="text/javascript"></script>
+    <script src="lib/table-export/jspdf/jspdf.js" type="text/javascript"></script>
+    <script src="lib/table-export/jspdf/libs/sprintf.js" type="text/javascript"></script>
+    <script src="lib/table-export/jspdf/libs/base64.js" type="text/javascript"></script>
     <!--Font Awesome-->
     <link href="lib/fontawesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!--CSS-->
