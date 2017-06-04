@@ -235,7 +235,13 @@ Factory.prototype.connectDBService = {
         var options = {
             type: 'post',
             url: ajaxUrl,
-            cache: false
+            cache: false,
+            beforeSend: function() {
+                $('body').append('<img src="img/loading.gif" class="loading">');
+            },
+            success: function() {
+                $('.loading').remove();
+            }
         };
 
         if(params != "" && params != undefined)
@@ -247,7 +253,13 @@ Factory.prototype.connectDBService = {
         var options = {
             type: 'post',
             url: ajaxUrl,
-            cache: false
+            cache: false,
+            beforeSend: function() {
+                $('body').append('<img src="img/loading.gif" class="loading">');
+            },
+            success: function() {
+                $('.loading').remove();
+            }
         };
 
         if(params != "" && params != undefined)
@@ -261,7 +273,13 @@ Factory.prototype.connectDBService = {
             url: ajaxUrl,
             processData: false,
             contentType: false,
-            data: params
+            data: params,
+            beforeSend: function() {
+                $('body').append('<img src="img/loading.gif" class="loading">');
+            },
+            success: function() {
+                $('.loading').remove();
+            }
         };
 
         return $.ajax(options);

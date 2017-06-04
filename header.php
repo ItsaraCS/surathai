@@ -30,9 +30,15 @@
     <link href="img/logoheader.png" rel="shortcut icon" type="image/x-icon">
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <!--JS-->
-    <script src="js/categories.js" type="text/javascript"></script>
     <script src="js/chart.js" type="text/javascript"></script>
     <script src="js/factory.js" type="text/javascript"></script>
+    <!--MAP-->
+    <script src="js/categories.js" type="text/javascript"></script>
+    <script src="js/getJson.js" type="text/javascript"></script>
+    <script src="js/olmaplib.js" type="text/javascript"></script>
+    <script src="js/local_shared.js" type="text/javascript"></script>
+    <script src="js/search_map_lib.js" type="text/javascript"></script>
+    <script src="js/e_map_lib.js" type="text/javascript"></script>
 </head>
 <body>
     <div class="container-fluid">

@@ -74,6 +74,8 @@
         var year = $('.nav-menu #year').val() || '';
         var region = $('.nav-menu #region').val() || 0;
         var province = $('.nav-menu #province').val() || 0;
+        var lat = $(this).attr('data-lat') || 0;
+        var lon = $(this).attr('data-lon') || 0;
 
         //--Page load
         getInit();
@@ -189,9 +191,18 @@
                                 tdAlign = ({
                                     '0': 'text-left',
                                     '1': 'text-right',
-                                    '2': 'text-center'
+                                    '2': 'text-center',
+                                    '3': 'text-center',
+                                    '4': 'text-center'
                                 })[data.data[index].align];
-                                tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+                                
+                                if(data.data[index].align == 3)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.data[index].text +'" style="width: 50px; height: 50px;"></a></td>';
+                                else if(data.data[index].align == 4)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="'+ data.data[index].text +'" class="show-link">ดูเพิ่มเติม</a></td>';
+                                else
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+
                                 index += 1;
                             }
 
@@ -241,24 +252,30 @@
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
                         if(index == 0) {
-                            searchDetailTableContent += '<th class="text-center text-nowrap">'+ item.subject +'</th>' +
-                                '<th class="text-center text-nowrap">'+ item.value[0] +'</th>';
+                            searchDetailTableContent += '<th class="text-center text-nowrap">'+ item.subject +'</th>';
+                                $.each(item.value, function(indexValue, itemValue) {
+                                    searchDetailTableContent += '<th class="text-center text-nowrap">'+ itemValue +'</th>';
+                                });
                             $('.search-detail-table thead tr').append(searchDetailTableContent);
                             searchDetailTableContent = '';
                         }
                         
                         if(index == (data.menu.length - 1)) {
                             searchDetailTableContent += '<tr class="search-detail-total">' +
-                                    '<td class="col-md-5 text-center"><p>'+ item.subject +'</p></td>' +
-                                    '<td class="col-md-7 text-center">'+ item.value[0] +'</td>' +
-                                '</tr>';
+                                    '<td class="text-center"><p>'+ item.subject +'</p></td>';
+                                    $.each(item.value, function(indexValue, itemValue) {
+                                        searchDetailTableContent += '<td class="text-center">'+ itemValue +'</td>';
+                                    });
+                                searchDetailTableContent += '</tr>';
                         } 
                         
                         if((index != 0) && (index != (data.menu.length - 1))) {
                             searchDetailTableContent += '<tr>' +
-                                    '<td class="col-md-5"><p>'+ item.subject +'</p></td>' +
-                                    '<td class="col-md-7 text-center">'+ item.value[0] +'</td>' +
-                                '</tr>';
+                                    '<td><p>'+ item.subject +'</p></td>';
+                                    $.each(item.value, function(indexValue, itemValue) {
+                                        searchDetailTableContent += '<td class="text-center">'+ itemValue +'</td>';
+                                    });
+                                searchDetailTableContent += '</tr>';
                         }
                     });
                     $('.search-detail-table tbody').append(searchDetailTableContent);
@@ -286,9 +303,18 @@
                                 tdAlign = ({
                                     '0': 'text-left',
                                     '1': 'text-right',
-                                    '2': 'text-center'
+                                    '2': 'text-center',
+                                    '3': 'text-center',
+                                    '4': 'text-center'
                                 })[data.data[index].align];
-                                tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+                                
+                                if(data.data[index].align == 3)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.data[index].text +'" style="width: 50px; height: 50px;"></a></td>';
+                                else if(data.data[index].align == 4)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="'+ data.data[index].text +'" class="show-link">ดูเพิ่มเติม</a></td>';
+                                else
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+
                                 index += 1;
                             }
 
@@ -462,8 +488,8 @@
         $(document).on('click', '.search-detail-table tbody tr:not(.search-detail-total)', function(e) {
             e.preventDefault();
 
-            $(this).closest('tbody').find('tr').removeClass('search-active-table');
-            $(this).addClass('search-active-table');
+            $(this).closest('tbody').find('tr').removeClass('active-row');
+            $(this).addClass('active-row');
 
             $('.search-detail-table thead tr').attr('data-menu', $(this)[0].rowIndex);
 
@@ -489,24 +515,24 @@
         $(document).on('click', '.search-table tbody tr', function(e) {
             e.preventDefault();
 
-            $(this).closest('tbody').find('tr').removeClass('search-active-table');
-            $(this).addClass('search-active-table');
+            $(this).closest('tbody').find('tr').removeClass('active-row');
+            $(this).addClass('active-row');
+        });
 
-            params = {
-                fn: 'getgeo',
-                job: 5,
-                id: $(this).attr('data-id') || 0
-            };
-
-            factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                if(res != undefined){
-                    var data = JSON.parse(res);
-                    console.log(data);
-                }
-            });
-
+        $(document).on('click', '.show-image', function(e) {
+            e.preventDefault();
+            
             Factory.prototype.utilityService.getPopup({
-                infoMsg: 'รอแผนที่ทำเสร็จก่อน, ข้อมูลที่คุณเลือกคือ : '+ $(this).find('td:eq(0)').html(),
+                infoMsg: '<img src="'+ $(this).find('img').attr('src') +'" style="width: 100%;">',
+                btnMsg: 'ปิด'
+            });
+        });
+
+        $(document).on('click', '.show-link', function(e) {
+            e.preventDefault();
+            
+            Factory.prototype.utilityService.getPopup({
+                infoMsg: 'ไม่พบข้อมูล',
                 btnMsg: 'ปิด'
             });
         });

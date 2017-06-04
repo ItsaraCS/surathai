@@ -497,11 +497,12 @@ ul.ui-autocomplete li div {
   font-weight: bold;
 }
 .search-detail-table tbody tr:not(.search-detail-total):hover,
-.search-table tbody tr:hover {
+.search-table tbody tr:hover,
+.eform-table tbody tr:hover {
   cursor: pointer;
   background-color: #d3e3f0;
 }
-.search-active-table {
+.active-row {
   background-color: #d7eed7 !important;
 }
 
@@ -552,4 +553,14 @@ ul.ui-autocomplete li div {
   height: 34vh;
   overflow-x: hidden;
   overflow-y: scroll; 
+}
+
+.loading {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   width: 100px;
+   height: 100px;
+   margin-top: -50px;
+   margin-left: -50px;
 }

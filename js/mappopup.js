@@ -3,7 +3,7 @@ var b_popup_shown = false;
 /**
  *
  */
-function show_popup_window(m, o, c, str) {
+function _show_popup_window(m, o, c, str) {
     var dvPopup = document.getElementById("popup-content");
 	console.log('xx');
     dvPopup.innerHTML = str;
@@ -20,4 +20,9 @@ function hide_popup_window() {
 	overlay.setPosition(undefined);
 	popup_closer.blur();
 	//return false;
+}
+
+function show_popup_window(o, p, c, str) {
+	p.innerHTML = str;
+	o.setPosition(c);
 }

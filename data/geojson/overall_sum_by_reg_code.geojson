@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "VAL_TAX": 9777.0, "VAL_CASE": 6216.0, "VAL_LIC": 7147.0, "VAL_STAMP": 7995.0, "VAL_FAC": 683.0, "VAL_TOTAL": 31818.0, "REG_CODE": 1.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 2670.0, "VAL_CASE": 2098.0, "VAL_LIC": 1025.0, "VAL_STAMP": 2470.0, "VAL_FAC": 20.0, "VAL_TOTAL": 8283.0, "REG_CODE": 2.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 2808.0, "VAL_CASE": 1448.0, "VAL_LIC": 1471.0, "VAL_STAMP": 1780.0, "VAL_FAC": 1091.0, "VAL_TOTAL": 8598.0, "REG_CODE": 3.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 1640.0, "VAL_CASE": 1790.0, "VAL_LIC": 1818.0, "VAL_STAMP": 1907.0, "VAL_FAC": 301.0, "VAL_TOTAL": 7456.0, "REG_CODE": 4.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 2677.0, "VAL_CASE": 2952.0, "VAL_LIC": 2752.0, "VAL_STAMP": 2697.0, "VAL_FAC": 1710.0, "VAL_TOTAL": 12788.0, "REG_CODE": 5.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 2914.0, "VAL_CASE": 1224.0, "VAL_LIC": 77.0, "VAL_STAMP": 9.0, "VAL_FAC": 1502.0, "VAL_TOTAL": 5726.0, "REG_CODE": 6.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 2013.0, "VAL_CASE": 403.0, "VAL_LIC": 1677.0, "VAL_STAMP": 1178.0, "VAL_FAC": 238.0, "VAL_TOTAL": 5509.0, "REG_CODE": 7.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 2315.0, "VAL_CASE": 449.0, "VAL_LIC": 114.0, "VAL_STAMP": 2676.0, "VAL_FAC": 258.0, "VAL_TOTAL": 5812.0, "REG_CODE": 8.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 588.0, "VAL_CASE": 2545.0, "VAL_LIC": 772.0, "VAL_STAMP": 2847.0, "VAL_FAC": 2129.0, "VAL_TOTAL": 8881.0, "REG_CODE": 9.0 }, "geometry": null },
+{ "type": "Feature", "properties": { "VAL_TAX": 167.0, "VAL_CASE": 1912.0, "VAL_LIC": 2484.0, "VAL_STAMP": 1413.0, "VAL_FAC": 1646.0, "VAL_TOTAL": 7622.0, "REG_CODE": 10.0 }, "geometry": null }
+]
+}

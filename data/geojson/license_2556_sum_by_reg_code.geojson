@@ -1,0 +1,16 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "COUNT": 29994, "SUM": 11083930, "REG_CODE": 1 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 39324, "SUM": 18910860, "REG_CODE": 2 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 70840, "SUM": 22483046, "REG_CODE": 3 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 45814, "SUM": 16129080, "REG_CODE": 4 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 33872, "SUM": 15288370, "REG_CODE": 5 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 31046, "SUM": 9697970, "REG_CODE": 6 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 23466, "SUM": 9077300, "REG_CODE": 7 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 27584, "SUM": 13403880, "REG_CODE": 8 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 10599, "SUM": 3804590, "REG_CODE": 9 }, "geometry": null },
+{ "type": "Feature", "properties": { "COUNT": 25931, "SUM": 17304980, "REG_CODE": 10 }, "geometry": null }
+]
+}

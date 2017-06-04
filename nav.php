@@ -44,10 +44,11 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select class="form-control input-sm" id="province">
+                    <select class="form-control input-sm" id="area">
                         <option value="" selected>เลือกพื้นที่</option>
                     </select>
                 </div>
+                <div class="col-sm-4" id="btn-view"><a href="#" class="btn btn-danger btn-md">View</a></div>
             </div>
         </div>
     </div>

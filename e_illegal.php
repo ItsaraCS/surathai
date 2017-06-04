@@ -119,10 +119,10 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ลองติจูด)</p></td>
+                                <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ลองจิจูด)</p></td>
                                 <td class="col-md-7">
                                     <input type="text" class="form-control input-sm" id="Long" disabled required>
-                                    <span class="error-content hide" data-label="ลองติจูด"></span>
+                                    <span class="error-content hide" data-label="ลองจิจูด"></span>
                                 </td>
                             </tr>
                             <tr>

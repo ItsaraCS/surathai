@@ -86,9 +86,9 @@ function on_map_mouse_move(event) {
 /**
  *
  */
-function get_map_mouse_pixel(coord) {
-	//var pixel = olmap.getPixelFromCoordinate(coord);
-	//return pixel;
+function get_map_mouse_pixel(m, coord) {
+	var pixel = m.getPixelFromCoordinate(coord);
+	return pixel;
 }
 
 /**
@@ -103,6 +103,23 @@ function get_feature_info(m, px, keys) {
 	m.forEachFeatureAtPixel(px, function(f) {
 		for( i = 0; i < keys.length; i++ ) {
 			//ret.push(f.get(keys[i]));
+			ret.push(f);
+		}
+	});
+	
+	return ret;
+}
+
+/**
+ *
+ */
+function get_feature_info(m, px) {
+	var ret = [];
+	
+	m.forEachFeatureAtPixel(px, function(f) {
+		//ret.push(f);
+		//console.log(f.get('REGCODE'));
+		if(f.get('REG_CODE')) {
 			ret.push(f);
 		}
 	});

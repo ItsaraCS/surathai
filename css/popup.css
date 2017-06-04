@@ -61,3 +61,20 @@ font-family: 'Athiti', sans-serif;
 font-weight: normal;
 font-size: 14px;
 }
+
+.ol-popup #popup-content th {
+text-align: center;
+}
+
+.ol-popup #popup-content .left {
+text-align: left;
+}
+
+.ol-popup #popup-content .center {
+text-align: center;
+}
+
+.ol-popup #popup-content .right {
+text-align: right;
+}
+

@@ -20,7 +20,7 @@
                             <tr>
                                 <td class="col-md-5"><p class="data-important">รหัสโรงงาน</p></td>
                                 <td class="col-md-7">
-                                    <input type="text" class="form-control input-sm" id="ID" disabled required>
+                                    <input type="text" class="form-control input-sm" id="ID" maxlength="6" required>
                                     <span class="error-content hide" data-label="รหัสโรงงาน"></span>
                                 </td>
                             </tr>
@@ -98,15 +98,15 @@
                             <tr>
                                 <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ละติจูด)</p></td>
                                 <td class="col-md-7">
-                                    <input type="text" class="form-control input-sm" id="Lat" readonly required>
+                                    <input type="text" class="form-control input-sm" id="Lat" required>
                                     <span class="error-content hide" data-label="ละติจูด"></span>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ลองติจูด)</p></td>
+                                <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ลองจิจูด)</p></td>
                                 <td class="col-md-7">
-                                    <input type="text" class="form-control input-sm" id="Long" readonly required>
-                                    <span class="error-content hide" data-label="ลองติจูด"></span>
+                                    <input type="text" class="form-control input-sm" id="Lon" required>
+                                    <span class="error-content hide" data-label="ลองจิจูด"></span>
                                 </td>
                             </tr>
                             <tr>
@@ -173,6 +173,9 @@
         </div>
     </div>
 </div>
+<!--MAP LIBRARY-->
+<script src="js/search_map_lib.js" type="text/javascript"></script>
+<script src="js/e_map_lib.js" type="text/javascript"></script>
 <!--JS-->
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -180,6 +183,13 @@
         var factory = new Factory();
         var ajaxUrl = 'http://210.4.143.51/Surathai01/API/eformAPI.php';
         var params = {};
+        var lat = $('#Lat').val() || 0;
+        var lon = $('#Lon').val() || 0;
+        var marker_geom = null;
+        var marker_feature = null;
+        var marker_style = null;
+        var marker_source = null;
+        var layers_marker = null;
 
         //--Page load
         setInit();
@@ -187,8 +197,6 @@
         //--Function
         function setInit() {
             $('input, select, textarea').val('');
-            $('#Lat').val('15.870032');
-            $('#Long').val('100.992541');
 
             getMap();
             getTable();
@@ -217,8 +225,30 @@
     
             var projection = ol.proj.get('EPSG:3857');
 
+			// ===========================================
+			// ADDED BY KUMPEE
+			marker_geom = new ol.geom.Point([0, 0]);
+			marker_feature = new ol.Feature({geometry: marker_geom});
+			marker_style = new ol.style.Style({
+				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [0.5, 46],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'pixels',
+					opacity: 0.75,
+					src: 'img/icon.png'
+				}))
+			});
+			marker_feature.setStyle(marker_style);
+			marker_source = new ol.source.Vector({
+				features: [marker_feature]
+			});
+			layers_marker = new ol.layer.Vector({
+				source: marker_source
+			});
+			// ===========================================
+			
             map = new ol.Map({
-                layers : [ layers_deemap ],
+                layers : [ layers_deemap, layers_marker ],
                 //overlays: [overlay], //--for popup
                 target : 'map',
                 view: new ol.View({
@@ -236,6 +266,19 @@
             
             map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
             map.getView().setZoom(9.0);
+			
+			// ===========================================
+			// ADDED BY KUMPEE
+			map.on('singleclick', function(event) {
+				// lonlat[0] : Longitude
+				// lonlat[1] : Latitude
+				var lonlat = e_get_factory_location(ol, map, event, marker_geom, 9, false);
+				console.log('lat:', lonlat[1], 'lon:', lonlat[0]);
+                
+                $('#Lat').val(lonlat[1]);
+                $('#Lon').val(lonlat[0]);
+			});
+			// ===========================================
         }
 
         function getTable() {
@@ -250,6 +293,7 @@
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined){
                     var data = JSON.parse(res);
+                    console.log(data);
 
                     var theadContent = '<th class="text-center text-nowrap" style="padding: 4px 10px;">#</th>';
                     $.each(data.label, function(index, item) {
@@ -264,7 +308,7 @@
                         var index = 0;
 
                         for(var i=1; i<=row; i++) {
-                            tbodyContent = '<tr>';
+                            tbodyContent = '<tr data-lat="'+ data.latlong[i].Lat +'" data-lon="'+ data.latlong[i].Long +'">';
                             tbodyContent += '<td class="text-center">'+ i +'</td>';
 
                             for(var j=1; j<=data.label.length; j++) {
@@ -334,6 +378,38 @@
 	        }
         });
 
+        $(document).on('keyup', '#Lat, #Lon', function(e) {
+            e.preventDefault();
+
+            if(($('#Lat').val() != '') && ($('#Lon').val() != '')) {
+                lat = parseFloat($('#Lat').val()) || 0;
+                lon = parseFloat($('#Lon').val()) || 0;
+                marker_geom = new ol.geom.Point([0, 0]);
+
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
+            }
+        });
+
+        $(document).on('click', '.eform-table tbody tr', function(e) {
+            e.preventDefault();
+
+            $(this).closest('tbody').find('tr').removeClass('active-row');
+            $(this).addClass('active-row');
+
+            lat = parseFloat($(this).attr('data-lat')) || 0;
+            lon = parseFloat($(this).attr('data-lon')) || 0;
+            marker_geom = new ol.geom.Point([0, 0]);
+
+            if((lat != 'null') && (lon != 'null'))
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
+            else {
+                Factory.prototype.utilityService.getPopup({
+                    infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
+                    btnMsg: 'ปิด'
+                });
+            }
+        });
+
         $(document).on('click', '#insertBtn', function(e) {
             e.preventDefault();
 
@@ -391,8 +467,6 @@
             factory.initService.setError($('input, select, textarea'), 'clear');
             $('input, select, textarea').val('');
             $('.thumbnail-upload img').remove();
-            $('#Lat').val('15.870032');
-            $('#Long').val('100.992541');
         });
 
         $('#FactoryName').autocomplete({ 
