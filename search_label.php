@@ -153,6 +153,7 @@
                     if(res != undefined){
                         var data = JSON.parse(res);
                         data = data[0];
+                        console.log(data);
 
                         if(data.length != 0) {
                             $('.search-label-table tbody tr').remove();
@@ -169,7 +170,7 @@
                                     '<td class="text-center text-nowrap">'+ data.extend_date +'</td>' +
                                     '<td class="text-center text-nowrap">'+ data.address +'</td>' +
                                     '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.plan +'" style="width: 50px; height: 50px;"></a></td>' +
-                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.plan +'" style="width: 50px; height: 50px;"></a></td>' +
+                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.picture +'" style="width: 50px; height: 50px;"></a></td>' +
                                 '</tr>');
                         }
                     }

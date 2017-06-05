@@ -28,19 +28,25 @@
                 params = {
                     fn: 'profile'
                 };
-                
-                factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                    if(res != undefined){
-                        var data = JSON.parse(res);
-                        //console.log(data);
 
-                        localStorage.setItem('userName', data.fullname);
-                        localStorage.setItem('userPosition', data.ProvinceTXT);
-                        
-                        $('.nav-menu #Province').attr('data-provice', data.Province);
-                        $('#ProvinceTXT').html(data.ProvinceTXT);
-                        $('.user-menu span, .user-menu-detail-label p').html(localStorage.getItem('userName'));
-                        $('.user-menu-detail-label span').html(localStorage.getItem('userPosition'));
+                $.ajax({
+                    type: 'post',
+                    url: ajaxUrl,
+                    cache: false,
+                    data: params,
+                    success: function(res) {
+                        if(res != undefined){
+                            var data = JSON.parse(res);
+                            //console.log(data);
+
+                            localStorage.setItem('userName', data.fullname);
+                            localStorage.setItem('userPosition', data.ProvinceTXT);
+                            
+                            $('.nav-menu #Province').attr('data-provice', data.Province);
+                            $('#ProvinceTXT').html(data.ProvinceTXT);
+                            $('.user-menu span, .user-menu-detail-label p').html(localStorage.getItem('userName'));
+                            $('.user-menu-detail-label span').html(localStorage.getItem('userPosition'));
+                        }
                     }
                 });
             }

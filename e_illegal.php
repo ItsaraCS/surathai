@@ -114,14 +114,14 @@
                             <tr>
                                 <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ละติจูด)</p></td>
                                 <td class="col-md-7">
-                                    <input type="text" class="form-control input-sm" id="Lat" disabled required>
+                                    <input type="text" class="form-control input-sm" id="Lat" required>
                                     <span class="error-content hide" data-label="ละติจูด"></span>
                                 </td>
                             </tr>
                             <tr>
                                 <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ลองจิจูด)</p></td>
                                 <td class="col-md-7">
-                                    <input type="text" class="form-control input-sm" id="Long" disabled required>
+                                    <input type="text" class="form-control input-sm" id="Lon" required>
                                     <span class="error-content hide" data-label="ลองจิจูด"></span>
                                 </td>
                             </tr>
@@ -193,6 +193,13 @@
         var factory = new Factory();
         var ajaxUrl = 'http://210.4.143.51/Surathai01/API/eformAPI.php';
         var params = {};
+        var lat = $('#Lat').val() || 0;
+        var lon = $('#Lon').val() || 0;
+        var marker_geom = null;
+        var marker_feature = null;
+        var marker_style = null;
+        var marker_source = null;
+        var layers_marker = null;
 
         //--Page load
         setInit();
@@ -216,8 +223,6 @@
 
             $('input, select, textarea').val('');
             $('#AccidentDate').val(factory.dataService.getCurrentDateTH('short'));
-            $('#Lat').val('15.870032');
-            $('#Long').val('100.992541');
 
             getMap();
             getTable();
@@ -246,8 +251,30 @@
     
             var projection = ol.proj.get('EPSG:3857');
 
+			// ===========================================
+			// ADDED BY KUMPEE
+			marker_geom = new ol.geom.Point([0, 0]);
+			marker_feature = new ol.Feature({geometry: marker_geom});
+			marker_style = new ol.style.Style({
+				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [0.5, 46],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'pixels',
+					opacity: 0.7,
+					src: 'img/marker-eform.png'
+				}))
+			});
+			marker_feature.setStyle(marker_style);
+			marker_source = new ol.source.Vector({
+				features: [marker_feature]
+			});
+			layers_marker = new ol.layer.Vector({
+				source: marker_source
+			});
+			// ===========================================
+			
             map = new ol.Map({
-                layers : [ layers_deemap ],
+                layers : [ layers_deemap, layers_marker ],
                 //overlays: [overlay], //--for popup
                 target : 'map',
                 view: new ol.View({
@@ -265,20 +292,34 @@
             
             map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
             map.getView().setZoom(9.0);
+			
+			// ===========================================
+			// ADDED BY KUMPEE
+			map.on('singleclick', function(event) {
+				// lonlat[0] : Longitude
+				// lonlat[1] : Latitude
+				var lonlat = e_get_factory_location(ol, map, event, marker_geom, 9, false);
+				console.log('lat:', lonlat[1], 'lon:', lonlat[0]);
+                
+                $('#Lat').val(lonlat[1]);
+                $('#Lon').val(lonlat[0]);
+			});
+			// ===========================================
         }
 
         function getTable() {
             $('.eform-table thead th, ' +
                 '.eform-table tbody tr').remove();
-                
+
             params = {
                 fn: 'gettable',
-                job: 2
+                job: 1
             };
 
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined){
                     var data = JSON.parse(res);
+                    console.log(data);
 
                     var theadContent = '<th class="text-center text-nowrap" style="padding: 4px 10px;">#</th>';
                     $.each(data.label, function(index, item) {
@@ -293,16 +334,29 @@
                         var index = 0;
 
                         for(var i=1; i<=row; i++) {
-                            tbodyContent = '<tr>';
+                            if(data.latlong.length != 0)
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="'+ data.latlong[i].Lat +'" data-lon="'+ data.latlong[i].Long +'">';
+                            else
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="0" data-lon="0">';
+
                             tbodyContent += '<td class="text-center">'+ i +'</td>';
 
                             for(var j=1; j<=data.label.length; j++) {
                                 tdAlign = ({
                                     '0': 'text-left',
                                     '1': 'text-right',
-                                    '2': 'text-center'
+                                    '2': 'text-center',
+                                    '3': 'text-center',
+                                    '4': 'text-center'
                                 })[data.data[index].align];
-                                tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+                                
+                                if(data.data[index].align == 3)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.data[index].text +'" style="width: 50px; height: 50px;"></a></td>';
+                                else if(data.data[index].align == 4)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="'+ data.data[index].text +'" class="show-link">ดูเพิ่มเติม</a></td>';
+                                else
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+
                                 index += 1;
                             }
 
@@ -326,6 +380,36 @@
 
         $(document).on('keyup', 'input[numbered], textarea[numbered]', function(e) {
             factory.initService.setError($(this), 'numbered');
+        });
+
+        $(document).on('keyup', '#Lat, #Lon', function(e) {
+            e.preventDefault();
+
+            if(($('#Lat').val() != '') && ($('#Lon').val() != '')) {
+                lat = parseFloat($('#Lat').val()) || 0;
+                lon = parseFloat($('#Lon').val()) || 0;
+
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
+            }
+        });
+
+        $(document).on('click', '.eform-table tbody tr', function(e) {
+            e.preventDefault();
+
+            $(this).closest('tbody').find('tr').removeClass('active-row');
+            $(this).addClass('active-row');
+
+            lat = parseFloat($(this).attr('data-lat')) || 0;
+            lon = parseFloat($(this).attr('data-lon')) || 0;
+
+            if((lat != 0) && (lon != 0))
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
+            else {
+                Factory.prototype.utilityService.getPopup({
+                    infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
+                    btnMsg: 'ปิด'
+                });
+            }
         });
 
         $(document).on('click', '#insertBtn', function(e) {
@@ -392,8 +476,6 @@
             factory.initService.setError($('input, select, textarea'), 'clear');
             $('input, select, textarea').val('');
             $('#AccidentDate').val(factory.dataService.getCurrentDateTH('short'));
-            $('#Lat').val('15.870032');
-            $('#Long').val('100.992541');
         });
 
         $('#FactoryName').autocomplete({ 

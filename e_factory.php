@@ -234,8 +234,8 @@
 					anchor: [0.5, 46],
 					anchorXUnits: 'fraction',
 					anchorYUnits: 'pixels',
-					opacity: 0.75,
-					src: 'img/icon.png'
+					opacity: 0.7,
+					src: 'img/marker-eform.png'
 				}))
 			});
 			marker_feature.setStyle(marker_style);
@@ -308,16 +308,29 @@
                         var index = 0;
 
                         for(var i=1; i<=row; i++) {
-                            tbodyContent = '<tr data-lat="'+ data.latlong[i].Lat +'" data-lon="'+ data.latlong[i].Long +'">';
+                            if(data.latlong.length != 0)
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="'+ data.latlong[i].Lat +'" data-lon="'+ data.latlong[i].Long +'">';
+                            else
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="0" data-lon="0">';
+
                             tbodyContent += '<td class="text-center">'+ i +'</td>';
 
                             for(var j=1; j<=data.label.length; j++) {
                                 tdAlign = ({
                                     '0': 'text-left',
                                     '1': 'text-right',
-                                    '2': 'text-center'
+                                    '2': 'text-center',
+                                    '3': 'text-center',
+                                    '4': 'text-center'
                                 })[data.data[index].align];
-                                tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+                                
+                                if(data.data[index].align == 3)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.data[index].text +'" style="width: 50px; height: 50px;"></a></td>';
+                                else if(data.data[index].align == 4)
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="'+ data.data[index].text +'" class="show-link">ดูเพิ่มเติม</a></td>';
+                                else
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap">'+ data.data[index].text +'</td>';
+
                                 index += 1;
                             }
 
@@ -384,7 +397,6 @@
             if(($('#Lat').val() != '') && ($('#Lon').val() != '')) {
                 lat = parseFloat($('#Lat').val()) || 0;
                 lon = parseFloat($('#Lon').val()) || 0;
-                marker_geom = new ol.geom.Point([0, 0]);
 
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
             }
@@ -398,9 +410,8 @@
 
             lat = parseFloat($(this).attr('data-lat')) || 0;
             lon = parseFloat($(this).attr('data-lon')) || 0;
-            marker_geom = new ol.geom.Point([0, 0]);
 
-            if((lat != 'null') && (lon != 'null'))
+            if((lat != 0) && (lon != 0))
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
             else {
                 Factory.prototype.utilityService.getPopup({

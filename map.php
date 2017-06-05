@@ -4,14 +4,12 @@
 <div class="section">
 	<!--MAP-->
 	<div class="container-fluid">
-		<div class="row">
-			<div id="map" class="map" style="width:100%; height: 100%; position:fixed"></div>
-			<!--POPUP-->
-			<div id="popup" class="ol-popup">
-				<a href="#" id="popup-closer" class="ol-popup-closer"></a>
-				<div id="popup-content"></div>
-			</div>
-		</div>
+        <div id="map" class="map" style="position: fixed; height: 100%;"></div>
+        <!--POPUP-->
+        <div id="popup" class="ol-popup">
+            <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+            <div id="popup-content"></div>
+        </div>
 	</div>
 
 	<!--LOADING-->
@@ -146,6 +144,12 @@
 
         $(document).on('change', '.nav-menu #area', function(e) {
             e.preventDefault();
+        });
+
+        $(document).on('click', '.export-file', function(e) {
+            e.preventDefault();
+
+            window.open('export/map/map.pdf', '_blank');
         });
     });
 </script>

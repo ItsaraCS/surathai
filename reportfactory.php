@@ -262,6 +262,12 @@
             getChart();
         });
 
+        $(document).on('click', '.export-file', function(e) {
+            e.preventDefault();
+
+            window.open('export/report/reportfactory.xlsx', '_blank');
+        });
+
         $(document).on('click', '#changeChartBtn', function(e) {
             e.preventDefault();
 

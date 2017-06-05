@@ -136,6 +136,7 @@ function on_page_loaded() {
 	prepare_region_and_area();
 	
 	// Insert region list
+	//--EDIT by ITSARA
 	/*$('#region').append('<option value="01">สรรพสามิตภาคที่ 1</option>');
 	$('#region').append('<option value="02">สรรพสามิตภาคที่ 2</option>');
 	$('#region').append('<option value="03">สรรพสามิตภาคที่ 3</option>');

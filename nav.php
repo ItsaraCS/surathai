@@ -25,7 +25,6 @@
                         <a href="e_stamp.php" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"> Export <span class="caret"></span></a>
                         <ul class="dropdown-menu" style="min-width: 0;">
                             <li><a href="#" class="export-file">PDF</a></li>
-                            <li><a href="#" class="export-file">PNG</a></li>
                         </ul>
                     </div>
                 </div>
@@ -81,7 +80,6 @@
                 <a href="#" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"> Export <span class="caret"></span></a>&nbsp;
                 <ul class="dropdown-menu" style="min-width: 100px;">
                     <li><a href="#" class="export-file">PDF</a></li>
-                    <li><a href="#" class="export-file">PNG</a></li>
                 </ul>
             </div>
         </div>

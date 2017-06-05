@@ -76,6 +76,11 @@
         var province = $('.nav-menu #province').val() || 0;
         var lat = $(this).attr('data-lat') || 0;
         var lon = $(this).attr('data-lon') || 0;
+        var marker_geom = null;
+        var marker_feature = null;
+        var marker_style = null;
+        var marker_source = null;
+        var layers_marker = null;
 
         //--Page load
         getInit();
@@ -122,8 +127,27 @@
 
             var projection = ol.proj.get('EPSG:3857');
 
+            marker_geom = new ol.geom.Point([0, 0]);
+			marker_feature = new ol.Feature({geometry: marker_geom});
+			marker_style = new ol.style.Style({
+				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [0.5, 16],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'pixels',
+					opacity: 0.7,
+					src: 'img/marker-search.png'
+				}))
+			});
+			marker_feature.setStyle(marker_style);
+			marker_source = new ol.source.Vector({
+				features: [marker_feature]
+			});
+			layers_marker = new ol.layer.Vector({
+				source: marker_source
+			});
+
             map = new ol.Map({
-                layers : [ layers_deemap ],
+                layers : [ layers_deemap, layers_marker ],
                 //overlays: [overlay],//for popup
                 target : 'map',
                 view: new ol.View({
@@ -149,7 +173,6 @@
 			);
 			// ==========================================================
 
-
             $('#dvloading').hide().fadeOut();
 
             /* Zoom Slider */ 
@@ -166,24 +189,22 @@
                 '.pagination div').remove();
             
             if(params == undefined) {
-                year = $('.nav-menu #year option:eq(1)').attr('value');
-                keyword = $('#FactoryName').val() || '';
-
                 params = {
                     fn: 'gettable',
                     job: 1,
-                    year: year,
+                    year: $('.nav-menu #year option:eq(1)').attr('value'),
                     region: 0,
                     province: 0,
                     menu: 0,
                     page: 1,
-                    keyword: keyword
+                    keyword: $('#LicenseNumber').val() || ''
                 };
             }
             
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined) {
                     var data = JSON.parse(res);
+                    console.log(data);
 
                     var theadContent = '';
                     $.each(data.label, function(index, item) {
@@ -202,7 +223,10 @@
                         var index = 0;
 
                         for(var i=1; i<=row; i++) {
-                            tbodyContent = '<tr data-id="'+ data.data[index].id +'">';
+                            if(data.latlong.length != 0)
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="'+ data.latlong[(row * (data.cur_page - 1) + i)].Lat +'" data-lon="'+ data.latlong[(row * (data.cur_page - 1) + i)].Long +'">';
+                            else
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="0" data-lon="0">';
 
                             for(var j=1; j<=data.label.length; j++) {
                                 tdAlign = ({
@@ -247,25 +271,22 @@
                 '.pagination div').remove();
             
             if(params == undefined) {
-                year = $('.nav-menu #year option:eq(1)').attr('value');
-                keyword = $('#FactoryName').val() || '';
-
                 params = {
                     fn: 'gettable',
                     job: 1,
-                    year: year,
+                    year: $('.nav-menu #year option:eq(1)').attr('value'),
                     region: 0,
                     province: 0,
                     menu: 0,
                     page: 1,
-                    keyword: keyword
+                    keyword: $('#LicenseNumber').val() || ''
                 };
             }
             
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined) {
                     var data = JSON.parse(res);
-
+                    
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
                         if(index == 0) {
@@ -314,7 +335,10 @@
                         var index = 0;
 
                         for(var i=1; i<=row; i++) {
-                            tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="'+ data.latlong[i].Lat +'" data-lon="'+ data.latlong[i].Long +'">';
+                            if(data.latlong.length != 0)
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="'+ data.latlong[(row * (data.cur_page - 1) + i)].Lat +'" data-lon="'+ data.latlong[(row * (data.cur_page - 1) + i)].Long +'">';
+                            else
+                                tbodyContent = '<tr data-id="'+ data.data[index].id +'" data-lat="0" data-lon="0">';
 
                             for(var j=1; j<=data.label.length; j++) {
                                 tdAlign = ({
@@ -376,6 +400,8 @@
             
             $('.nav-menu #region').find('option:eq(0)').prop('selected', true);
             $('.nav-menu #province option[value!=""]').remove();
+            $('.search-detail-table thead tr').attr('data-menu', 0);
+            $('#LicenseNumber').val('');
             
             year = $('.nav-menu #year').val() || 0;
 
@@ -398,39 +424,41 @@
                             $.each(data, function(index, item) {
                                 $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
                             });
-
                             $('.nav-menu #province').find('option:eq(1)').prop('selected', true);
+
+                            getTableAll({
+                                fn: 'gettable',
+                                job: 1,
+                                year: $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value'),
+                                region: $('.nav-menu #region').val() || 0,
+                                province: $('.nav-menu #province').val() || 0,
+                                menu: 0,
+                                page: 1,
+                                keyword: ''
+                            });
                         }
                     });
                 }
+            } else {
+                getTableAll({
+                    fn: 'gettable',
+                    job: 1,
+                    year: $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value'),
+                    region: $('.nav-menu #region').val() || 0,
+                    province: $('.nav-menu #province').val() || 0,
+                    menu: 0,
+                    page: 1,
+                    keyword: ''
+                });
             }
-
-            $('.search-detail-table thead tr').attr('data-menu', 0);
-            $('#FactoryName').val('');
-
-            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
-            region = $('.nav-menu #region').val() || 0;
-            province = $('.nav-menu #province').val() || 0;
-            menu = 0;
-            page = 1;
-            keyword = '';
-
-            getTableAll({
-                fn: 'gettable',
-                job: 1,
-                year: year,
-                region: region,
-                province: province,
-                menu: menu,
-                page: page,
-                keyword: keyword
-            });
         });
 
         $(document).on('change', '.nav-menu #region', function(e) {
             e.preventDefault();
             
             $('.nav-menu #province').find('option[value!=""]').remove();
+            $('.search-detail-table thead tr').attr('data-menu', 0);
+            $('#LicenseNumber').val('');
 
             region = $('.nav-menu #region').val() || 0;
             
@@ -449,56 +477,49 @@
                         $.each(data, function(index, item) {
                             $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
                         });
-
                         $('.nav-menu #province').find('option:eq(1)').prop('selected', true);
+
+                        getTableAll({
+                            fn: 'gettable',
+                            job: 1,
+                            year: $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value'),
+                            region: $('.nav-menu #region').val() || 0,
+                            province: $('.nav-menu #province').val() || 0,
+                            menu: 0,
+                            page: 1,
+                            keyword: ''
+                        });
                     }
                 });
+            } else {
+                getTableAll({
+                    fn: 'gettable',
+                    job: 1,
+                    year: $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value'),
+                    region: $('.nav-menu #region').val() || 0,
+                    province: $('.nav-menu #province').val() || 0,
+                    menu: 0,
+                    page: 1,
+                    keyword: ''
+                });
             }
-
-            $('.search-detail-table thead tr').attr('data-menu', 0);
-            $('#FactoryName').val('');
-
-            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
-            region = $('.nav-menu #region').val() || 0;
-            province = $('.nav-menu #province').val() || 0;
-            menu = 0;
-            page = 1;
-            keyword = '';
-
-            getTableAll({
-                fn: 'gettable',
-                job: 1,
-                year: year,
-                region: region,
-                province: province,
-                menu: menu,
-                page: page,
-                keyword: keyword
-            });
         });
 
         $(document).on('change', '.nav-menu #province', function(e) {
             e.preventDefault();
 
             $('.search-detail-table thead tr').attr('data-menu', 0);
-            $('#FactoryName').val('');
-
-            year = $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value');
-            region = $('.nav-menu #region').val() || 0;
-            province = $('.nav-menu #province').val() || 0;
-            menu = 0;
-            page = 1;
-            keyword = '';
+            $('#LicenseNumber').val('');
 
             getTableAll({
                 fn: 'gettable',
                 job: 1,
-                year: year,
-                region: region,
-                province: province,
-                menu: menu,
-                page: page,
-                keyword: keyword
+                year: $('.nav-menu #year').val() || $('.nav-menu #year option:eq(1)').attr('value'),
+                region: $('.nav-menu #region').val() || 0,
+                province: $('.nav-menu #province').val() || 0,
+                menu: 0,
+                page: 1,
+                keyword: ''
             });
         });
 
@@ -537,9 +558,9 @@
 
             lat = parseFloat($(this).attr('data-lat')) || 0;
             lon = parseFloat($(this).attr('data-lon')) || 0;
-
-            if((lat != 'null') && (lon != 'null'))
-                zoom_to_factory(ol, map, lat, lon, 9);
+            
+            if((lat != 0) && (lon != 0))
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 18, true);
             else {
                 Factory.prototype.utilityService.getPopup({
                     infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
@@ -626,10 +647,17 @@
         $(document).on('click', '.show-image', function(e) {
             e.preventDefault();
             
-            Factory.prototype.utilityService.getPopup({
-                infoMsg: '<img src="'+ $(this).find('img').attr('src') +'" style="width: 100%;">',
-                btnMsg: 'ปิด'
-            });
+            if($(this).find('img').attr('src') != '') {
+                Factory.prototype.utilityService.getPopup({
+                    infoMsg: '<img src="'+ $(this).find('img').attr('src') +'" style="width: 100%;">',
+                    btnMsg: 'ปิด'
+                });
+            } else {
+                Factory.prototype.utilityService.getPopup({
+                    infoMsg: 'ไม่พบรูปภาพ',
+                    btnMsg: 'ปิด'
+                });
+            }
         });
 
         $(document).on('click', '.show-link', function(e) {
@@ -644,11 +672,13 @@
         $(document).on('click', '.export-file', function(e) {
             e.preventDefault();
 
-            $('.search-table').tableExport({
+            /*$('.search-table').tableExport({
                 type: 'pdf',
                 escape: true,
                 htmlContent: true
-            });
+            });*/
+
+            window.open('export/search/search_tax.pdf', '_blank');
         });
 
         $('#FactoryName').autocomplete({ 

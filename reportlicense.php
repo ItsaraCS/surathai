@@ -260,6 +260,12 @@
             getChart();
         });
 
+        $(document).on('click', '.export-file', function(e) {
+            e.preventDefault();
+
+            window.open('export/report/reportlicense.xlsx', '_blank');
+        });
+
         $(document).on('click', '#changeChartBtn', function(e) {
             e.preventDefault();
 
