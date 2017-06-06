@@ -54,6 +54,55 @@ function prepare_region_and_area(url) {
 }
 
 /**
+ *
+ */
+function prepare_layer_toggler(e) {
+	var ele = document.getElementById(e);
+	
+	var ctn_office = null;
+	var ctn_factory = null;
+	var ctn_case = null;	
+
+	// Offices
+	ctn_office = document.createElement("div");
+	ctn_office.className = 'layer_block';
+	ctn_office.innerHTML = '<input type="checkbox" id="chk_office" name="chk_office" onclick="update_layer_visibility();" /> สำนักงาน';
+	
+	// Factories
+	ctn_factory = document.createElement("div");
+	ctn_factory.className = 'layer_block';
+	ctn_factory.innerHTML = '<input type="checkbox" id="chk_factory" name="chk_factory" onclick="update_layer_visibility();" /> โรงงาน';
+	
+	// Illegal cases
+	ctn_case = document.createElement("div");
+	ctn_case.className = 'layer_block';
+	ctn_case.innerHTML = '<input type="checkbox" id="chk_case" name="chk_office" onclick="update_layer_visibility();" disabled /> ผู้กระทำผิด';
+	
+	ele.appendChild(ctn_office);
+	ele.appendChild(ctn_factory);
+	ele.appendChild(ctn_case);
+}
+
+/**
+ *
+ */
+function update_layer_visibility() {
+	if(vec_branch_point != null) {
+		toggle_map_layer_visibility(vec_branch_point, 
+									document.getElementById('chk_office').checked);
+	}
+	if(vec_factory_point != null) {
+		toggle_map_layer_visibility(vec_factory_point, 
+									document.getElementById('chk_factory').checked);
+	}
+	//toggle_map_layer_visibility(vec_region_polygon, true);
+	//toggle_map_layer_visibility(vec_area_polygon, false);
+	//toggle_map_layer_visibility(vec_area_point, false);
+	//toggle_map_layer_visibility(vec_branch_point, false);
+}
+
+
+/**
  * Load region boundary
  */
 function load_data_region_polygon(url) {
@@ -142,6 +191,25 @@ function load_data_branch_point(url) {
 											'EPSG:3857',
 											branch_point_style_function);
 			b_branch_point_loaded = true;
+			process_loaded_data();
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
+ * Load branch data (polygon centroid)
+ */
+function load_data_factory_point(url) {
+	getJSON(
+		url,
+		function(data) {
+			// Create a new vector layer.
+			vec_factory_point = create_vector_layer(data, 
+											'EPSG:3857',
+											factory_point_style_function);
+			b_factory_point_loaded = true;
 			process_loaded_data();
 		}, 
 		function(xhr) {
@@ -258,10 +326,11 @@ function on_ele_sel_region_change() {
 	var reg_code = parseInt(ele_sel_region.value);
 	
 	if( (!reg_code) ) {
-		// Hide layers
+		// Switch layers visibility
+		toggle_map_layer_visibility(vec_region_polygon, true);
 		toggle_map_layer_visibility(vec_area_polygon, false);
-		toggle_map_layer_visibility(vec_area_point, false);
-		toggle_map_layer_visibility(vec_branch_point, false);
+		//toggle_map_layer_visibility(vec_area_point, false);
+		//toggle_map_layer_visibility(vec_branch_point, false);
 		
 		return;
 	}
@@ -270,16 +339,19 @@ function on_ele_sel_region_change() {
 	
 	if(idx < 0) { return; }
 	
-	// Show area layers
+	// Switch layers visibility
+	toggle_map_layer_visibility(vec_region_polygon, false);
 	toggle_map_layer_visibility(vec_area_polygon, true);
-	toggle_map_layer_visibility(vec_area_point, true);
-	toggle_map_layer_visibility(vec_branch_point, true);
+	//toggle_map_layer_visibility(vec_area_point, true);
+	//toggle_map_layer_visibility(vec_branch_point, true);
 	
 	var reg = regions_info.regions[idx];
 	
-	console.log('REGION:',reg_code,reg);
+	console.log('REGION:',reg_code, reg);
+	console.log('regions_info', regions_info);
 	
-	ele_sel_area.options.length = 0;
+	//--EDIT BY ITSARA
+	/*ele_sel_area.options.length = 0;
 	ele_sel_area.options[ele_sel_area.options.length] = new Option('เลือกพื้นที่', '-999');
 	
 	// Search areas that mathes selected region code
@@ -289,7 +361,7 @@ function on_ele_sel_region_change() {
 					reg[i].areas.AREA_TNAME, 
 					reg[i].areas.AREA_CODE
 		);
-	}
+	}*/
 	
 	// Auto zoom
 	if( (b_auto_zoom == true) && (region_ext.length > 0) ) {
@@ -631,51 +703,53 @@ function update_chart_data_overall(ctx, ctn, data, field) {
 	var rk;
 	var ri;
 	var fi;
+	var color = [0,0,0];
 	
-	// Each region data
-	for( k = 0; k < 6; k++ ) {
-		// Region k-th
-		rk = k + 1;
-		
-		// Collect data
-		for( i = 0; i < fm.length; i++ ) {
-			fi = fm[i];
-			
-			if( rk == fi.properties.REG_CODE ) {
-				// Select field
-				if(field == 'SUM') {
-					val = fi.properties.SUM;
-				} else if(field == 'COUNT') {
-					val = fi.properties.COUNT;
-				} else if(field == 'VAL_TOTAL') {
-					val = fi.properties.VAL_TOTAL;
-				}
-				
-				// Accumulate the value
-				monthly_data[fi.properties.MONTH-1] = val;
-				monthly_sum_data[fi.properties.MONTH-1] += val;
-			}
-		}
-		
-		// Update chart
-		for( i = 0; i < monthly_data.length; i++ ) {
-			ctn.data.datasets[k].data[i] = monthly_data[i];
-		}
-		
-		// Reset
-		for( i = 0; i < monthly_data.length; i++) {
-			monthly_data[i] = 0;
-		}
-	}
-	// Summary data
-	for( i = 0; i < monthly_sum_data.length; i++ ) {
-		ctn.data.datasets[5].data[i] = monthly_sum_data[i];
+	console.log('update_chart_data_overall');
+	
+	// Clear previous dataset
+	ctn.data.datasets.length = 0;
+	
+	// Insert new datasets.
+	var labels = ['ภาษี', 'ปราบปราม', 'ใบอนุญาต', 'สแตมป์', 'โรงงาน'];
+	for (i = 0; i < labels.length; i++) {
+		ri = i + 1;
+		color[0] = Math.round(Math.random()*255);
+		color[1] = Math.round(Math.random()*255);
+		color[2] = Math.round(Math.random()*255);
+		var dummy = create_linechart_element(
+									labels[i], 
+									12, 
+									color, 
+									color,
+									1.0,
+									0.95);
+		ctn.data.datasets.push(dummy);
 	}
 	
-	// Reset
-	//for( i = 0; i < monthly_sum_data.length; i++) {
-	//	monthly_sum_data[i] = 0;
-	//}
+	// Accumulate values
+	for( i = 0; i < fm.length; i++ ) {
+		fi = fm[i];
+		
+		// get region code and month
+		ri = parseInt(fi.properties.REG_CODE) - 1;
+		m  = parseInt(fi.properties.MONTH) - 1
+		f_val_tax = data.features[i].properties.VAL_TAX;
+		f_val_case = data.features[i].properties.VAL_CASE;
+		f_val_lic = data.features[i].properties.VAL_LIC;
+		f_val_stamp = data.features[i].properties.VAL_STAMP;
+		f_val_fac = data.features[i].properties.VAL_FAC;
+		f_val_total = data.features[i].properties.VAL_TOTAL;
+
+		// Accumulate values
+		ctn.data.datasets[0].data[m] += f_val_tax;
+		ctn.data.datasets[1].data[m] += f_val_case;
+		ctn.data.datasets[2].data[m] += f_val_lic;
+		ctn.data.datasets[3].data[m] += f_val_stamp;
+		ctn.data.datasets[4].data[m] += f_val_fac;
+		
+		console.log(ri, m, f_val_tax, f_val_fac);
+	}
 	
 	// Refresh chart
 	ctn.update();
@@ -702,6 +776,8 @@ function update_chart_data(ctx, ctn, data, field) {
 	var ri;
 	var fi;
 	
+	// Clear
+	
 	// For each feature,...
 	for( i = 0; i < fm.length; i++ ) {
 		fi = fm[i];
@@ -726,8 +802,212 @@ function update_chart_data(ctx, ctn, data, field) {
 		ctn.data.datasets[0].data[i] = monthly_sum_data[i];
 	}
 	
+	//var dummy = create_linechart_element('รวมssdf', 12, [80,200,255], [80,200,255],1.0, 0.95);
+	//console.log(ctn.data.datasets.push(dummy));
+	
 	// Refresh chart
 	ctn.update();
+}
+
+/**
+ * Update chart data.
+ *
+ * @param ctx		Drawing context
+ * @param ctn		Chart container
+ * @param data		Chart data
+ * @param field		Field to be used
+ */
+function update_chart_data_region(ctx, ctn, data, field, reg_code = -999, area_code = '') {
+	var i;
+	var k;
+	var j;
+	var m;
+	var val;
+	var monthly_data = [0,0,0,0,0,0,0,0,0,0,0,0];
+	var monthly_sum_data = [0,0,0,0,0,0,0,0,0,0,0,0];
+	var fm = data.features;
+	var rk;
+	var ri;
+	var fi;
+	var n_regions = 10;
+	var n_areas = 0;
+	var areas = 0;
+	var label;
+	var color = [0,0,0];
+	
+	console.log('update chart:', reg_code);
+	console.log('c0', categories[1]);
+	
+	// Clear previous dataset
+	ctn.data.datasets.length = 0;
+	
+	// If no region code is given,
+	// then show graph of all regions.
+	// Otherwise, show graphs of ares inside the
+	// given region.
+	if((reg_code == -999) && (area_code == '')) {
+		// Insert new datasets.
+		for (i = 0; i < n_regions; i++) {
+			ri = i + 1;
+			label = 'ภาค ' + (i+1);
+			color[0] = categories[ri][0];
+			color[1] = categories[ri][1];
+			color[2] = categories[ri][2];
+			var dummy = create_linechart_element(
+										label, 
+										12, 
+										color, 
+										color,
+										1.0,
+										0.95);
+			ctn.data.datasets.push(dummy);
+		}
+		
+		// Acculate values
+		for( i = 0; i < fm.length; i++ ) {
+			fi = fm[i];
+			
+			// Select field
+			if(field == 'SUM') {
+				val = fi.properties.SUM;
+			} else if(field == 'COUNT') {
+				val = fi.properties.COUNT;
+			} else if(field == 'VAL_TOTAL') {
+				val = fi.properties.VAL_TOTAL;
+			}
+			
+			// get region code and month
+			ri = parseInt(fi.properties.REG_CODE) - 1;
+			m  = parseInt(fi.properties.MONTH) - 1
+			
+			// Accumulate the value
+			ctn.data.datasets[ri].data[m] += val;
+		}
+		
+		// Update chart datasets.
+		for (i = 0; i < n_regions; i++) {
+			for( j = 0; j < monthly_sum_data.length; j++ ) {
+				//ctn.data.datasets[i].data[j] = monthly_sum_data[j];
+			}
+		}
+	} else {
+		// Check number of areas
+		areas = document.getElementById('area').options;
+		n_areas = areas.length;
+		console.log("number of ares:", n_areas);
+		
+		// No area code is given.
+		if( area_code == '' ) {
+			// Region code is given
+			// show graphs of ares inside the given region.
+			// Insert new datasets.
+			for(i = 1; i < n_areas; i++) {
+				label = areas[i].text.replace('สำนักงานสรรพสามิต', '');
+				console.log("\t", label);
+				
+				//color[0] = Math.round(((i/n_areas)*255));
+				//color[1] = 128;
+				//color[2] = 255 - area_color[0];
+				color[0] = Math.round(Math.random()*255);
+				color[1] = Math.round(Math.random()*255);
+				color[2] = Math.round(Math.random()*255);
+				var dummy = create_linechart_element(
+											label, 
+											12, 
+											color, 
+											color,
+											1.0,
+											0.95);
+				ctn.data.datasets.push(dummy);
+			}
+			
+			// Acculate values
+			for( i = 0; i < (n_areas-1); i++ ) {
+				for( m = 0; m < 12; m++ ) {
+					val = Math.random() * 1000;
+					ctn.data.datasets[i].data[m] += val;
+				}
+			}
+		} else {
+			// User provide both region code and area code.
+			// In this case, show only one line
+			// Check area name from dropdown list.
+			/*label = '';
+			for(i = 1; i < n_areas; i++) {
+				if(areas[i].value == area_code) {
+					label = areas[i].text;
+					break;
+				}
+			}*/
+			label = get_dropdown_text(areas, area_code);
+			
+			// Is area code found?
+			if( label.length > 0 ) {
+				color[0] = 80;//Math.round(Math.random()*255);
+				color[1] = 220;//Math.round(Math.random()*255);
+				color[2] = 255;//Math.round(Math.random()*255);
+				var dummy = create_linechart_element(
+											label, 
+											12, 
+											color, 
+											color,
+											1.0,
+											0.95);
+				ctn.data.datasets.push(dummy);
+				
+				// Update data
+				for( m = 0; m < 12; m++ ) {
+					val = Math.random() * 1000;
+					ctn.data.datasets[0].data[m] += val;
+				}
+			}
+		}
+	}
+
+	// For each feature,...
+	/*for( i = 0; i < fm.length; i++ ) {
+		fi = fm[i];
+		
+		// Select field
+		if(field == 'SUM') {
+			val = fi.properties.SUM;
+		} else if(field == 'COUNT') {
+			val = fi.properties.COUNT;
+		} else if(field == 'VAL_TOTAL') {
+			val = fi.properties.VAL_TOTAL;
+		}
+		console.log(fi.properties.REG_CODE, fi.properties.MONTH, val);
+		
+		// Accumulate the value
+		monthly_data[fi.properties.MONTH-1] = val;
+		monthly_sum_data[fi.properties.MONTH-1] += val;
+	}*/
+	
+	// Summary data
+	//for( i = 0; i < monthly_sum_data.length; i++ ) {
+	//	ctn.data.datasets[0].data[i] = monthly_sum_data[i];
+	//}
+	
+	//var dummy = create_linechart_element('รวมssdf', 12, [80,200,255], [80,200,255],1.0, 0.95);
+	//console.log(ctn.data.datasets.push(dummy));
+	
+	// Refresh chart
+	ctn.update();
+}
+
+/**
+ *
+ */
+function get_dropdown_text(d, key) {
+	var i;
+	var text = '';
+	for(i = 1; i < d.length; i++) {
+		if(d[i].value == key) {
+			text = d[i].text;
+			break;
+		}
+	}
+	return text;
 }
 
 /**
@@ -777,7 +1057,8 @@ function show_thematic_map_region(vf, data) {
 	
 	// Create lookup table
 	create_LUT(n_classes, classes, thresholds, min, max, range);
-
+	update_legend_box(ele_legend_box, thresholds);
+	
 	// Apply styles
 	set_feature_style(vf, classes, default_polygon_thematic_style);
 }
@@ -841,4 +1122,35 @@ function show_thematic_map_area(vf, target_area, data) {
 	
 	// Apply styles
 	set_feature_style(vf, classes, default_polygon_thematic_style);
+}
+
+/**
+ * Show legend.
+ *
+ * @param e
+ * @param t
+ */
+function update_legend_box(e, t) {
+	e.innerHTML = "<h3>สัญลักษณ์แผนที่</h3>";
+	console.log('kjkjkj', t);
+	var i;
+	for( i = 0; i < (t.length-1); i++ ) {
+		var container = document.createElement("div");
+		container.className = 'map_legend_box';
+		
+		// i-th legend color
+		var legend = document.createElement("div");
+		legend.className = 'map_legend_legend_box';
+		legend.style.backgroundColor = 'rgba(' + colors[i][0] + ', ' + colors[i][1] + ', ' + colors[i][2] + ', ' + colors[i][3] + ')';
+		
+		// i-th legend text
+		var text = document.createElement("div");
+		text.className = 'map_legend_legend_text';
+		text.innerHTML = t[i].toFixed(0) + " - " + t[i+1].toFixed(0);
+		
+		// Add to container.
+		container.appendChild(legend);
+		container.appendChild(text);
+		e.appendChild(container);
+	}
 }

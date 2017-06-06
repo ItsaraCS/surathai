@@ -11,6 +11,7 @@ var ele_sel_area = null;
 var ele_chart = null;
 var chart_context = null;
 var chart_container = null;
+var ele_legend_box = null;
 
 // Misc
 var b_auto_zoom = true;
@@ -22,6 +23,8 @@ var b_region_polygon_loaded = false;
 var b_area_point_loaded = false;
 var b_area_polygon_loaded = false;
 var b_branch_point_loaded = false;
+var b_factory_point_loaded = false;
+var b_case_point_loaded = false;
 var b_data_ready = false;
 
 // Generic layers
@@ -31,6 +34,8 @@ var vec_region_polygon = null;
 var vec_area_point = null;
 var vec_area_polygon = null;
 var vec_branch_point = null;
+var vec_factory_point = null;
+var vec_case_point = null;
 
 // Case data
 var map_data = null; // total number of cases, sum by region code
@@ -71,7 +76,6 @@ var region_ext = [];
 function on_page_loaded() {
 	// Show progress dialog
 	console.log('Loading...');
-	$('#dvloading').show();
 	
 	// Get UI elements
 	container = document.getElementById('popup');
@@ -79,6 +83,7 @@ function on_page_loaded() {
 	ele_sel_area = document.getElementById('area'); // area names list
 	//ele_sel_branch = document.getElementById('branch'); // branch
 	ele_btn_view = document.getElementById('btn-view'); // view button
+	ele_legend_box = document.getElementById('map_legend'); // legend box
 	// Popup
 	popup_container = document.getElementById('popup');
 	popup_content = document.getElementById('popup-content');
@@ -97,11 +102,11 @@ function on_page_loaded() {
 	};
 	
 	
-	// Prepare chart
-	prepare_chart();
-	
+	prepare_chart(); // Prepare chart
+	prepare_layer_toggler('map_layer_toggler'); // Prepare layer toggler
+
 	// Create color map.
-	create_color_ramp(n_classes, colors, 'G_R', false);
+	create_color_ramp(n_classes, colors, 'Y_R', false);
 	
 	//default_region_polygon_styles.push(create_style(MY_DEFAULT_LINE_COLOR, 1, [255, 255, 255, 1.0]));
 	
@@ -136,6 +141,7 @@ function on_page_loaded() {
 	prepare_region_and_area('data/geojson/excise_area_centroid_compact.geojson');
 	
 	// Insert region list
+	//--EDIT BY ITSARA
 	/*$('#region').append('<option value="01">สรรพสามิตภาคที่ 1</option>');
 	$('#region').append('<option value="02">สรรพสามิตภาคที่ 2</option>');
 	$('#region').append('<option value="03">สรรพสามิตภาคที่ 3</option>');
@@ -156,6 +162,7 @@ function on_page_loaded() {
 	load_data_area_point('data/geojson/excise_area_centroid_compact.geojson');
 	load_data_area_polygon('data/geojson/area_dissolved.geojson');
 	load_data_branch_point('data/geojson/excise_branch_centroid.geojson');
+	load_data_factory_point('data/geojson/factory_2126_point.geojson');
 	
 	// Attribute data
 	load_data_region('data/geojson/factory_sum_by_reg_code.geojson');
@@ -164,7 +171,6 @@ function on_page_loaded() {
 	
 	// Done
 	console.log('Done.');
-	$('#dvloading').hide();
 }
 
 /**
@@ -178,13 +184,15 @@ function process_loaded_data() {
 				&& b_area_polygon_loaded
 				&& b_map_data_loaded
 				&& b_map_data_monthly_loaded
-				&& b_map_data_area_loaded;
+				&& b_map_data_area_loaded
+				&& b_factory_point_loaded;
 	
 	if(b_data_ready == false) { 
 		console.log('...still loading...');
 		return; 
 	} else {
 		console.log('data is ready...');
+		$('#dvloading').hide();
 	}
 	
 	//
@@ -212,11 +220,13 @@ function process_loaded_data() {
 	map.addLayer(vec_branch_point);
 	map.addLayer(vec_area_point);
 	map.addLayer(vec_region_point);
+	map.addLayer(vec_factory_point);
 	
 	// Hide some layers by default
 	toggle_map_layer_visibility(vec_area_polygon, false);
 	toggle_map_layer_visibility(vec_area_point, false);
 	toggle_map_layer_visibility(vec_branch_point, false);
+	toggle_map_layer_visibility(vec_factory_point, false);
 	
 	$('#dvloading').hide().fadeOut();
 	
@@ -259,7 +269,6 @@ function process_loaded_data() {
 // OpenLayer's map style functions.
 // ----------------------------------------------------------------
 
-
 // ----------------------------------------------------------------
 // VIEW BUTTON
 // ----------------------------------------------------------------
@@ -271,16 +280,82 @@ function show_map() {
 	var filter_year = $('#year').val();
 	var filter_region = $('#region option:selected').val();
 	var filter_area = $('#area option:selected').val();
-	var filter_branch = $('#branch option:selected').val();
 	var none = " / ";
 	var fi;
 	var ri;
 	var vi;
 	var sum;
 	
-	// Show area map
-	console.log('filter_region', filter_region);
 	console.log('--------------------');
+	console.log('filter_year', filter_year);
+	console.log('filter_region', filter_region);
+	console.log('filter_area', filter_area);
+	console.log('--------------------');
+	
+	// No any region selected. So, show overall region map
+	if((filter_region == '00') || (filter_region == '') || (!filter_region)) {
+		console.log('overall');
+		
+		// Reset area polygon.
+		// Set default style : all white
+		var vf;
+		vf = vec_area_polygon.getSource().getFeatures();
+		//for( i = 0; i < vf.length; i++ ) {
+		//	vf[i].setStyle(polygon_styles[0]);
+		//}
+		
+		// Create thematic map based on region data
+		show_thematic_map_region(vec_region_polygon.getSource().getFeatures(), map_data);
+		
+		// Show graph of all regions
+		update_chart_data_region(chart_context, 
+								 chart_container, 
+								 map_data_monthly,
+								 'COUNT',
+								 -999,
+								 '');
+	// User selects a region, check area selector
+	} else {
+		// Parse region code
+		var target_reg_code = parseInt(ele_sel_region.value);
+		
+		// Show area's thematic map
+		show_thematic_map_area(
+					vec_area_polygon.getSource().getFeatures(),
+					target_reg_code,
+					map_data_area);
+						
+		// User do not select any area.
+		if((filter_area == '-999') || (filter_area == '') 
+		|| (!filter_area) || (filter_area < 0)) {
+			console.log('zoom to region');
+			
+			update_chart_data_region(chart_context, 
+								 chart_container, 
+								 map_data_monthly,
+								 'COUNT',
+								 target_reg_code,
+								 '');
+		// User selects an area.
+		} else {
+			console.log('zoom to area', filter_area);
+			
+			update_chart_data_region(chart_context, 
+								 chart_container, 
+								 map_data_monthly,
+								 'COUNT',
+								 target_reg_code,
+								 filter_area);
+		}
+	}
+	
+	
+	return;
+	/*
+
+	
+	
+	// Show region map
 	if((filter_region == '00') || (filter_region == '') || (!filter_region)) {
 		console.log('xxxx');
 		// Reset area polygon.
@@ -314,7 +389,7 @@ function show_map() {
 	show_thematic_map_area(
 				vec_area_polygon.getSource().getFeatures(),
 				target_reg_code,
-				map_data_area);
+				map_data_area);*/
 }
 
 // ----------------------------------------------------------------
@@ -328,6 +403,10 @@ function show_map() {
  *
  */
 function show_feature_info(evt) {
+	var filter_year = $('#year').val();
+	var filter_region = $('#region option:selected').val();
+	var filter_area = $('#area option:selected').val();
+	
 	// Get feature information
 	var coordinate = evt.coordinate;
 	var hdms = ol.coordinate.toStringHDMS(
@@ -344,12 +423,91 @@ function show_feature_info(evt) {
 	var i;
 	var ci, cj;
 	var str = "";
+	var label = "";
 	
 	// Return if user donot select any feature.
 	if(f.length == 0) {return;}
 	
+	console.log('--------------------');
+	console.log('length', f.length);
+	console.log('filter_year', filter_year);
+	console.log('filter_region', filter_region);
+	console.log('filter_area', filter_area);
+	console.log('--------------------');
+	
+	// No any region selected. So, show overall region data
+	if((filter_region == '00') || (filter_region == '') || (!filter_region)) { 
+		console.log('overall');
+		
+		// Check region code
+		cj = parseInt(f[0].get('REG_CODE'));
+		for (i = 0; i < map_data.features.length; i++ ) {
+			ci = map_data.features[i].properties.REG_CODE;
+			
+			// Found
+			if(ci == cj) {
+				f_count = map_data.features[i].properties.COUNT;
+				f_sum = map_data.features[i].properties.SUM;
+				
+				str += "<h3><a href=\"search_tax.php\">สรรพสามิตภาคที่ " + cj + "</a></h3>";
+				str += "<table>";
+					str += "<tr>";
+						str += "<td>จำนวนโรงงาน</td>";
+						str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " โรง</td>";
+					str += "</tr>";
+				str += "</table>";
+				popup_content.innerHTML = str;
+				overlay.setPosition(coordinate);
+				
+				break;
+			}
+		}
+		
+	// User selects a region, check area selector
+	} else {
+		// User do not select any area.
+		/*if((filter_area == '-999') || (filter_area == '') 
+		|| (!filter_area) || (filter_area < 0)) {
+			console.log('zoom to region');
+			
+		// User selects an area.
+		} else {
+			console.log('one area', label);
+		}*/
+		
+		console.log('zoom to region');
+		console.log(f[0]);
+		cj = f[0].get('AREA_CODE');
+		for (i = 0; i < map_data_area.features.length; i++ ) {
+			ci = map_data_area.features[i].properties.AREA_CODE;
+			
+			// Found
+			if(ci == cj) {
+				label = get_dropdown_text( document.getElementById('area').options, ci);
+				if(label == '') { return; }
+				
+				f_sum = map_data_area.features[i].properties.VAL_SUM;
+				
+				str += "<h3><a href=\"search_tax.php\">" + label + "</a></h3>";
+				str += "<table>";
+					str += "<tr>";
+						str += "<td>จำนวนโรงงาน</td>";
+						str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " โรง</td>";
+					str += "</tr>";
+				str += "</table>";
+				popup_content.innerHTML = str;
+				overlay.setPosition(coordinate);
+				
+				break;
+			}
+		}
+	}
+	return;
+	
+	
+	
 	// Check region code
-	cj = parseInt(f[0].get('REG_CODE'));
+	/*cj = parseInt(f[0].get('REG_CODE'));
 	for (i = 0; i < map_data.features.length; i++ ) {
 		ci = map_data.features[i].properties.REG_CODE;
 		if(ci == cj) {
@@ -370,7 +528,7 @@ function show_feature_info(evt) {
 			
 			break;
 		}
-	}
+	}*/
 }
 /**
  * Post-process data after user release mouse button.

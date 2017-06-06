@@ -672,13 +672,12 @@
         $(document).on('click', '.export-file', function(e) {
             e.preventDefault();
 
-            /*$('.search-table').tableExport({
-                type: 'pdf',
-                escape: true,
-                htmlContent: true
-            });*/
+            //window.open('export/search/search_tax.pdf', '_blank');
 
-            window.open('export/search/search_tax.pdf', '_blank');
+            $('.search-table').tableExport({
+                type: 'pdf',
+                escape: 'false'
+            });
         });
 
         $('#FactoryName').autocomplete({ 

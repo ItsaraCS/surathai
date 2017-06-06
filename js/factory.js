@@ -231,16 +231,19 @@ Factory.prototype.utilityService = {
     }
 }
 Factory.prototype.connectDBService = {
-    sendJSONObj: function(ajaxUrl, params) {
+    sendJSONObj: function(ajaxUrl, params, loadingRequired) {
+        loadingRequired = ((loadingRequired != undefined) && (loadingRequired != true)) ? false : true;
         var options = {
             type: 'post',
             url: ajaxUrl,
             cache: false,
             beforeSend: function() {
-                $('body').append('<img src="img/loading.gif" class="loading">');
+                if(loadingRequired)
+                    $('body').append('<img src="img/loading.gif" class="loading">');
             },
             success: function() {
-                $('.loading').remove();
+                if(loadingRequired)
+                    $('.loading').remove();
             }
         };
 
@@ -249,16 +252,19 @@ Factory.prototype.connectDBService = {
             
         return $.ajax(options);
     },
-    sendJSONStr: function(ajaxUrl, params) {
+    sendJSONStr: function(ajaxUrl, params, loadingRequired) {
+        loadingRequired = ((loadingRequired != undefined) && (loadingRequired != true)) ? false : true;
         var options = {
             type: 'post',
             url: ajaxUrl,
             cache: false,
             beforeSend: function() {
-                $('body').append('<img src="img/loading.gif" class="loading">');
+                if(loadingRequired)
+                    $('body').append('<img src="img/loading.gif" class="loading">');
             },
             success: function() {
-                $('.loading').remove();
+                if(loadingRequired)
+                    $('.loading').remove();
             }
         };
 
@@ -267,7 +273,8 @@ Factory.prototype.connectDBService = {
             
         return $.ajax(options);
     },
-    sendJSONObjForUpload: function(ajaxUrl, params) {
+    sendJSONObjForUpload: function(ajaxUrl, params, loadingRequired) {
+        loadingRequired = ((loadingRequired != undefined) && (loadingRequired != true)) ? false : true;
         var options = {
             type: 'post',
             url: ajaxUrl,
@@ -275,10 +282,12 @@ Factory.prototype.connectDBService = {
             contentType: false,
             data: params,
             beforeSend: function() {
-                $('body').append('<img src="img/loading.gif" class="loading">');
+                if(loadingRequired)
+                    $('body').append('<img src="img/loading.gif" class="loading">');
             },
             success: function() {
-                $('.loading').remove();
+                if(loadingRequired)
+                    $('.loading').remove();
             }
         };
 

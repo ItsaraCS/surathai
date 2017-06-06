@@ -32,7 +32,7 @@
     <!--JS-->
     <script src="js/chart.js" type="text/javascript"></script>
     <script src="js/factory.js" type="text/javascript"></script>
-    <!--MAP-->
+    <!--MAP LIBRARY-->
     <script src="js/categories.js" type="text/javascript"></script>
     <script src="js/getJson.js" type="text/javascript"></script>
     <script src="js/olmaplib.js" type="text/javascript"></script>

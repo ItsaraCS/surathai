@@ -12,5 +12,8 @@ function getJSON(path, success, error) {
         }
     };
     xhr.open("GET", path, true);
+    var beforeSend = function(){
+        $('#dvloading').show();
+    }();
     xhr.send();
 }

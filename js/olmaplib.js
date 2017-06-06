@@ -441,14 +441,31 @@ function area_point_style_function(feature, resolution) {
 function branch_point_style_function(feature, resolution) {
 	return new ol.style.Style({
 				image: new ol.style.Circle({
-					radius: 2,
-					fill: new ol.style.Fill({color: 'rgba(0, 0, 0, 0.15)'}),
-					stroke: new ol.style.Stroke({color: 'red', width: 0.1})
+					radius: 3,
+					fill: new ol.style.Fill({color: 'rgba(80, 255, 80, 0.80)'}),
+					stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.90)', width: 1})
 				}),
 				text: create_text_style(feature, 
 									  resolution,
 									  myDom.branch_points,
 									  'BRAN_TNAME')
+				});
+}
+
+/**
+ * Crate style
+ */
+function factory_point_style_function(feature, resolution) {
+	return new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 3,
+					fill: new ol.style.Fill({color: 'rgba(255, 0, 255, 0.80)'}),
+					stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.90)', width: 1})
+				}),
+				text: create_text_style(feature, 
+									  resolution,
+									  myDom.branch_points,
+									  'FACTORY_TNAME')
 				});
 }
 
