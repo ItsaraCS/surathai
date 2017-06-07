@@ -207,6 +207,10 @@ Factory.prototype.initService = {
                 }
 
                 break;
+            case 'user.php':
+                $('.header .header-menu-title span').html('ระบบสมาชิก');
+                $('.header .header-menu ul li').find('a[data-header-menu="ผู้ใช้งานระบบ"] span').css({ 'color': '#f17022' });
+                break;
             default:
                 $('.header .header-menu-title span').html('แผนที่');
                 $('.header .header-menu ul li').find('a[data-header-menu="แผนที่"] span').css({ 'color': '#f17022' });

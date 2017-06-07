@@ -101,8 +101,10 @@ function on_page_loaded() {
 		overlay.setPosition(undefined);
 	};
 	
-	
-	prepare_chart(); // Prepare chart
+	//--EDIT BY ITSARA
+	prepare_chart({
+		yAxes: 'จำนวนโรงงาน'
+	}); // Prepare chart
 	prepare_layer_toggler('map_layer_toggler'); // Prepare layer toggler
 
 	// Create color map.
@@ -165,7 +167,8 @@ function on_page_loaded() {
 	load_data_factory_point('data/geojson/factory_2126_point.geojson');
 	
 	// Attribute data
-	load_data_region('data/geojson/factory_sum_by_reg_code.geojson');
+	//load_data_region('data/geojson/factory_sum_by_reg_code.geojson');
+	load_data_region('http://210.4.143.51/Surathai01/API/taxmapAPI.php?data=fac_reg&year=2017');
 	load_data_region_monthly('data/geojson/factory_sum_by_reg_code_month.geojson');
 	load_data_area('data/geojson/factory_sum_by_area_code.geojson');
 	
@@ -453,7 +456,7 @@ function show_feature_info(evt) {
 				str += "<table>";
 					str += "<tr>";
 						str += "<td>จำนวนโรงงาน</td>";
-						str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " โรง</td>";
+						str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " แห่ง</td>";
 					str += "</tr>";
 				str += "</table>";
 				popup_content.innerHTML = str;
@@ -492,7 +495,7 @@ function show_feature_info(evt) {
 				str += "<table>";
 					str += "<tr>";
 						str += "<td>จำนวนโรงงาน</td>";
-						str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " โรง</td>";
+						str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " แห่ง</td>";
 					str += "</tr>";
 				str += "</table>";
 				popup_content.innerHTML = str;

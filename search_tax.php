@@ -179,8 +179,8 @@
             zoomslider = new ol.control.ZoomSlider();
             map.addControl(zoomslider);
 
-            map.getView().setCenter(ol.proj.transform([108.697123, 10.231792], 'EPSG:4326', 'EPSG:3857'));
-            map.getView().setZoom(6.0);
+            map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
+            map.getView().setZoom(4.5);
         }
 
         function getTable(params) {
@@ -286,6 +286,7 @@
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined) {
                     var data = JSON.parse(res);
+                    console.log(data);
                     
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
@@ -387,7 +388,7 @@
                 };
             }
 
-            factory.connectDBService.sendJSONStr('API/paginator.php', params).done(function(res) {
+            factory.connectDBService.sendJSONStr('API/paginatorAPI.php', params).done(function(res) {
                 if(res != undefined){
                     $('.pagination').append(res);
                 }

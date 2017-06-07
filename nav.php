@@ -47,7 +47,7 @@
                         <option value="-999" selected>เลือกพื้นที่</option>
                     </select>
                 </div>
-                <div class="col-sm-4" id="btn-view"><a href="#" class="btn btn-danger btn-md">View</a></div>
+                <div class="col-sm-4" id="btn-view"><a href="#" class="btn btn-danger btn-md">แสดงข้อมูล</a></div>
             </div>
         </div>
     </div>

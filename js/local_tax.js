@@ -100,7 +100,10 @@ function on_page_loaded() {
 		overlay.setPosition(undefined);
 	};
 	
-	prepare_chart(); // Prepare chart
+	//--EDIT BY ITSARA
+	prepare_chart({
+		yAxes: 'มูลค่ารวม'
+	}); // Prepare chart
 	prepare_layer_toggler('map_layer_toggler'); // Prepare layer toggler
 
 	// Create color map.

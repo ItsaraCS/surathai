@@ -548,7 +548,7 @@ function prepare_chart_overall() {
 /**
  * Prepare chart data.
  */
-function prepare_chart() {
+function prepare_chart(options) {
 	console.log('Preparing chart...');
 	// ["ภาษี", "ปราบปราม", "ใบอนุญาต", "แสตมป์", "โรงงาน"]
 	var tax_line_color = "rgba(255,80,80,0.4)";
@@ -562,7 +562,8 @@ function prepare_chart() {
 	
 	// Chart elements
 	// fiscal year format
-	var dummy_chart_prop = create_linechart_element('รวม', 12, [80,200,255], [80,200,255],1.0, 0.95);
+	var dummy_chart_prop = create_linechart_element('รวม', 12, [80,200,255], [80,200,255], 1.0, 0.95);
+	console.log(dummy_chart_prop);
 	var chart_data = {
 		labels: ['ต.ค.', 'พ.ย.', 'ธ.ค.', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.'],
 		datasets: [
@@ -587,10 +588,31 @@ function prepare_chart() {
 				yAxes: [{
 					scaleLabel: {
 						display: true,
-						labelString: 'มูลค่า'
+						//--EDIT BY ITSARA
+						//labelString: 'มูลค่า'
+						labelString: ((options.yAxes != '') && (options.yAxes != undefined)) ? options.yAxes : ''
 					}
 				}]
 			},
+			//--EDIT BY ITSARA
+			tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+						switch(data.datasets[tooltipItem.datasetIndex].label) {
+							case 'ภาษี':
+								return 'มูลค่ารวม: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 2 }) +' บาท';
+							case 'ปราบปราม':
+								return 'จำนวนคดี: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 0 }) +' คดี';
+							case 'ใบอนุญาต':
+								return 'จำนวนใบอนุญาต: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 0 }) +' ใบ';
+							case 'สแตมป์':
+								return 'ภาษีการชำระแสตมป์: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 2 }) +' บาท';
+							case 'โรงงาน':
+								return 'จำนวนโรงงาน: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 0 }) +' แห่ง';
+						}
+                    }
+                }
+            }
 		}
 	});
 }

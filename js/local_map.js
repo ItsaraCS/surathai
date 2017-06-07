@@ -112,7 +112,10 @@ function on_page_loaded() {
 		overlay.setPosition(undefined);
 	};
 	
-	prepare_chart(); // Prepare chart
+	//--EDIT BY ITSARA
+	prepare_chart({
+		yAxes: ''
+	}); // Prepare chart
 	prepare_layer_toggler('map_layer_toggler'); // Prepare layer toggler
 	
 	// Create color map.
@@ -606,6 +609,7 @@ function show_feature_info(evt) {
 						str += "<td class=\"right\">" + Number(f_val_fac).toLocaleString('en', { minimumFractionDigits: 0 }) + " แห่ง</td>";
 					str += "</tr>";
 				str += "</table>";
+				//console.log(f_val_tax);
 				popup_content.innerHTML = str;
 				overlay.setPosition(coordinate);
 				

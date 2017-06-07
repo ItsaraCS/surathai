@@ -101,8 +101,10 @@ function on_page_loaded() {
 		overlay.setPosition(undefined);
 	};
 	
-	
-	prepare_chart(); // Prepare chart
+	//--EDIT BY ITSARA
+	prepare_chart({
+		yAxes: 'จำนวนคดี'
+	}); // Prepare chart
 	prepare_layer_toggler('map_layer_toggler'); // Prepare layer toggler
 
 	// Create color map.
@@ -165,7 +167,8 @@ function on_page_loaded() {
 	load_data_factory_point('data/geojson/factory_2126_point.geojson');
 	
 	// Attribute data
-	load_data_region('data/geojson/case_sum_by_reg_code.geojson');
+	//load_data_region('data/geojson/case_sum_by_reg_code.geojson');
+	load_data_region('http://210.4.143.51/Surathai01/API/taxmapAPI.php?data=illegal_reg&year=2016');
 	load_data_region_monthly('data/geojson/case_sum_by_reg_code_month.geojson');
 	load_data_area('data/geojson/case_sum_by_area_code.geojson');
 	
