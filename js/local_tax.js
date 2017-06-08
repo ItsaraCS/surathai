@@ -1,74 +1,3 @@
-var filer_region = null;
-var styleCache = {};
-
-// UI elements
-var container = null;
-var ele_btn_view = null;
-var ele_popup = null;
-var ele_sel_region = null;
-var ele_sel_area = null;
-var ele_chart = null;
-var chart_context = null;
-var chart_container = null;
-var ele_legend_box = null;
-
-// Misc
-var b_auto_zoom = true;
-var MY_DEFAULT_LINE_COLOR = [ 0, 0, 0, 0.5 ];
-
-// Data loading misc
-var b_region_point_loaded = false;
-var b_region_polygon_loaded = false;
-var b_area_point_loaded = false;
-var b_area_polygon_loaded = false;
-var b_branch_point_loaded = false;
-var b_factory_point_loaded = false;
-var b_case_point_loaded = false;
-var b_data_ready = false;
-
-// Generic layers
-var ras_background = null;
-var vec_region_point = null;
-var vec_region_polygon = null;
-var vec_area_point = null;
-var vec_area_polygon = null;
-var vec_branch_point = null;
-var vec_factory_point = null;
-var vec_case_point = null;
-
-// Case data
-var map_data = null; // total number of cases, sum by region code
-var map_data_monthly = null; // monthly number of cases, sum by region code
-var map_data_area = null; // area data
-var b_map_data_loaded = false;
-var b_map_data_monthly_loaded = false;
-var b_map_data_area_loaded = false;
-
-// Polygon colors
-var n_classes = 5;
-var colors = [];
-var thresholds = [];
-
-// Mouse interaction
-var selected_feature = null;
-var feature_style_selected = null;
-var feature_style_old = null;
-
-// Overlay (popup window)
-var popup_container = null;
-var popup_content = null;
-var popup_closer = null;
-var overlay = null;
-
-// Styles
-var polygon_styles = [];
-var default_region_polygon_styles = [];
-var default_polygon_thematic_style = [];
-
-// Region data (sorted by region code)
-var regions_info = {regions:[[],[],[],[],[],[],[],[],[],[]]};
-var region_ext = [];
-
 /**
  * On document loaded.
  */
@@ -80,7 +9,6 @@ function on_page_loaded() {
 	container = document.getElementById('popup');
 	ele_sel_region = document.getElementById('region'); // region names list 
 	ele_sel_area = document.getElementById('area'); // area names list
-	//ele_sel_branch = document.getElementById('branch'); // branch
 	ele_btn_view = document.getElementById('btn-view'); // view button
 	ele_legend_box = document.getElementById('map_legend'); // legend box
 	// Popup
@@ -164,6 +92,9 @@ function on_page_loaded() {
 	load_data_area_polygon('data/geojson/area_dissolved.geojson');
 	load_data_branch_point('data/geojson/excise_branch_centroid.geojson');
 	load_data_factory_point('data/geojson/factory_2126_point.geojson');
+	load_data_lawbreaker_point('data/geojson/lawbreaker_point.geojson');
+	load_data_store_point('data/geojson/store_point.geojson');
+	load_data_thaiwhisky_point('data/geojson/thaiwhisky_point.geojson');
 	
 	// Attribute data
 	load_data_region('data/geojson/tax_sum_by_reg_code.geojson');
@@ -186,7 +117,10 @@ function process_loaded_data() {
 				&& b_map_data_loaded
 				&& b_map_data_monthly_loaded
 				&& b_map_data_area_loaded
-				&& b_factory_point_loaded;
+				&& b_factory_point_loaded
+				&& b_lawbreaker_point_loaded
+				&& b_store_point_loaded
+				&& b_thaiwhisky_point_loaded;
 	
 	if(b_data_ready == false) { 
 		console.log('...still loading...');
@@ -222,12 +156,18 @@ function process_loaded_data() {
 	map.addLayer(vec_area_point);
 	map.addLayer(vec_region_point);
 	map.addLayer(vec_factory_point);
+	map.addLayer(vec_lawbreaker_point);
+	map.addLayer(vec_store_point);
+	map.addLayer(vec_thaiwhisky_point);
 	
 	// Hide some layers by default
 	toggle_map_layer_visibility(vec_area_polygon, false);
 	toggle_map_layer_visibility(vec_area_point, false);
 	toggle_map_layer_visibility(vec_branch_point, false);
 	toggle_map_layer_visibility(vec_factory_point, false);
+	toggle_map_layer_visibility(vec_lawbreaker_point, false);
+	toggle_map_layer_visibility(vec_store_point, false);
+	toggle_map_layer_visibility(vec_thaiwhisky_point, false);
 	
 	$('#dvloading').hide().fadeOut();
 	

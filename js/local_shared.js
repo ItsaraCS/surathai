@@ -1,3 +1,87 @@
+// ----------------------------------------------------------------------------
+// GLOBAL VARIABLES
+// ----------------------------------------------------------------------------
+var filer_region = null;
+var styleCache = {};
+
+// UI elements
+var container = null;
+var ele_btn_view = null;
+var ele_popup = null;
+var ele_sel_region = null;
+var ele_sel_area = null;
+var ele_chart = null;
+var chart_context = null;
+var chart_container = null;
+var ele_legend_box = null;
+
+// Misc
+var b_auto_zoom = true;
+var MY_DEFAULT_LINE_COLOR = [ 0, 0, 0, 0.5 ];
+
+// Data loading misc
+var b_region_point_loaded = false;
+var b_region_polygon_loaded = false;
+var b_area_point_loaded = false;
+var b_area_polygon_loaded = false;
+var b_branch_point_loaded = false;
+var b_factory_point_loaded = false;
+var b_case_point_loaded = false;
+var b_lawbreaker_point_loaded = false;
+var b_store_point_loaded = false;
+var b_thaiwhisky_point_loaded = false;
+var b_data_ready = false;
+
+// Generic layers
+var ras_background = null;
+var vec_region_point = null;
+var vec_region_polygon = null;
+var vec_area_point = null;
+var vec_area_polygon = null;
+var vec_branch_point = null;
+var vec_factory_point = null;
+var vec_lawbreaker_point = false;
+var vec_store_point = false;
+var vec_thaiwhisky_point = false;
+var vec_case_point = null;
+
+// Case data
+var map_data = null; // total number of cases, sum by region code
+var map_data_monthly = null; // monthly number of cases, sum by region code
+var map_data_area = null; // area data
+var b_map_data_loaded = false;
+var b_map_data_monthly_loaded = false;
+var b_map_data_area_loaded = false;
+
+// Polygon colors
+var n_classes = 5;
+var colors = [];
+var thresholds = [];
+
+// Mouse interaction
+var selected_feature = null;
+var feature_style_selected = null;
+var feature_style_old = null;
+
+// Overlay (popup window)
+var popup_container = null;
+var popup_content = null;
+var popup_closer = null;
+var overlay = null;
+
+// Styles
+var polygon_styles = [];
+var default_region_polygon_styles = [];
+var default_polygon_thematic_style = [];
+
+// Region data (sorted by region code)
+var regions_info = {regions:[[],[],[],[],[],[],[],[],[],[]]};
+var region_ext = [];
+
+
+// ----------------------------------------------------------------------------
+// LAYER STYLE SECTION
+// ----------------------------------------------------------------------------
 /**
  *
  */
@@ -14,6 +98,27 @@ function set_default_region_polygon_style(vf) {
 	}
 }
 
+/**
+ * Reset area polygon style.
+ */
+function set_default_area_polygon_style(vf) {
+	var i;
+	var vi;
+	var region_code;
+	
+	// Set default style.
+	for( i = 0; i < vf.length; i++ ) {
+		vi = vf[i];
+		region_code = parseInt(vi.get('REG_CODE'));
+		if((region_code >= 1) && (region_code <= 10)) {
+			vi.setStyle(polygon_styles[0]);
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------
+// MISC
+// ----------------------------------------------------------------------------
 /**
  * Prepare regions, areas, and branches data.
  */
@@ -56,52 +161,41 @@ function prepare_region_and_area(url) {
 /**
  *
  */
-function prepare_layer_toggler(e) {
-	var ele = document.getElementById(e);
-	
-	var ctn_office = null;
-	var ctn_factory = null;
-	var ctn_case = null;	
-
-	// Offices
-	ctn_office = document.createElement("div");
-	ctn_office.className = 'layer_block';
-	ctn_office.innerHTML = '<input type="checkbox" id="chk_office" name="chk_office" onclick="update_layer_visibility();" /> สำนักงาน';
-	
-	// Factories
-	ctn_factory = document.createElement("div");
-	ctn_factory.className = 'layer_block';
-	ctn_factory.innerHTML = '<input type="checkbox" id="chk_factory" name="chk_factory" onclick="update_layer_visibility();" /> โรงงาน';
-	
-	// Illegal cases
-	ctn_case = document.createElement("div");
-	ctn_case.className = 'layer_block';
-	ctn_case.innerHTML = '<input type="checkbox" id="chk_case" name="chk_office" onclick="update_layer_visibility();" disabled /> ผู้กระทำผิด';
-	
-	ele.appendChild(ctn_office);
-	ele.appendChild(ctn_factory);
-	ele.appendChild(ctn_case);
-}
-
-/**
- *
- */
 function update_layer_visibility() {
+	// Branches
 	if(vec_branch_point != null) {
 		toggle_map_layer_visibility(vec_branch_point, 
 									document.getElementById('chk_office').checked);
 	}
+	
+	// Factories
 	if(vec_factory_point != null) {
 		toggle_map_layer_visibility(vec_factory_point, 
 									document.getElementById('chk_factory').checked);
 	}
-	//toggle_map_layer_visibility(vec_region_polygon, true);
-	//toggle_map_layer_visibility(vec_area_polygon, false);
-	//toggle_map_layer_visibility(vec_area_point, false);
-	//toggle_map_layer_visibility(vec_branch_point, false);
+	
+	// Law breakers
+	if(vec_lawbreaker_point != null) {
+		toggle_map_layer_visibility(vec_lawbreaker_point, 
+									document.getElementById('chk_lawbreaker').checked);
+	}
+	
+	// Stores
+	if(vec_store_point != null) {
+		toggle_map_layer_visibility(vec_store_point, 
+									document.getElementById('chk_store').checked);
+	}
+	
+	// Thai whisky
+	if(vec_thaiwhisky_point != null) {
+		toggle_map_layer_visibility(vec_thaiwhisky_point, 
+									document.getElementById('chk_thaiwhisky').checked);
+	}
 }
 
-
+// ----------------------------------------------------------------------------
+// DATA LOADING SECTION
+// ----------------------------------------------------------------------------
 /**
  * Load region boundary
  */
@@ -218,6 +312,63 @@ function load_data_factory_point(url) {
 }
 
 /**
+ * Load branch data (polygon centroid)
+ */
+function load_data_lawbreaker_point(url) {
+	getJSON(
+		url,
+		function(data) {
+			// Create a new vector layer.
+			vec_lawbreaker_point = create_vector_layer(data, 
+											'EPSG:3857',
+											lawbreaker_point_style_function);
+			b_lawbreaker_point_loaded = true;
+			process_loaded_data();
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
+ * Load branch data (polygon centroid)
+ */
+function load_data_store_point(url) {
+	getJSON(
+		url,
+		function(data) {
+			// Create a new vector layer.
+			vec_store_point = create_vector_layer(data, 
+											'EPSG:3857',
+											store_point_style_function);
+			b_store_point_loaded = true;
+			process_loaded_data();
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
+ * Load branch data (polygon centroid)
+ */
+function load_data_thaiwhisky_point(url) {
+	getJSON(
+		url,
+		function(data) {
+			// Create a new vector layer.
+			vec_thaiwhisky_point = create_vector_layer(data, 
+											'EPSG:3857',
+											thaiwhisky_point_style_function);
+			b_thaiwhisky_point_loaded = true;
+			process_loaded_data();
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
  * Load case data (attribute-only data)
  */
 function load_data_region(url) {
@@ -309,6 +460,7 @@ function cal_region_extends(r, f, p) {
 	
 	// manual adjust
 	for( i = 0; i < r.length; i++ ) {
+		console.log(i, r[i]);
 		r[i][0] -= p;
 		r[i][1] -= p;
 		r[i][2] += p;
@@ -316,6 +468,9 @@ function cal_region_extends(r, f, p) {
 	}
 }
 
+// ----------------------------------------------------------------------------
+// DROPDOWN MENU SECTION
+// ----------------------------------------------------------------------------
 /**
  * Region selector listener.
  */
@@ -325,48 +480,36 @@ function on_ele_sel_region_change() {
 	
 	var reg_code = parseInt(ele_sel_region.value);
 	
+	// Overall view, show region-level.
 	if( (!reg_code) ) {
 		// Switch layers visibility
 		toggle_map_layer_visibility(vec_region_polygon, true);
-		toggle_map_layer_visibility(vec_area_polygon, false);
-		//toggle_map_layer_visibility(vec_area_point, false);
-		//toggle_map_layer_visibility(vec_branch_point, false);
+		//toggle_map_layer_visibility(vec_area_polygon, false);
 		
-		return;
-	}
-	
-	var idx = reg_code - 1;
-	
-	if(idx < 0) { return; }
-	
-	// Switch layers visibility
-	toggle_map_layer_visibility(vec_region_polygon, false);
-	toggle_map_layer_visibility(vec_area_polygon, true);
-	//toggle_map_layer_visibility(vec_area_point, true);
-	//toggle_map_layer_visibility(vec_branch_point, true);
-	
-	var reg = regions_info.regions[idx];
-	
-	console.log('REGION:',reg_code, reg);
-	console.log('regions_info', regions_info);
-	
-	//--EDIT BY ITSARA
-	/*ele_sel_area.options.length = 0;
-	ele_sel_area.options[ele_sel_area.options.length] = new Option('เลือกพื้นที่', '-999');
-	
-	// Search areas that mathes selected region code
-	for(i = 0; i < reg.length; i++) {
-		ele_sel_area.options[ele_sel_area.options.length] = 
-			new Option(
-					reg[i].areas.AREA_TNAME, 
-					reg[i].areas.AREA_CODE
-		);
-	}*/
-	
-	// Auto zoom
-	if( (b_auto_zoom == true) && (region_ext.length > 0) ) {
-		//console.log('x', region_ext[idx]);
-		zoom_to_extent(map, region_ext[idx], 100);
+		//fa = vec_area_polygon.getSource().getFeatures();
+		set_default_region_polygon_style(vec_region_polygon.getSource().getFeatures());
+		set_default_area_polygon_style(vec_area_polygon.getSource().getFeatures());
+		toggle_map_layer_visibility(vec_area_point, true);
+	} else {
+		// Area-level
+		var idx = reg_code - 1;
+		
+		if(idx < 0) { return; }
+		
+		// Switch layers visibility
+		toggle_map_layer_visibility(vec_region_polygon, true);
+		toggle_map_layer_visibility(vec_area_polygon, true);
+		
+		var reg = regions_info.regions[idx];
+		
+		console.log('REGION:',reg_code, reg);
+		console.log('regions_info', regions_info);
+		
+		// Auto zoom
+		if( (b_auto_zoom == true) && (region_ext.length > 0) ) {
+			//console.log('x', region_ext[idx]);
+			zoom_to_extent(map, region_ext[idx], 100);
+		}
 	}
 }
 
@@ -426,6 +569,24 @@ function on_ele_sel_area_change() {
 function on_ele_sel_branch_change() {
 }
 
+/**
+ *
+ */
+function get_dropdown_text(d, key) {
+	var i;
+	var text = '';
+	for(i = 1; i < d.length; i++) {
+		if(d[i].value == key) {
+			text = d[i].text;
+			break;
+		}
+	}
+	return text;
+}
+
+// ----------------------------------------------------------------------------
+// CHART.JS SECTION
+// ----------------------------------------------------------------------------
 /**
  * Create a line chart element for Chart.js
  */
@@ -563,12 +724,9 @@ function prepare_chart(options) {
 	// Chart elements
 	// fiscal year format
 	var dummy_chart_prop = create_linechart_element('รวม', 12, [80,200,255], [80,200,255], 1.0, 0.95);
-	console.log(dummy_chart_prop);
 	var chart_data = {
 		labels: ['ต.ค.', 'พ.ย.', 'ธ.ค.', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.'],
-		datasets: [
-			dummy_chart_prop,
-		]
+		datasets: ((options.yAxes != '') ? [ dummy_chart_prop ] : [])
 	};
 
 	// Create chart
@@ -598,6 +756,7 @@ function prepare_chart(options) {
 			tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
+						console.log(data);
 						switch(data.datasets[tooltipItem.datasetIndex].label) {
 							case 'ภาษี':
 								return 'มูลค่ารวม: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 2 }) +' บาท';
@@ -609,6 +768,29 @@ function prepare_chart(options) {
 								return 'ภาษีการชำระแสตมป์: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 2 }) +' บาท';
 							case 'โรงงาน':
 								return 'จำนวนโรงงาน: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 0 }) +' แห่ง';
+							case 'รวม':
+							case 'ภาค 1':
+							case 'ภาค 2':
+							case 'ภาค 3':
+							case 'ภาค 4':
+							case 'ภาค 5':
+							case 'ภาค 6':
+							case 'ภาค 7':
+							case 'ภาค 8':
+							case 'ภาค 9':
+							case 'ภาค 10':
+								switch(options.yAxes) {
+									case 'มูลค่ารวม':
+										return 'มูลค่ารวม: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 2 }) +' บาท';
+									case 'จำนวนคดี':
+										return 'จำนวนคดี: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 0 }) +' คดี';
+									case 'จำนวนใบอนุญาต':
+										return 'จำนวนใบอนุญาต: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 0 }) +' ใบ';
+									case 'ภาษีการชำระแสตมป์':
+										return 'ภาษีการชำระแสตมป์: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 2 }) +' บาท';
+									case 'จำนวนโรงงาน':
+										return 'จำนวนโรงงาน: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 0 }) +' แห่ง';
+								}
 						}
                     }
                 }
@@ -1017,21 +1199,9 @@ function update_chart_data_region(ctx, ctn, data, field, reg_code = -999, area_c
 	ctn.update();
 }
 
-/**
- *
- */
-function get_dropdown_text(d, key) {
-	var i;
-	var text = '';
-	for(i = 1; i < d.length; i++) {
-		if(d[i].value == key) {
-			text = d[i].text;
-			break;
-		}
-	}
-	return text;
-}
-
+// ----------------------------------------------------------------------------
+// THEMATIC MAP SECTION
+// ----------------------------------------------------------------------------
 /**
  * @param vf 		vector features
  */

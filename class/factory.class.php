@@ -5,6 +5,7 @@ class exFactory{
 	public $Province;//ID จังหวัด
 	public $ProvinceTXT;//ID จังหวัด
 	public $Region;//ภาคที่
+	public $SuraType;//ประเภท
 	public $Lat;//Latitude
 	public $Long;//Longitude
 	public $IssueDate;//วันที่ออกใบอนุญาต
@@ -22,6 +23,7 @@ class exFactory{
 		$this->ID = 0;
 		$this->Province = 0;
 		$this->Region = 0;
+		$this->SuraType= 2;
 		$this->Lat = 0;
 		$this->Long = 0;
 		$this->IssueDate = "";
@@ -49,6 +51,7 @@ class exFactory{
 		$this->Province = $data["faProvince"];
 		$this->ProvinceTXT = $data["pvName"];
 		$this->Region = $data["faRegion"];
+		$this->SuraType = $data["faSuraType"];
 		$this->Lat = $data["faLat"];
 		$this->Long = $data["faLong"];
 		$this->IssueDate = $data["faIssueDate"];

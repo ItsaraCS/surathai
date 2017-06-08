@@ -51,7 +51,7 @@
             <div class="panel panel-default" style="height: 18vh;">
                 <div class="panel-body" style="padding: 0;">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered search-label-table" style="margin: 0 auto; overflow-y: hidden;"> 
+                        <table class="table table-striped table-bordered search-table" style="margin: 0 auto; overflow-y: hidden;"> 
                             <thead>
                                 <tr>
                                     <th class="text-center text-nowrap">ชื่อสถานประกอบการโรงงาน</th>
@@ -83,6 +83,13 @@
         var factory = new Factory();
         var ajaxUrl = 'http://210.4.143.51/Surathai01/API/labelAPI.php';
         var params = {};
+        var lat = 0;
+        var lon = 0;
+        var marker_geom = null;
+        var marker_feature = null;
+        var marker_style = null;
+        var marker_source = null;
+        var layers_marker = null;
 
         //--Page load
         getInit();
@@ -107,8 +114,27 @@
 
             var projection = ol.proj.get('EPSG:3857');
 
+            marker_geom = new ol.geom.Point([0, 0]);
+			marker_feature = new ol.Feature({geometry: marker_geom});
+			marker_style = new ol.style.Style({
+				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [0.5, 16],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'pixels',
+					opacity: 0.7,
+					src: 'img/marker-search.png'
+				}))
+			});
+			marker_feature.setStyle(marker_style);
+			marker_source = new ol.source.Vector({
+				features: [marker_feature]
+			});
+			layers_marker = new ol.layer.Vector({
+				source: marker_source
+			});
+
             map = new ol.Map({
-                layers : [ layers_deemap ],
+                layers : [ layers_deemap, layers_marker ],
                 //overlays: [overlay],//for popup
                 target : 'map',
                 view: new ol.View({
@@ -117,6 +143,22 @@
                 zoom: 6
                 })
             });
+			
+			// ==========================================================
+			// ADDED BY KUMPEE - 2017-06-04
+			// ==========================================================
+			getJSON(
+				'data/geojson/factory_2126_point.geojson',
+				function(data) {
+					var v = create_vector_layer(data, 
+												'EPSG:3857', 
+												search_point_style_function);
+					map.addLayer(v);
+				}, 
+				function(xhr) {
+				}
+			);
+			// ==========================================================
 
             $('#dvloading').hide().fadeOut();
 
@@ -153,12 +195,12 @@
                     if(res != undefined){
                         var data = JSON.parse(res);
                         data = data[0];
-                        console.log(data);
+                        console.log(data)
 
                         if(data.length != 0) {
-                            $('.search-label-table tbody tr').remove();
-                            $('#BrandImage').attr('src', data.picture);
-                            $('.search-label-table tbody').append('<tr>' + 
+                            $('.search-table tbody tr').remove();
+                            $('#BrandImage').attr('src', ((data.picture != 'data/label/') ? data.picture : 'img/noimages.png'));
+                            $('.search-table tbody').append('<tr data-lat="'+ data.lat +'" data-lon="'+ data.long +'">' + 
                                     '<td class="text-center text-nowrap">'+ data.factory_name +'</td>' +
                                     '<td class="text-center text-nowrap">'+ data.factory_code +'</td>' +
                                     '<td class="text-center text-nowrap">'+ data.contact +'</td>' +
@@ -169,8 +211,8 @@
                                     '<td class="text-center text-nowrap">'+ data.issue_date +'</td>' +
                                     '<td class="text-center text-nowrap">'+ data.extend_date +'</td>' +
                                     '<td class="text-center text-nowrap">'+ data.address +'</td>' +
-                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.plan +'" style="width: 50px; height: 50px;"></a></td>' +
-                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.picture +'" style="width: 50px; height: 50px;"></a></td>' +
+                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((data.plan != 'data/factoryplan/') ? data.plan : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
+                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((data.picture != 'data/label/') ? data.picture : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
                                 '</tr>');
                         }
                     }
@@ -183,7 +225,7 @@
             
             if($(this).val() == '') {
                 $('#BrandImage').attr('src', 'img/noimages.png');
-                $('.search-label-table tbody tr').remove();
+                $('.search-table tbody tr').remove();
             }
         });
 
@@ -195,6 +237,25 @@
                 infoMsg: '<img src="'+ $(this).find('img').attr('src') +'" style="width: 100%;">',
                 btnMsg: 'ปิด'
             });
+        });
+
+        $(document).on('click', '.search-table tbody tr', function(e) {
+            e.preventDefault();
+
+            $(this).closest('tbody').find('tr').removeClass('active-row');
+            $(this).addClass('active-row');
+
+            lat = parseFloat($(this).attr('data-lat')) || 0;
+            lon = parseFloat($(this).attr('data-lon')) || 0;
+            
+            if((lat != 0) && (lon != 0))
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 18, true);
+            else {
+                Factory.prototype.utilityService.getPopup({
+                    infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
+                    btnMsg: 'ปิด'
+                });
+            }
         });
     });
 </script>

@@ -24,25 +24,6 @@
                 $.datepicker.setDefaults($.datepicker.regional['th']);
                 $('.datepicker').datepicker($.datepicker.regional['th']);
                 $('.datepicker').datepicker('setDate', new Date());
-
-                params = {
-                    fn: 'profile'
-                };
-
-                factory.connectDBService.sendJSONObj(ajaxUrl, params, false).done(function(res) {
-                    if(res != undefined){
-                        var data = JSON.parse(res);
-                        console.log(data);
-
-                        localStorage.setItem('userName', data.fullname);
-                        localStorage.setItem('userPosition', data.ProvinceTXT);
-                        
-                        $('.nav-menu #Province').attr('data-provice', data.Province);
-                        $('#ProvinceTXT').html(data.ProvinceTXT);
-                        $('.user-menu span, .user-menu-detail-label p').html(localStorage.getItem('userName'));
-                        $('.user-menu-detail-label span').html(localStorage.getItem('userPosition'));
-                    }
-                });
             }
 
             //--Event
@@ -61,6 +42,48 @@
             $(window).click(function(e) {
                 if($('.user-menu-detail').hasClass('show')) 
                     $('.user-menu-detail').toggleClass('show');
+            });
+
+            $(document).on('click', '#loginBtn', function(e) {
+                e.preventDefault();
+
+                params = {
+                    fn: 'login',
+                    user: $('form[name="loginForm"] #username').val() || '',
+                    password: $('form[name="loginForm"] #password').val() || ''
+                };
+                
+                factory.connectDBService.sendJSONObj(ajaxUrl, params, false).done(function(res) {
+                    if(res != undefined){
+                        var data = JSON.parse(res);
+                        
+                        if(data.id == 0)
+                            window.open('login.php', '_self');
+                        else {
+                            sessionStorage.setItem('userData', JSON.stringify(data));
+                            window.open('map.php', '_self');
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', '#logoutBtn', function(e) {
+                e.preventDefault();
+
+                params = {
+                    fn: 'logout'
+                };
+                
+                factory.connectDBService.sendJSONObj(ajaxUrl, params, false).done(function(res) {
+                    if(res != undefined){
+                        var data = JSON.parse(res);
+                        
+                        if(data.id == 0) {
+                            sessionStorage.removeItem('userData');
+                            window.open('login.php', '_self');
+                        }
+                    }
+                });
             });
         });
     </script>

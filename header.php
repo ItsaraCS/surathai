@@ -33,6 +33,8 @@
     <script src="js/chart.js" type="text/javascript"></script>
     <script src="js/factory.js" type="text/javascript"></script>
     <!--MAP-->
+    <link href="css/layer_toggler.css" rel="stylesheet" type="text/css">
+	<link href="css/search_layer_toggler.css" rel="stylesheet" type="text/css">
     <script src="js/categories.js" type="text/javascript"></script>
     <script src="js/getJson.js" type="text/javascript"></script>
     <script src="js/olmaplib.js" type="text/javascript"></script>
@@ -43,6 +45,22 @@
 <body>
     <div class="container-fluid">
         <div class="row">
+            <!--CHECK USER-->
+            <script type="text/javascript">
+                var pathFile = (window.location.pathname).split('/Surathai01/')[1];
+                var userData = JSON.parse(sessionStorage.getItem('userData'));
+                
+                if(pathFile != 'login.php') {
+                    if(userData == null)
+                        window.open('login.php', '_self');
+                    else {
+                        $(document).ready(function(e) {
+                            $('.user-menu img, .user-menu-detail-avatar img').attr('src', ((userData.Gender == 0) ? 'img/user-female.png' : 'img/user-male.png'));
+                            $('.user-menu-detail-label p').html(userData.Fullname);
+                        });
+                    }
+                }
+            </script>
             <!--HEADER-->
             <div class="header">
                 <nav class="navbar navbar-default header-menu" role="navigation">
@@ -72,7 +90,7 @@
                                 <li class="navbar-icon">
                                     <a href="#" data-header-menu="ผู้ใช้งานระบบ">
                                         <div class="user-menu">
-                                            <img src="img/user.png"> <i class="fa fa-caret-down"></i>
+                                            <img> <i class="fa fa-caret-down"></i>
                                         </div>
                                     </a>
                                 </li>
@@ -82,20 +100,20 @@
                 </nav>
                 <div class="user-menu-detail hide">
                     <div class="user-menu-detail-avatar text-center">
-                        <img src="img/user.png">
+                        <img>
                     </div>
                     <div class="user-menu-detail-label text-center" style="margin: 10px auto;">
-                        <p></p><span></span>
+                        <p></p>
                     </div>
                     <div class="col-md-12 user-menu-detail-btn text-center">              
                         <div class="col-md-6 text-left">
                             <div class="row">
-                                <a href="user.php" class="btn btn-default" id="settingAccount">ตั้งค่าบัญชี</a>
+                                <a href="user.php" class="btn btn-default">ตั้งค่าบัญชี</a>
                             </div>
                         </div>
                         <div class="col-md-6 text-right">
                             <div class="row">
-                                <a href="index.php" class="btn btn-default" id="logout">ออกจากระบบ</a>
+                                <a class="btn btn-default" id="logoutBtn">ออกจากระบบ</a>
                             </div>
                         </div>
                     </div>

@@ -288,10 +288,6 @@ function show_map() {
 	var ri;
 	var vi;
 	var sum;
-
-	load_data_region('http://210.4.143.51/Surathai01/API/taxmapAPI.php?data=license_reg&year='+ filter_year);
-	load_data_region_monthly('data/geojson/license_sum_by_reg_code_month.geojson');
-	load_data_area('data/geojson/license_sum_by_area_code.geojson');
 	
 	console.log('--------------------');
 	console.log('filter_year', filter_year);

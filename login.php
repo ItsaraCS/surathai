@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>เข้าสู่ระบบ</title>
     <!--jQuery-->
     <script src="lib/jquery/jquery-11.0.min.js" type="text/javascript"></script>
@@ -25,7 +25,7 @@
                     <div class="col-sm-10 position-center">
                         <div class="input-group text-center">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                            <input type="text" class="form-control input-lg" name="username" autofocus placeholder="ชื่อเข้าใช้งาน">
+                            <input type="text" class="form-control input-lg" id="username" name="username" autofocus placeholder="ชื่อเข้าใช้งาน">
                         </div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                     <div class="col-sm-10 position-center">
                         <div class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input type="password" class="form-control input-lg" name="password" placeholder="รหัสผ่าน">
+                            <input type="password" class="form-control input-lg" id="password" name="password" placeholder="รหัสผ่าน">
                         </div>
                     </div>
                 </div>
@@ -43,4 +43,17 @@
                     </div>
                 </div>
             </form>
+<!--JS-->
+<script type="text/javascript">
+    $(document).ready(function(e) {
+        //--Page load
+        getInit();
+
+        //--Function
+        function getInit() {
+            $('#username, #password').val('');
+            console.log(JSON.parse(sessionStorage.getItem('userData')));
+        }
+    });
+</script>
 <?php require('footer.php'); ?>

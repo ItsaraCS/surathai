@@ -7,6 +7,7 @@ Factory.prototype.initService = {
 
         $(self).closest('div, td').removeClass('has-error');
         $(self).next('.error-content').removeClass('show').addClass('hide');
+        $(self).closest('td').find('.error-content').removeClass('show').addClass('hide');
 
         switch(errorType) {
             case 'required':
@@ -208,7 +209,7 @@ Factory.prototype.initService = {
 
                 break;
             case 'user.php':
-                $('.header .header-menu-title span').html('ระบบสมาชิก');
+                $('.header .header-menu-title span').html('ตั้งค่าบัญชี');
                 $('.header .header-menu ul li').find('a[data-header-menu="ผู้ใช้งานระบบ"] span').css({ 'color': '#f17022' });
                 break;
             default:
@@ -237,6 +238,7 @@ Factory.prototype.utilityService = {
 Factory.prototype.connectDBService = {
     sendJSONObj: function(ajaxUrl, params, loadingRequired) {
         loadingRequired = ((loadingRequired != undefined) && (loadingRequired != true)) ? false : true;
+        
         var options = {
             type: 'post',
             url: ajaxUrl,
@@ -258,6 +260,7 @@ Factory.prototype.connectDBService = {
     },
     sendJSONStr: function(ajaxUrl, params, loadingRequired) {
         loadingRequired = ((loadingRequired != undefined) && (loadingRequired != true)) ? false : true;
+        
         var options = {
             type: 'post',
             url: ajaxUrl,
@@ -279,6 +282,7 @@ Factory.prototype.connectDBService = {
     },
     sendJSONObjForUpload: function(ajaxUrl, params, loadingRequired) {
         loadingRequired = ((loadingRequired != undefined) && (loadingRequired != true)) ? false : true;
+
         var options = {
             type: 'post',
             url: ajaxUrl,

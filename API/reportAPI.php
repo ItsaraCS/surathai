@@ -8,7 +8,7 @@ $mode = isset($_POST["mode"])?$_POST["mode"]:0;
 
 				$title = array(
 					1 => array("เดือน","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา","ภาษีรวม"),
-					2 => array("เดือน","จำนวนราย","เปรียบเทียปรับ","ศาลปรับ","พนักงานสอบสวน","เงินสินบน","เงินรางวัล","เงินส่งคลัง"),
+					2 => array("เดือน","จำนวนราย","เปรียบเทียบปรับ","ศาลปรับ","พนักงานสอบสวน","เงินสินบน","เงินรางวัล","เงินส่งคลัง"),
 					3 => array("เดือน","จำนวนใบอนุญาตก่อสร้าง","จำนวนใบอนุญาตผลิต","จำนวนใบอนุญาตจำหน่าย","จำนวนใบอนุญาตขน","จำนวนใบอนุญาตรวม"),
 					4 => array("เดือน","28","30","35","40","จำนวนทั้งหมด"),
 					5 => array("เดือน","สุรากลั่น","สุราแช่","รวมทั้งหมด")
@@ -295,7 +295,7 @@ switch($fn){
 								}else{
 									$total = 5;
 									$rdata = array(1,2,3,4,5);
-									$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS Y, faSuraType, COUNT(FactoryID) AS C FROM `Factory` WHERE ? IN (0,faRegion) AND ? IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN ? AND ? GROUP BY Y,faSuraType ORDER BY faIssueDate",array("iiii",$region,$province,$year-4,$year));
+									$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS Y, faSuraType, COUNT(FactoryID) AS C FROM `Factory` WHERE ? IN (0,faRegion) AND ? IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN ? AND ? GROUP BY Y,faSuraType ORDER BY Y, faSuraType",array("iiii",$region,$province,$year-4,$year));
 								}
         
 								$data = new exReport_Table;
@@ -309,7 +309,7 @@ switch($fn){
 
 									for($x=1;$x<=$total;$x++){
 										if($total==5){
-											$tdata[$x][0] = "ปีงบประมาณ ".(($year + 539) + $x);
+											$tdata[$x][0] = "ปีงบประมาณ ".(($year + 538) + $x);
 										}else{
 											$tdata[$x][0] = $etcObj->GetMonthFullName($x)." ".($x>9?$year+542:$year+543);
 										}
@@ -321,11 +321,24 @@ switch($fn){
 									while($fdata = $DB->FetchData()){
 										if($total==5){
 											$x = $fdata["Y"] - $year+5;
-											$tdata[$x][$fdata["faSuraType"]] = $fdata["C"];
-											$tdata[$x][3] = intval($tdata[$x][3]) + $fdata["C"];
+											if($fdata["faSuraType"] == 3){
+												$tdata[$x][1] += $fdata["C"];
+												$tdata[$x][2] += $fdata["C"];
+												$tdata[$x][3] = intval($tdata[$x][3]) + $fdata["C"]*2;
+											}else{
+												$tdata[$x][$fdata["faSuraType"]] = $fdata["C"];
+												$tdata[$x][3] = intval($tdata[$x][3]) + $fdata["C"];
+											}
 										}else{
-											$tdata[$fdata["M"]][$fdata["faSuraType"]] = $fdata["C"];
-											$tdata[$fdata["M"]][3] = intval($tdata[$fdata["M"]][3]) + $fdata["C"];
+											if($fdata["faSuraType"] == 3){
+												$tdata[$fdata["M"]][1] += $fdata["C"];
+												$tdata[$fdata["M"]][2] += $fdata["C"];
+												$tdata[$fdata["M"]][3] = intval($tdata[$fdata["M"]][3]) + $fdata["C"]*2;
+												$tdata[$x][3] = intval($tdata[$x][3]) + $fdata["C"]*2;
+											}else{
+												$tdata[$fdata["M"]][$fdata["faSuraType"]] = $fdata["C"];
+												$tdata[$fdata["M"]][3] = intval($tdata[$fdata["M"]][3]) + $fdata["C"];
+											}
 										}
 									}
 
@@ -694,11 +707,21 @@ switch($fn){
 								array_push($VList,$CurV);
 								$CountV++;
 							}
-							$tmpData[$fdata["V"]][$fdata["H"]] = $fdata["S"];
-							if(isset($tmpData[3][$fdata["H"]])){
-								$tmpData[3][$fdata["H"]] += $fdata["S"];
+							if($fdata["V"] == 3){
+								$tmpData[1][$fdata["H"]] += $fdata["S"];
+								$tmpData[2][$fdata["H"]] += $fdata["S"];
+								if(isset($tmpData[3][$fdata["H"]])){
+									$tmpData[3][$fdata["H"]] += $fdata["S"]*2;
+								}else{
+									$tmpData[3][$fdata["H"]] = $fdata["S"]*2;
+								}
 							}else{
-								$tmpData[3][$fdata["H"]] = $fdata["S"];
+								$tmpData[$fdata["V"]][$fdata["H"]] = $fdata["S"];
+								if(isset($tmpData[3][$fdata["H"]])){
+									$tmpData[3][$fdata["H"]] += $fdata["S"];
+								}else{
+									$tmpData[3][$fdata["H"]] = $fdata["S"];
+								}
 							}
 						}
 						for($i=1;$i<count($ItemTitle);$i++){

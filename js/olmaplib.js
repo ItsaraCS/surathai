@@ -58,7 +58,37 @@ var myDom = {
 		outline:        'rgba(255, 255, 255, 0.0)',
 		outlineWidth:   '2',
 		maxreso:        '400'
-	}
+	},
+	factory_points: {
+		text:           'normal',
+		align:          'center',
+		baseline:       'bottom',
+		rotation:       '0',
+		font:           'MS Sans Serif',
+		weight:         'normal',
+		size:           '11px',
+		offsetX:        '0',
+		offsetY:        '-8',
+		color:          'rgba(0, 0, 0, 0.5)',
+		outline:        'rgba(255, 255, 255, 0.0)',
+		outlineWidth:   '2',
+		maxreso:        '200'
+	},
+	lawbreaker_points: {
+		text:           'normal',
+		align:          'center',
+		baseline:       'bottom',
+		rotation:       '0',
+		font:           'MS Sans Serif',
+		weight:         'normal',
+		size:           '11px',
+		offsetX:        '0',
+		offsetY:        '-8',
+		color:          'rgba(0, 0, 0, 0.5)',
+		outline:        'rgba(255, 255, 255, 0.0)',
+		outlineWidth:   '2',
+		maxreso:        '100'
+	},
 };
 
 
@@ -462,12 +492,64 @@ function factory_point_style_function(feature, resolution) {
 					fill: new ol.style.Fill({color: 'rgba(255, 0, 255, 0.80)'}),
 					stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.90)', width: 1})
 				}),
-				text: create_text_style(feature, 
+				/*text: create_text_style(feature, 
 									  resolution,
-									  myDom.branch_points,
-									  'FACTORY_TNAME')
+									  myDom.factory_points,
+									  'FACTORY_TNAME')*/
 				});
 }
+
+/**
+ * Crate style
+ */
+function lawbreaker_point_style_function(feature, resolution) {
+	return new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 3,
+					fill: new ol.style.Fill({color: 'rgba(0, 255, 255, 0.80)'}),
+					stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.90)', width: 1})
+				}),
+				/*text: create_text_style(feature, 
+									  resolution,
+									  myDom.branch_points,
+									  'ACCUSER_K_SUSPECT_T')*/
+				});
+}
+
+/**
+ * Crate style
+ */
+function store_point_style_function(feature, resolution) {
+	return new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 3,
+					fill: new ol.style.Fill({color: 'rgba(0, 0, 255, 0.80)'}),
+					stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.90)', width: 1})
+				}),
+				/*text: create_text_style(feature, 
+									  resolution,
+									  myDom.branch_points,
+									  'ID')*/
+				});
+}
+
+/**
+ * Crate style
+ */
+function thaiwhisky_point_style_function(feature, resolution) {
+	return new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 3,
+					fill: new ol.style.Fill({color: 'rgba(255, 150, 0, 0.80)'}),
+					stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.90)', width: 1})
+				}),
+				/*text: create_text_style(feature, 
+									  resolution,
+									  myDom.branch_points,
+									  'ADDRESS')*/
+				});
+}
+
 
 /**
  * Toggle layer visibility.
@@ -477,4 +559,56 @@ function factory_point_style_function(feature, resolution) {
  */
 function toggle_map_layer_visibility(layer, mode) {
 	layer.setVisible(mode);
+}
+
+
+/**
+ *
+ */
+function prepare_layer_toggler(e) {
+	var ele = document.getElementById(e);
+	
+	var ctn_office = null;
+	var ctn_factory = null;
+	var ctn_case = null;
+	var ctn_store = null;
+	var ctn_whisky = null;
+
+	// Offices
+	ctn_office = document.createElement("div");
+	ctn_office.className = 'layer_block';
+	ctn_office.innerHTML = '<input type="checkbox" id="chk_office" name="chk_office" onclick="update_layer_visibility();" /> สำนักงานสรรพสามิต';
+	
+	// Factories
+	ctn_factory = document.createElement("div");
+	ctn_factory.className = 'layer_block';
+	ctn_factory.innerHTML = '<input type="checkbox" id="chk_factory" name="chk_factory" onclick="update_layer_visibility();" /> โรงงานสุรา';
+	
+	// Illegal cases
+	ctn_case = document.createElement("div");
+	ctn_case.className = 'layer_block';
+	ctn_case.innerHTML = '<input type="checkbox" id="chk_lawbreaker" name="chk_lawbreaker" onclick="update_layer_visibility();" /> ผู้กระทำผิด';
+	
+	// Stores
+	ctn_store = document.createElement("div");
+	ctn_store.className = 'layer_block';
+	ctn_store.innerHTML = '<input type="checkbox" id="chk_store" name="chk_store" onclick="update_layer_visibility();" /> ร้านค้า';
+	
+	// Thai whisky
+	ctn_whisky = document.createElement("div");
+	ctn_whisky.className = 'layer_block';
+	ctn_whisky.innerHTML = '<input type="checkbox" id="chk_thaiwhisky" name="chk_thaiwhisky" onclick="update_layer_visibility();" /> ร้านยาดอง';
+	
+	// Add children
+	ele.appendChild(ctn_office);
+	ele.appendChild(ctn_factory);
+	ele.appendChild(ctn_case);
+	ele.appendChild(ctn_store);
+	ele.appendChild(ctn_whisky);
+	
+	// Attach event listener
+	ele = document.getElementById('map_layer_title');
+	ele.addEventListener("click", function() {
+		$('#map_layer_toggler').toggle(250);
+	});
 }

@@ -25,8 +25,8 @@ switch($fn){
         				$sdata->issue_date = $etcObj->GetShortDate(exETC::C_TH,$fdata["lbIssueDate"]);
 					$sdata->extend_date = $etcObj->GetShortDate(exETC::C_TH,$fdata["lbExpireDate"]);
   				      	$sdata->address = $fdata["lbAddress"];
-					$sdata->lat = $fdata["lbLat"];
-        				$sdata->long = $fdata["lbLong"];
+					$sdata->lat = $fdata["faLat"];
+        				$sdata->long = $fdata["faLong"];
 					$sdata->picture = "data/label/".$fdata["lbPicture"];
 					$sdata->plan = file_exists("../data/factoryplan/".$fdata["lbPicture"])==true?"data/factoryplan/".$fdata["lbPicture"]:"";
 					array_push($data,$sdata);

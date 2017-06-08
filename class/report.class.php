@@ -16,6 +16,7 @@ class exReport_Table{
 	public $row_per_page;//จำนวนแถวของข้อมูลต่อ 1 หน้า
 	public $label;//หัวข้อ เป็น array of string
 	public $data;//ข้อมูล เป็น array of class exReport_Cell
+	public $latlong;//ข้อมูล เป็น array of class exReport_Cell
 
 	function __construct() {//Initital variable in class
 		$this->lastid=0;
@@ -26,6 +27,7 @@ class exReport_Table{
 		$this->row_per_page = 0;
 		$this->label = array();
 		$this->data = array();
+		$this->latlong = array();
         }
 
         function __destruct(){
@@ -33,6 +35,13 @@ class exReport_Table{
 		unset($this->data);
         }
 
+	public function AddLatLong($id,$lat,$long){
+		$ll = new exGPS2;
+		$ll->Lat = $lat;
+		$ll->Long = $long;
+		$this->latlong[$id] = $ll;
+	}
+	
 	public function AddLabel($text){
 		if(empty($this->data)){
 			array_push($this->label,$text);
@@ -86,5 +95,10 @@ class exChart{
 class exChart_Data{
 	public $label;//ชื่อข้อมูล ที่จะแสดงฝั่งขวา
 	public $data;//ชุดข้อมูลเป็น array
+}
+
+class exGPS2{
+	public $Lat;
+	public $Long;
 }
 ?>

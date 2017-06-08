@@ -74,8 +74,8 @@
         var year = $('.nav-menu #year').val() || '';
         var region = $('.nav-menu #region').val() || 0;
         var province = $('.nav-menu #province').val() || 0;
-        var lat = $(this).attr('data-lat') || 0;
-        var lon = $(this).attr('data-lon') || 0;
+        var lat = 0;
+        var lon = 0;
         var marker_geom = null;
         var marker_feature = null;
         var marker_style = null;
@@ -254,7 +254,7 @@
                             page: data.cur_page || 1,
                             perPage: data.row_per_page || 5,
                             splitPage: 3,
-                            total: data.sum_of_row|| 0
+                            total: data.sum_of_row || 0
                         });
                     } else 
                         $('.search-table tbody').append('<tr class="disabled"><td colspan="'+ data.label.length +'" style="text-align: center;">ไม่พบข้อมูล</td></tr>');
@@ -301,7 +301,7 @@
                             searchDetailTableContent += '<tr class="search-detail-total">' +
                                     '<td class="text-center"><p>'+ item.subject +'</p></td>';
                                     $.each(item.value, function(indexValue, itemValue) {
-                                        searchDetailTableContent += '<td class="text-center">'+ item.value[0] +'</td>';
+                                        searchDetailTableContent += '<td class="text-center">'+ item.value[indexValue] +'</td>';
                                     });
                                 searchDetailTableContent += '</tr>';
                         } 
@@ -310,7 +310,7 @@
                             searchDetailTableContent += '<tr>' +
                                     '<td style="padding: 0 10px !important;"><p>'+ item.subject +'</p></td>';
                                     $.each(item.value, function(indexValue, itemValue) {
-                                        searchDetailTableContent += '<td class="text-center" style="padding: 0 10px !important;">'+ item.value[0] +'</td>';
+                                        searchDetailTableContent += '<td class="text-center" style="padding: 0 10px !important;">'+ item.value[indexValue] +'</td>';
                                     });
                                 searchDetailTableContent += '</tr>';
                         }
@@ -349,7 +349,7 @@
                                 })[data.data[index].align];
                                 
                                 if(data.data[index].align == 3)
-                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ data.data[index].text +'" style="width: 50px; height: 50px;"></a></td>';
+                                    tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((data.data[index].text != '') ? data.data[index].text : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>';
                                 else if(data.data[index].align == 4)
                                     tbodyContent += '<td class="'+ tdAlign +' text-nowrap"><a href="'+ data.data[index].text +'" class="show-link">ดูเพิ่มเติม</a></td>';
                                 else
@@ -366,7 +366,7 @@
                             page: data.cur_page || 1,
                             perPage: data.row_per_page || 5,
                             splitPage: 3,
-                            total: data.sum_of_row|| 0
+                            total: data.sum_of_row || 0
                         });
                     } else 
                         $('.search-table tbody').append('<tr class="disabled"><td colspan="'+ data.label.length +'" style="text-align: center;">ไม่พบข้อมูล</td></tr>');
@@ -618,8 +618,9 @@
             e.preventDefault();
 
             var regex = /[^\d\,]/;
+            var numPage = $('ul.pagination').attr('data-num-page') || 0;
 
-            if(regex.test($(this).val()))
+            if((regex.test($(this).val())) || ($(this).val() > numPage))
                 $(this).val('');
                 
             if(($(this).val() != '') && (e.which == 13)) {

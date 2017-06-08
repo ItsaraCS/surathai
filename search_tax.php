@@ -74,8 +74,8 @@
         var year = $('.nav-menu #year').val() || '';
         var region = $('.nav-menu #region').val() || 0;
         var province = $('.nav-menu #province').val() || 0;
-        var lat = $(this).attr('data-lat') || 0;
-        var lon = $(this).attr('data-lon') || 0;
+        var lat = 0;
+        var lon = 0;
         var marker_geom = null;
         var marker_feature = null;
         var marker_style = null;
@@ -204,7 +204,6 @@
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined) {
                     var data = JSON.parse(res);
-                    console.log(data);
 
                     var theadContent = '';
                     $.each(data.label, function(index, item) {
@@ -286,7 +285,6 @@
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined) {
                     var data = JSON.parse(res);
-                    console.log(data);
                     
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
@@ -303,7 +301,7 @@
                             searchDetailTableContent += '<tr class="search-detail-total">' +
                                     '<td class="text-center"><p>'+ item.subject +'</p></td>';
                                     $.each(item.value, function(indexValue, itemValue) {
-                                        searchDetailTableContent += '<td class="text-center">'+ item.value[0] +'</td>';
+                                        searchDetailTableContent += '<td class="text-center">'+ item.value[indexValue] +'</td>';
                                     });
                                 searchDetailTableContent += '</tr>';
                         } 
@@ -312,7 +310,7 @@
                             searchDetailTableContent += '<tr>' +
                                     '<td style="padding: 0 10px !important;"><p>'+ item.subject +'</p></td>';
                                     $.each(item.value, function(indexValue, itemValue) {
-                                        searchDetailTableContent += '<td class="text-center" style="padding: 0 10px !important;">'+ item.value[0] +'</td>';
+                                        searchDetailTableContent += '<td class="text-center" style="padding: 0 10px !important;">'+ item.value[indexValue] +'</td>';
                                     });
                                 searchDetailTableContent += '</tr>';
                         }
@@ -368,7 +366,7 @@
                             page: data.cur_page || 1,
                             perPage: data.row_per_page || 5,
                             splitPage: 3,
-                            total: data.sum_of_row|| 0
+                            total: data.sum_of_row || 0
                         });
                     } else 
                         $('.search-table tbody').append('<tr class="disabled"><td colspan="'+ data.label.length +'" style="text-align: center;">ไม่พบข้อมูล</td></tr>');
@@ -620,8 +618,9 @@
             e.preventDefault();
 
             var regex = /[^\d\,]/;
+            var numPage = $('ul.pagination').attr('data-num-page') || 0;
 
-            if(regex.test($(this).val()))
+            if((regex.test($(this).val())) || ($(this).val() > numPage))
                 $(this).val('');
                 
             if(($(this).val() != '') && (e.which == 13)) {
@@ -675,8 +674,8 @@
 
             //window.open('export/search/search_tax.pdf', '_blank');
 
-            $('.search-table').tableExport({
-                type: 'pdf',
+            $('.map').tableExport({
+                type: 'png',
                 escape: 'false'
             });
         });

@@ -13,6 +13,62 @@ function zoom_to_factory(o, m, lat, lon, z) {
 }
 
 /**
+ *
+ */
+function search_load_point_layers() {
+	getJSON(
+		'data/geojson/excise_area_centroid_compact.geojson',
+		function(data) {
+			vec_branch_point = create_vector_layer(data, 'EPSG:3857', branch_point_style_function);
+			map.addLayer(vec_branch_point);
+			toggle_map_layer_visibility(vec_branch_point, false);
+		}, 
+		function(xhr) {
+		}
+	);
+	getJSON(
+		'data/geojson/factory_2126_point.geojson',
+		function(data) {
+			vec_factory_point = create_vector_layer(data, 'EPSG:3857', factory_point_style_function);
+			map.addLayer(vec_factory_point);
+			toggle_map_layer_visibility(vec_factory_point, false);
+		}, 
+		function(xhr) {
+		}
+	);
+	getJSON(
+		'data/geojson/lawbreaker_point.geojson',
+		function(data) {
+			vec_lawbreaker_point = create_vector_layer(data, 'EPSG:3857', lawbreaker_point_style_function);
+			map.addLayer(vec_lawbreaker_point);
+			toggle_map_layer_visibility(vec_lawbreaker_point, false);
+		}, 
+		function(xhr) {
+		}
+	);
+	getJSON(
+		'data/geojson/store_point.geojson',
+		function(data) {
+			vec_store_point = create_vector_layer(data, 'EPSG:3857', store_point_style_function);
+			map.addLayer(vec_store_point);
+			toggle_map_layer_visibility(vec_store_point, false);
+		}, 
+		function(xhr) {
+		}
+	);
+	getJSON(
+		'data/geojson/thaiwhisky_point.geojson',
+		function(data) {
+			vec_thaiwhisky_point = create_vector_layer(data, 'EPSG:3857', thaiwhisky_point_style_function);
+			map.addLayer(vec_thaiwhisky_point);
+			toggle_map_layer_visibility(vec_thaiwhisky_point, false);
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
  * Point style
  */
 function search_point_style_function(feature, resolution) {

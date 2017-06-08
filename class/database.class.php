@@ -19,19 +19,28 @@ class exDB{
 	
 	protected $DBStructure = array(
 			//1st = datatype[i=int,d=decimal point,s=string,b=blob]; 2nd...lastest = field
-			"Act" => "is,ActID,acName",
-			"Admin" => "iiiiissss,AdminID,adLevel,adRegion,adProvince,adArea,adBranch,adUsername,adPassword,adFullname",
-			"Area" => "iiis,AreaID,arProvince,arRegion,arName",
-			"Factory" => "iiiiiidddsssssss,FactoryID,faSuraType,faProvince,faRegion,faCapital,faWorker,faHP,faLat,faLong,faIssueDate,faPlan,faLicenseNo,faRegistNo,faContact,faName,faAddress",
-			"Label" => "iiiiiisssddsssss,LabelID,lbProvince,lbRegion,lbDegree,lbType,lbFacCode,lbLicense,lbIssueDate,lbExpireDate,lbLat,lbLong,lbBrand,lbContact,lbFacName,lbPicture,lbAddress",
-			"LicenseType" => "is,LicenseTypeID,ltName",
-			"Province" => "iis,ProvinceID,pvRegion,pvName",
-			"Region" => "isss,RegionID,rgCode,rgNameEN,rgNameTH",
-			"SaleLicense" => "siiss,SaleLicenseID,slFactoryID,slType,slIssueDate,slExtendDate",
-			"SaleStamp" => "issiis,SaleStampID,ssStartNo,ssFinishNo,ssAmount,ssFactoryID,ssBuyDate",
-			"Stamp" => "iiiiddddsss,StampID,stFacCode,stLabel,stAmount,stSize,stPrice,stVolume,stTax,stReleaseDate,stBookNo,stNumber",
-			"StampRemain" => "sii,StampRemainID,srBranch,srAmount",
-			"SuraType" => "is,SuraTypeID,suName"
+                  "Act" => "is,ActID,acName",
+                  "Admin" => "iiiiiiiiisssssss,AdminID,adGender,adStatus,adLevel,adUnder,adEform,adRegion,adProvince,adArea,adBranch,adUsername,adPassword,adFullname,adEmail,adTel,adMobile",
+                  "Area" => "iiis,AreaID,arProvince,arRegion,arName",
+                  "Branch" => "iiiis,BranchID,brAreaID,brProvince,brRegion,brName",
+                  "ExciseGPS" => "iiiiiddss,exBranch,exArea,exAmphur,exProvince,exRegion,exLat,exLong,exBranchName,exAmphurName",
+                  "Factory" => "iiiiiidddssssssss,FactoryID,faSuraType,faProvince,faRegion,faCapital,faWorker,faHP,faLat,faLong,faIssueDate,faPlan,faLicenseNo,faCode,faRegistNo,faContact,faName,faAddress",
+                  "Factory2" => "iiiiiidddssssssss,FactoryID,faSuraType,faProvince,faRegion,faCapital,faWorker,faHP,faLat,faLong,faIssueDate,faPlan,faLicenseNo,faCode,faRegistNo,faContact,faName,faAddress",
+                  "Factory_backup" => "iiiiiidddssssssss,FactoryID,faSuraType,faProvince,faRegion,faCapital,faWorker,faHP,faLat,faLong,faIssueDate,faPlan,faLicenseNo,faCode,faRegistNo,faContact,faName,faAddress",
+                  "GovMonth" => "iis,GovMonthID,gmValue,gmName",
+                  "Illegal" => "iiiiiddddddddssssss,IllegalID,ilArea,ilRegion,ilActType,ilCase,ilComparativeMoney,ilFine,ilOfficer,ilBribe,IlReward,ilReturn,ilLat,ilLong,ilActDate,ilSuspect,ilOrator,ilAddress,ilAllegation,ilMaterial",
+                  "Label" => "iiiiiissssssss,LabelID,lbProvince,lbRegion,lbDegree,lbType,lbFacCode,lbLicense,lbIssueDate,lbExpireDate,lbBrand,lbContact,lbFacName,lbPicture,lbAddress",
+                  "Label2" => "iiiiiissssssss,LabelID,lbProvince,lbRegion,lbDegree,lbType,lbFacCode,lbLicense,lbIssueDate,lbExpireDate,lbBrand,lbContact,lbFacName,lbPicture,lbAddress",
+                  "LicenseType" => "is,LicenseTypeID,ltName",
+                  "Province" => "iis,ProvinceID,pvRegion,pvName",
+                  "Region" => "isss,RegionID,rgCode,rgNameEN,rgNameTH",
+                  "SaleLicense" => "siiss,SaleLicenseID,slFactoryID,slType,slIssueDate,slExtendDate",
+                  "SaleStamp" => "issiis,SaleStampID,ssStartNo,ssFinishNo,ssAmount,ssFactoryID,ssBuyDate",
+                  "Stamp" => "iiiiddddsss,StampID,stFacCode,stLabel,stAmount,stSize,stPrice,stVolume,stTax,stReleaseDate,stBookNo,stNumber",
+                  "StampRemain" => "sii,StampRemainID,srBranch,srAmount",
+                  "SuraType" => "is,SuraTypeID,suName",
+                  "Transport" => "iiiiiisssssss,TransportID,tpRegion,tpProvince,tpFactory,tpDegree,tpAmount,tpDate,tpLicense,tpType,tpStamp,tpContact,tpBrand,tpAddress",
+                  "Users" => "iiiiiiiiisss,UsersID,usGender,usLevel,usUnder,usEform,usRegion,usProvince,usArea,usBranch,usUsername,usPassword,usFullname"
 		);
 			
 	public $ErrorMsg;		//Error Message on String format

@@ -14,7 +14,10 @@
             
             <!--MAP LEGEND AND LAYERS TOGGLERS-->
             <div id="map_legend"><h3>สัญลักษณ์แผนที่</h3></div>
-            <div id="map_layer_toggler"></div>
+            <div id="map_layer_toggler_container">
+				<div id="map_layer_title">ชั้นข้อมูล</div>
+				<div id="map_layer_toggler"></div>
+			</div>
         </div>
     </div>
 
