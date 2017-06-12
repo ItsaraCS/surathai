@@ -55,7 +55,8 @@
                                     <tr>
                                         <td><p>อีเมล์</p></td>
                                         <td>
-                                            <input type="text" class="form-control" id="Email" disabled>
+                                            <input type="text" class="form-control" id="Email" disabled email-only>
+                                            <span class="error-content hide" data-label="อีเมล์"></span>
                                         </td>
                                     </tr>
                                     <tr>
@@ -263,8 +264,9 @@
         }
 
         //--Event
-        $(document).on('keyup', 'input[required], textarea[required]', function(e) {
+        $(document).on('keyup', 'input[required], textarea[required], input[email-only]', function(e) {
             factory.initService.setError($(this), 'required'); 
+            factory.initService.setError($(this), 'email-only'); 
         });
 
         $(document).on('change', 'select[required]', function(e) {

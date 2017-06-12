@@ -59,8 +59,10 @@
                         
                         if(data.id == 0)
                             window.open('login.php', '_self');
-                        else
+                        else {
+                            sessionStorage.setItem('userID', data.id);
                             window.open('map.php', '_self');
+                        }
                     }
                 });
             });
@@ -72,8 +74,10 @@
                     if(res != undefined){
                         var data = JSON.parse(res);
                         
-                        if(data.id == 0) 
+                        if(data.id == 0) {
+                            sessionStorage.removeItem('userID');
                             window.open('login.php', '_self');
+                        }
                     }
                 });
             });

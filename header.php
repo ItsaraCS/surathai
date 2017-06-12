@@ -41,35 +41,41 @@
     <script src="js/local_shared.js" type="text/javascript"></script>
     <script src="js/search_map_lib.js" type="text/javascript"></script>
     <script src="js/e_map_lib.js" type="text/javascript"></script>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <!--CHECK USER-->
-            <script type="text/javascript">
-                var factory = new Factory();
-                var ajaxUrl = 'API/userAPI.php';
-                var userData;
-                var pathFile = (window.location.pathname).split('/Surathai01/')[1];
-
-                factory.connectDBService.sendJSONObj(ajaxUrl, {}).done(function(res) {
+    <!--CHECK USER-->
+    <script type="text/javascript">
+        var factory = new Factory();
+        var ajaxUrl = 'API/userAPI.php';
+        var userData;
+        var pathFile = (window.location.pathname).split('/Surathai01/')[1];
+        var userID = JSON.parse(sessionStorage.getItem('userID'));
+        
+        if(userID == null)
+            window.open('login.php', '_self');
+        else {
+            if(pathFile != 'login.php') {
+                factory.connectDBService.sendJSONObj(ajaxUrl, {}, false).done(function(res) {
                     if(res != undefined){
                         var data = JSON.parse(res);
                         userData = data;
 
-                        if(pathFile != 'login.php') {
-                            if(userData.id == 0)
-                                window.open('login.php', '_self');
-                            else {
-                                $(document).ready(function(e) {
-                                    $('.user-menu img, .user-menu-detail-avatar img').attr('src', ((userData.Gender == 0) ? 'img/user-female.png' : 'img/user-male.png'));
-                                    $('.user-menu-detail-label p').html(userData.Fullname);
-                                });
-                            }
+                        if(userData.id == 0)
+                            window.open('login.php', '_self');
+                        else {
+                            $(document).ready(function(e) {
+                                $('.user-menu img, .user-menu-detail-avatar img').attr('src', ((userData.Gender == 0) ? 'img/user-female.png' : 'img/user-male.png'));
+                                $('.user-menu-detail-label p').html(userData.Fullname);
+                                $('#ProvinceTXT').html(userData.ProvinceTXT);
+                            });
                         }
                     }
                 });
-            </script>
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
             <!--HEADER-->
             <div class="header">
                 <nav class="navbar navbar-default header-menu" role="navigation">

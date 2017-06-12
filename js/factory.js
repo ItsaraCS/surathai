@@ -14,7 +14,6 @@ Factory.prototype.initService = {
                     $(self).closest('div, td').addClass('has-error');
                     $(self).closest('td').find('.error-content').removeClass('hide').addClass('show').html('('+ $(self).closest('td').find('.error-content').data('label') +') ห้ามว่าง');
                 }
-
                 break;
             case 'duplicate':
                 $(self).closest('div, td').addClass('has-error');
@@ -96,6 +95,15 @@ Factory.prototype.initService = {
                     return x1 + x2;
                 }
 
+                break;
+            case 'email-only':
+                regex = /^\s*[\w\-\+_]+(\.[\w\-\+_]+)*\@[\w\-\+_]+\.[\w\-\+_]+(\.[\w\-\+_]+)*\s*$/;
+
+                if((!(regex.test($(self).val()))) && ($(self).val() != '')) {
+                    $(self).closest('div, td').addClass('has-error');
+                    $(self).closest('td').find('.error-content').removeClass('hide').addClass('show').html('('+ $(self).closest('td').find('.error-content').data('label') +') ไม่ถูกต้อง');
+                }
+                
                 break;
             case 'clear':
                 $(self).closest('div, td').removeClass('has-error');
