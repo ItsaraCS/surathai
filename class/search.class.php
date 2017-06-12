@@ -74,40 +74,40 @@ class exSearch_Table{
 		switch($job){
 			case 1 :
 						$this->AddTitleMenu(array("รายการ","ภาษี"));
-						$this->AddcontentMenu(array("ก่อสร้าง",isset($data[0])?$data[0]:"-"));
-						$this->AddcontentMenu(array("ผลิต",isset($data[1])?$data[1]:"-"));
-						$this->AddcontentMenu(array("ขาย",isset($data[2])?$data[2]:"-"));
-						$this->AddcontentMenu(array("ขน",isset($data[3])?$data[3]:"-"));
-						$this->AddcontentMenu(array("แสตมป์",isset($data[4])?$data[4]:"-"));
-						$this->TerminateMenu(array(isset($data[5])?$data[5]:"-"));
+						$this->AddcontentMenu(array("ก่อสร้าง",isset($data[0])?number_format($data[0],2):"-"));
+						$this->AddcontentMenu(array("ผลิต",isset($data[1])?number_format($data[1],2):"-"));
+						$this->AddcontentMenu(array("ขาย",isset($data[2])?number_format($data[2],2):"-"));
+						$this->AddcontentMenu(array("ขน",isset($data[3])?number_format($data[3],2):"-"));
+						$this->AddcontentMenu(array("แสตมป์",isset($data[4])?number_format($data[4],2):"-"));
+						$this->TerminateMenu(array(isset($data[5])?number_format($data[5],2):"-"));
 				break;
 			case 2 :
 						$this->AddTitleMenu(array("ประเภทคดี","จำนวนคดี"));
-						$this->AddcontentMenu(array("ไม่ทำบัญชี",isset($data[0])?$data[0]:"-"));
-						$this->AddcontentMenu(array("ผลิต",isset($data[1])?$data[1]:"-"));
-						$this->AddcontentMenu(array("ขาย",isset($data[2])?$data[2]:"-"));
-						$this->AddcontentMenu(array("ขน",isset($data[3])?$data[3]:"-"));
-						$this->TerminateMenu(array(isset($data[4])?$data[4]:"-"));
+						$this->AddcontentMenu(array("ไม่ทำบัญชี",isset($data[0])?number_format($data[0]):"-"));
+						$this->AddcontentMenu(array("ผลิต",isset($data[1])?number_format($data[1]):"-"));
+						$this->AddcontentMenu(array("ขาย",isset($data[2])?number_format($data[2]):"-"));
+						$this->AddcontentMenu(array("ขน",isset($data[3])?number_format($data[3]):"-"));
+						$this->TerminateMenu(array(isset($data[4])?number_format($data[4]):"-"));
 				break;
 			case 3 :
-						$this->AddTitleMenu(array("ประเภทคดี","จำนวนแห่ง"));
-						$this->AddcontentMenu(array("ก่อสร้าง",isset($data[0])?$data[0]:"-"));
-						$this->AddcontentMenu(array("ผลิต",isset($data[1])?$data[1]:"-"));
-						$this->AddcontentMenu(array("ขาย",isset($data[2])?$data[2]:"-"));
-						$this->AddcontentMenu(array("ขน",isset($data[3])?$data[3]:"-"));
-						$this->TerminateMenu(array(isset($data[4])?$data[4]:"-"));
+						$this->AddTitleMenu(array("ประเภทใบอนุญาต","จำนวนใบอนุญาต"));
+						$this->AddcontentMenu(array("ก่อสร้าง",isset($data[0])?number_format($data[0]):"-"));
+						$this->AddcontentMenu(array("ผลิต",isset($data[1])?number_format($data[1]):"-"));
+						$this->AddcontentMenu(array("ขาย",isset($data[2])?number_format($data[2]):"-"));
+						$this->AddcontentMenu(array("ขน",isset($data[3])?number_format($data[3]):"-"));
+						$this->TerminateMenu(array(isset($data[4])?number_format($data[4]):"-"));
 				break;
 			case 4 :
 						$this->AddTitleMenu(array("ประเภทสุรา","28","30","35","40","รวม"));
-						$this->AddcontentMenu(array("สุรากลั่น",$data[0],$data[1],$data[2],$data[3],$data[4]));
-						$this->AddcontentMenu(array("สุราแช่",$data[5],$data[6],$data[7],$data[8],$data[9]));
-						$this->TerminateMenu(array($data[0]+$data[5],$data[1]+$data[6],$data[2]+$data[7],$data[3]+$data[8],$data[4]+$data[9]));
+						$this->AddcontentMenu(array("สุรากลั่น",number_format($data[0]),number_format($data[1]),number_format($data[2]),number_format($data[3]),number_format($data[4])));
+						$this->AddcontentMenu(array("สุราแช่",number_format($data[5]),number_format($data[6]),number_format($data[7]),number_format($data[8]),number_format($data[9])));
+						$this->TerminateMenu(array(number_format($data[0]+$data[5]),number_format($data[1]+$data[6]),number_format($data[2]+$data[7]),number_format($data[3]+$data[8]),number_format($data[4]+$data[9])));
 				break;
 			case 5 :
-						$this->AddTitleMenu(array("ประเภทคดี","จำนวน"));
-						$this->AddcontentMenu(array("โรงงาน",isset($data[0])?$data[0]:"-"));
-						$this->AddcontentMenu(array("ยี่ห้อ",isset($data[1])?$data[1]:"-"));
-						$this->TerminateMenu(array(isset($data[2])?$data[2]:"-"));
+						$this->AddTitleMenu(array("ประเภทโรงงาน","จำนวน"));
+						$this->AddcontentMenu(array("โรงงาน",isset($data[0])?number_format($data[0]):"-"));
+						$this->AddcontentMenu(array("ยี่ห้อ",isset($data[1])?number_format($data[1]):"-"));
+						$this->TerminateMenu(array(isset($data[2])?number_format($data[2]):"-"));
 				break;
 			default :
 		}

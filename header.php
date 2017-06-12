@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    echo json_encode($_SESSION['surathai']['id']);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,19 +51,28 @@
         <div class="row">
             <!--CHECK USER-->
             <script type="text/javascript">
+                var factory = new Factory();
+                var ajaxUrl = 'API/userAPI.php';
+                var userData;
                 var pathFile = (window.location.pathname).split('/Surathai01/')[1];
-                var userData = JSON.parse(sessionStorage.getItem('userData'));
-                
-                if(pathFile != 'login.php') {
-                    if(userData == null)
-                        window.open('login.php', '_self');
-                    else {
-                        $(document).ready(function(e) {
-                            $('.user-menu img, .user-menu-detail-avatar img').attr('src', ((userData.Gender == 0) ? 'img/user-female.png' : 'img/user-male.png'));
-                            $('.user-menu-detail-label p').html(userData.Fullname);
-                        });
+
+                factory.connectDBService.sendJSONObj(ajaxUrl, {}).done(function(res) {
+                    if(res != undefined){
+                        var data = JSON.parse(res);
+                        userData = data;
+
+                        if(pathFile != 'login.php') {
+                            if(userData.id == 0)
+                                window.open('login.php', '_self');
+                            else {
+                                $(document).ready(function(e) {
+                                    $('.user-menu img, .user-menu-detail-avatar img').attr('src', ((userData.Gender == 0) ? 'img/user-female.png' : 'img/user-male.png'));
+                                    $('.user-menu-detail-label p').html(userData.Fullname);
+                                });
+                            }
+                        }
                     }
-                }
+                });
             </script>
             <!--HEADER-->
             <div class="header">
@@ -72,21 +85,21 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                                <a class="navbar-brand header-logo" href="#" style="padding-top: 5px;"><img src="img/logoheader.png"></a>
+                                <a class="navbar-brand header-logo" href="#" style="padding-top: 5px; margin-top: 0px;"><img height="60" src="img/logoheader.png" ></a>
                         </div>
 
                         <ul class="nav navbar-nav navbar-left">
                             <li>
-                                <h2 style="margin-top: 8px;">ระบบข้อมูลผู้ประกอบการสุราชุมชน</h2>
-                                <h3 class="header-menu-title" style="margin-top: 0px;"><i class="fa fa-caret-right text-right-indent"></i> <span></span></h3>
+                                <h2 style="margin-top: 5px; font-size: 20px; margin-left: 10px;">ฐานข้อมูลผู้ประกอบการสุราชุมชน</h2>
+                                <h3 class="header-menu-title" style="margin-top: 0px; margin-left: 10px;"><i class="fa fa-caret-right text-right-indent"></i> <span style="font-size: 18px;"></span></h3>
                             </li>
                         </ul>
                         <div class="collapse navbar-collapse navbar-ex1-collapse">
                             <ul class="nav navbar-nav navbar-right">
-                                <li class="navbar-icon"><a href="map.php" data-header-menu="แผนที่"><span><i class="glyphicon glyphicon-map-marker"></i> แผนที่</span></a></li>
-                                <li class="navbar-icon"><a href="search_tax.php" data-header-menu="ค้นหา"><span><i class="glyphicon glyphicon-search"></i> ค้นหา</span></a></li>
-                                <li class="navbar-icon"><a href="reporttax.php" data-header-menu="รายงาน"><span><i class="glyphicon glyphicon-stats"></i> รายงาน</span></a></li>
-                                <li class="navbar-icon"><a href="e_factory.php" data-header-menu="e-Form"><span><i class="glyphicon glyphicon-list-alt"></i> e-Form</span></a></li>
+                                <li class="navbar-icon"><a href="map.php" data-header-menu="แผนที่"><span style="font-size: 16px;"><i class="glyphicon glyphicon-map-marker"></i> แผนที่</span></a></li>
+                                <li class="navbar-icon"><a href="search_tax.php" data-header-menu="ค้นหา"><span style="font-size: 16px;"><i class="glyphicon glyphicon-search"></i> ค้นหา</span></a></li>
+                                <li class="navbar-icon"><a href="reporttax.php" data-header-menu="รายงาน"><span style="font-size: 16px;"><i class="glyphicon glyphicon-stats"></i> รายงาน</span></a></li>
+                                <li class="navbar-icon"><a href="e_factory.php" data-header-menu="e-Form"><span style="font-size: 16px;"><i class="glyphicon glyphicon-list-alt"></i> e-Form</span></a></li>
                                 <li class="navbar-icon">
                                     <a href="#" data-header-menu="ผู้ใช้งานระบบ">
                                         <div class="user-menu">

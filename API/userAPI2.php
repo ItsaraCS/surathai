@@ -143,28 +143,29 @@
 					die;
 				break;
 			case "autocomplete" :
+					$Under = 0;
 					switch($user->Under){
 						case 0 :
-								$DB->GetData("SELECT AdminID AS ID, adGender AS Icon, CONCAT(adFullname,' [',adBranch,']') AS Fullname FROM `Admin` WHERE adFullname LIKE ? LIMIT 10",array("s","%".$_GET["keyword"]."%"));
+								$DB->GetData("SELECT AdminID AS ID, adFullname, CONCAT(adFullname,' [',adBranch,']') AS Fullname FROM `Admin` WHERE adFullname LIKE ? LIMIT 10",array("s","%".$_GET["keyword"]."%"));
 							break;
 						case 1 :
-								$DB->GetData("SELECT AdminID AS ID, adGender AS Icon, adFullname AS Fullname FROM `Admin` WHERE adUnder = 1 AND adRegion = ? AND adFullname LIKE ? LIMIT 10",array("is",$user->Region,"%".$_GET["keyword"]."%"));
+								$DB->GetData("SELECT AdminID AS ID, adFullname, adFullname AS Fullname FROM `Admin` WHERE adUnder = 1 AND adRegion = ? AND adFullname LIKE ? LIMIT 10",array("is",$user->Region,"%".$_GET["keyword"]."%"));
 							break;
 						case 2 :
-								$DB->GetData("SELECT AdminID AS ID, adGender AS Icon, adFullname AS Fullname FROM `Admin` WHERE adUnder = 2 AND adArea = ? AND adFullname LIKE ? LIMIT 10",array("is",$user->Area,"%".$_GET["keyword"]."%"));
+								$DB->GetData("SELECT AdminID AS ID, adFullname, adFullname AS Fullname FROM `Admin` WHERE adUnder = 2 AND adArea = ? AND adFullname LIKE ? LIMIT 10",array("is",$user->Area,"%".$_GET["keyword"]."%"));
 							break;
 						case 3 :
-								$DB->GetData("SELECT AdminID AS ID, adGender AS Icon, adFullname AS Fullname FROM `Admin` WHERE adUnder = 3 AND adBranch = ? AND adFullname LIKE ? LIMIT 10",array("is",$user->Branch,"%".$_GET["keyword"]."%"));
+								$DB->GetData("SELECT AdminID AS ID, adFullname, adFullname AS Fullname FROM `Admin` WHERE adUnder = 3 AND adBranch = ? AND adFullname LIKE ? LIMIT 10",array("is",$user->Branch,"%".$_GET["keyword"]."%"));
 							break;
 						default : $DB->GetData("SELECT * FROM `Admin` WHERE 0");
 					}
 
 					$data = array();
 					while($fdata = $DB->FetchData()){
-						$sdata = new exUser_Item;
+						$sdata = new exItem;
 						$sdata->id = $fdata["ID"];
-						$sdata->icon = $fdata["Icon"];
-						$sdata->text = $fdata["Fullname"];
+						$sdata->value = $fdata["adFullname"];
+						$sdata->label = $fdata["Fullname"];
 						array_push($data,$sdata);
 					}
 					header("Access-Control-Allow-Origin: *");
@@ -174,7 +175,7 @@
 			default : $user->Message = "กรุณาเข้าสู่ระบบก่อนใช้งาน";
 		}
 	}else{
-		$user->Message = "กรุณาเข้าสู่ระบบก่อนใช้งาน";
+		if($user->id == 0) $user->Message = "กรุณาเข้าสู่ระบบก่อนใช้งาน";
 	}
 
 	header("Access-Control-Allow-Origin: *");

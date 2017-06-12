@@ -66,12 +66,12 @@
 
     <!--MAP AND TABLE DATA-->
     <div class="col-md-7">
-        <div class="panel panel-default" style="height: 74vh; border-radius: 0; padding: 0;">
+        <div class="panel panel-default" style="height: 77vh; border-radius: 0; padding: 0;">
             <div class="panel-heading text-center header-table">
                 <h3>รายการข้อมูล</h3>
             </div>
             <div class="panel-body" style="padding: 0;">
-                <div class="table-responsive" style="height: 66vh;">
+                <div class="table-responsive" style="height: 77vh;">
                     <table class="table table-striped table-bordered eform-table" style="margin-top: 0;"> 
                         <thead><tr></tr></thead>
                         <tbody></tbody>

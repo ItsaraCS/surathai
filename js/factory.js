@@ -6,7 +6,6 @@ Factory.prototype.initService = {
         var regex;
 
         $(self).closest('div, td').removeClass('has-error');
-        $(self).next('.error-content').removeClass('show').addClass('hide');
         $(self).closest('td').find('.error-content').removeClass('show').addClass('hide');
 
         switch(errorType) {

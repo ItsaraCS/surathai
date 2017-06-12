@@ -3,19 +3,29 @@ html body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'thai_sans_literegular';
+    font-family: 'CSChatThai';
     font-weight: 600;
     color: #2A7CBF;
     font-size: 2.8em; 
 }
 
 /* Fonts */
+
+@font-face {
+    font-family: 'CSChatThai';
+    src: url('../fonts/CSChatThai.ttf');
+}
+
+/*
 @font-face {
     font-family: 'thai_sans_literegular';
     src: url('../fonts/thaisanslite.woff2') format('woff2'), url('../fonts/thaisanslite.woff') format('woff');
     font-weight: 600;
     font-style: inherit;
 }
+*/
+
+
 
 .container { margin-top: 15em; }
 

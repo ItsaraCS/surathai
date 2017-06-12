@@ -6,7 +6,7 @@
         <div class="row">
             <!--DATA-->
             <div class="col-md-4">
-                <div class="panel panel-default" style="height: 55vh; border-radius: 0;">
+                <div class="panel panel-default" style="height: 58vh; border-radius: 0;">
                     <div class="panel-body" style="padding: 0;">
                         <table class="table table-striped search-label-detail-table" style="margin-top: 0; margin-bottom: 0;">
                             <tbody>
@@ -16,8 +16,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="col-md-12 text-center" style="height: 47vh; padding: 10px !important; border: 0;">
-                                        <img src="" id="BrandImage" style="width: 80%; height: 40vh;">
+                                    <td class="col-md-12 text-center" style="height: 50vh; padding: 10px !important; border: 0;">
+                                        <img src="" id="BrandImage" style="width: 100%; height: 46vh;">
                                     </td>
                                 </tr>
                             </tbody>
@@ -28,10 +28,10 @@
 
             <!--MAP-->
             <div class="col-md-8 get-map">
-                <div class="panel panel-default" style="height: 55vh; border-radius: 0; padding: 0;">
+                <div class="panel panel-default" style="height: 58vh; border-radius: 0; padding: 0;">
                     <div class="panel-body" style="padding-top: 0; padding-bottom: 0;">
                         <div class="row">
-                            <div id="map" class="map" style="width: 100%; height: 55vh;"></div>
+                            <div id="map" class="map" style="width: 100%; height: 58vh;"></div>
                                 <div id="popup" class="ol-popup">
                                     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
                                     <div id="popup-content"></div>

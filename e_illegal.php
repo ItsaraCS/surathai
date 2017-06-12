@@ -5,7 +5,7 @@
     <!--FORM DATA-->
     <div class="col-md-5">
         <form name="insertForm" novalidate>
-            <div class="panel panel-default" style="height: 65vh; overflow-y: scroll; border-radius: 0;">
+            <div class="panel panel-default" style="height: 67vh; overflow-y: scroll; border-radius: 0;">
                 <div class="panel-body">
                     <table class="table table-striped" style="margin-top: 0; margin-bottom: 0;">
                         <tbody>
@@ -161,10 +161,10 @@
 
     <!--MAP AND TABLE DATA-->
     <div class="col-md-7">
-        <div class="panel panel-default" style="height: 44vh; border-radius: 0; padding: 0;">
+        <div class="panel panel-default" style="height: 51vh; border-radius: 0; padding: 0;">
             <div class="panel-body" style="padding-top: 0; padding-bottom: 0;">
                 <div class="row">
-                    <div id="map" class="map" style="width: 100%; height: 44vh;"></div>
+                    <div id="map" class="map" style="width: 100%; height: 51vh;"></div>
                         <div id="popup" class="ol-popup">
                             <a href="#" id="popup-closer" class="ol-popup-closer"></a>
                             <div id="popup-content"></div>
@@ -174,9 +174,9 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default" style="height: 30vh; border-radius: 0; padding: 0;">
+        <div class="panel panel-default" style="height: 25vh; border-radius: 0; padding: 0;">
             <div class="panel-body" style="padding: 0;">
-                <div class="table-responsive" style="height: 30vh;">
+                <div class="table-responsive" style="height: 25vh; overflow-y: hidden;">
                     <table class="table table-striped table-bordered eform-table" style="margin-top: 0;"> 
                         <thead><tr></tr></thead>
                         <tbody></tbody>

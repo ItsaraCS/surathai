@@ -3,7 +3,7 @@
 <!--SECTION-->
 <div class="section hide">
     <!--TABLE REPORT-->
-    <div class="col-md-12 table-responsive table-report" style="height: 29vh; margin-bottom: 15px;">
+    <div class="col-md-12 table-responsive table-report" style="height: 32vh; margin-bottom: 15px;">
         <table class="table table-striped table-bordered">
             <thead><tr></tr></thead>
             <tbody></tbody>
@@ -60,6 +60,10 @@
                     $.each(data.province, function(index, item) {
                         $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
                     });
+                    
+                    $('.nav-menu #year, ' +
+                        '.nav-menu #region, ' +
+                        '.nav-menu #province').find('option:eq(1)').prop('selected', true);
 
                     getTable();
                     getChart();

@@ -4,7 +4,7 @@
         $(document).ready(function(e) {
             //--Variable
             var factory = new Factory();
-            var ajaxUrl = 'http://210.4.143.51/Surathai01/API/userAPI.php';
+            var ajaxUrl = 'API/userAPI.php';
             var params = {};
 
             //--Page load
@@ -54,15 +54,13 @@
                 };
                 
                 factory.connectDBService.sendJSONObj(ajaxUrl, params, false).done(function(res) {
-                    if(res != undefined){
+                    if(res != undefined) {
                         var data = JSON.parse(res);
                         
                         if(data.id == 0)
                             window.open('login.php', '_self');
-                        else {
-                            sessionStorage.setItem('userData', JSON.stringify(data));
+                        else
                             window.open('map.php', '_self');
-                        }
                     }
                 });
             });
@@ -70,18 +68,12 @@
             $(document).on('click', '#logoutBtn', function(e) {
                 e.preventDefault();
 
-                params = {
-                    fn: 'logout'
-                };
-                
-                factory.connectDBService.sendJSONObj(ajaxUrl, params, false).done(function(res) {
+                factory.connectDBService.sendJSONObj(ajaxUrl, { fn: 'logout' }, false).done(function(res) {
                     if(res != undefined){
                         var data = JSON.parse(res);
                         
-                        if(data.id == 0) {
-                            sessionStorage.removeItem('userData');
+                        if(data.id == 0) 
                             window.open('login.php', '_self');
-                        }
                     }
                 });
             });

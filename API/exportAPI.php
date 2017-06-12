@@ -2,7 +2,7 @@
     require('../lib/fpdf/fpdf.php');
     define('FPDF_FONTPATH', '../lib/fpdf/font/');
 
-    class exportAPI {
+    class ExportAPI {
         public $pdf;
 
         public function __construct() {
@@ -14,6 +14,33 @@
 
             $summaryTableData = [
                 'header'=>['รายการ', 'ภาษี'],
+                'body'=>[
+                    [
+                        'title'=>'ก่อสร้าง',
+                        'value'=>'0'
+                    ],
+                    [
+                        'title'=>'ผลิต',
+                        'value'=>'0'
+                    ],
+                    [
+                        'title'=>'ขาย',
+                        'value'=>'0'
+                    ],
+                    [
+                        'title'=>'ขน',
+                        'value'=>'0'
+                    ],
+                    [
+                        'title'=>'แสตมป์',
+                        'value'=>'197741.1'
+                    ]
+                ],
+                'footer'=>['รวมทั้งสิ้น', '197741.1']
+            ];
+
+            $detailTableData = [
+                'header'=>['ลำดับที่', 'ชื่อสถานประกอบการ', 'ค่าธรรมเนียมใบอนุญาตก่อสร้าง', 'ค่าธรรมเนียมใบอนุญาตผลิต', 'ค่าธรรมเนียมใบอนุญาตจำหน่าย', 'ค่าธรรมเนียมใบอนุญาตขน', 'จำหน่ายแสตมป์สุรา'],
                 'body'=>[
                     [
                         'title'=>'ก่อสร้าง',
@@ -83,16 +110,21 @@
                     $fill = !$fill;
                 }
 
-                $this->pdf->SetFillColor(101, 115, 126);
+                $this->pdf->Ln();
+                $this->pdf->Cell(10);
+                $this->pdf->SetFillColor(76, 174, 76);
                 $this->pdf->SetTextColor(255, 255, 255);
 
                 foreach($summaryTableData['footer'] as $footer) {
-                    $this->pdf->Ln();
-                    $this->pdf->Cell(10);
-                    $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', $footer['title']), 1, 0, 'C', true);
-                    $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', number_format($body['value'], 2)), 1, 0, 'R', true);
-                    $fill = !$fill;
+                    if(is_numeric($footer))
+                        $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', number_format($footer, 2)), 1, 0, 'R', true);
+                    else
+                        $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', $footer), 1, 0, 'C', true);
                 }
+
+                
+                /*$this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', $summaryTableData['footer']['title']), 1, 0, 'C', true);
+                $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', number_format($summaryTableData['footer']['value'], 2)), 1, 0, 'R', true);*/
             }
 
             /*if(!empty($mapImage)) {
@@ -105,5 +137,5 @@
         }
     }
 
-    new exportAPI;
+    new ExportAPI;
 ?>

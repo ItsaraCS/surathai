@@ -5,7 +5,7 @@
 	<!--MAP-->
     <div class="container-fluid">
         <div class="row">
-            <div id="map" class="map" style="position: fixed; height: 100%;"></div>
+            <div id="map" class="map" style="position: fixed; width: 100%; height: 100%;"></div>
             <!--POPUP-->
             <div id="popup" class="ol-popup">
                 <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -14,7 +14,7 @@
             
             <!--MAP LEGEND AND LAYERS TOGGLERS-->
             <div id="map_legend"><h3>สัญลักษณ์แผนที่</h3></div>
-           <div id="map_layer_toggler_container">
+            <div id="map_layer_toggler_container">
 				<div id="map_layer_title">ชั้นข้อมูล</div>
 				<div id="map_layer_toggler"></div>
 			</div>

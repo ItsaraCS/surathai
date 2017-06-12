@@ -4,18 +4,18 @@
 	require_once("../class/report.class.php");
 	require_once("../class/search.class.php");
 
-$fn = isset($_POST["fn"])?$_POST["fn"]:"";
+$fn = isset($_GET["fn"])?$_GET["fn"]:"";
 
 switch($fn){
 	case "gettable" :
 				$RPP = 5;
-				$year = isset($_POST["year"])?$_POST["year"]:0;
-				$region = isset($_POST["region"])?$_POST["region"]:0;
-				$province = isset($_POST["province"])?$_POST["province"]:0;
-				$page = isset($_POST["page"])?$_POST["page"]-1:0;
-				$job = isset($_POST["job"])?$_POST["job"]:0;
-				$menu = isset($_POST["menu"])?$_POST["menu"]:0;
-				$Keyword = isset($_POST["keyword"])?$_POST["keyword"]:"";
+				$year = isset($_GET["year"])?$_GET["year"]:0;
+				$region = isset($_GET["region"])?$_GET["region"]:0;
+				$province = isset($_GET["province"])?$_GET["province"]:0;
+				$page = isset($_GET["page"])?$_GET["page"]-1:0;
+				$job = isset($_GET["job"])?$_GET["job"]:0;
+				$menu = isset($_GET["menu"])?$_GET["menu"]:0;
+				$Keyword = isset($_GET["keyword"])?$_GET["keyword"]:"";
 				if(!in_array($job,array(1,2,3,4,5))) $job = 1;
 				$title = array(
 					10 => array("ลำดับที่","ชื่อสถานประกอบการ","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา"),
@@ -65,8 +65,15 @@ switch($fn){
         
         
 								$data = new exSearch_Table;
-								$data->Init(1,$page+1,$RPP,$total,array($s1,$s2,$s3,$s4,$s5,($s1+$s2+$s3+$s4+$s5)));
-        
+								$data->Init(1,$page+1,$RPP,$total,array(
+													number_format($s1,2),
+													number_format($s2,2),
+													number_format($s3,2),
+													number_format($s4,2),
+													number_format($s5,2),
+													number_format($s1+$s2+$s3+$s4+$s5,2)
+												)
+									);
 								if($total > 0){
 									$etcObj = new exETC;
 									for($i=0;$i<$colnum;$i++){
@@ -162,7 +169,7 @@ switch($fn){
 							break;
 						case 4:
 								$DB = new exDB;
-								$total = $DB->GetDataOneField("SELECT count(StampID) FROM `Stamp`,`Label` WHERE stLabel = LabelID AND lbType = ? AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ?",array("iiiis",$menu,$year,$region,$province,"%".$Keyword."%"));
+								$total = $DB->GetDataOneField("SELECT count(StampID) FROM `Stamp`,`Label` WHERE stLabel = LabelID AND ? IN (0,lbType) AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ?",array("iiiis",$menu,$year,$region,$province,"%".$Keyword."%"));
 								$tdata = array(0,0,0,0,0,0,0,0,0,0,0);
 								$psum = array("128"=>0,"130"=>1,"135"=>2,"140"=>3,"150"=>4,"228"=>5,"230"=>6,"235"=>7,"240"=>8,"250"=>9);
 								$DB->GetData("SELECT lbDegree, lbType, SUM(stAmount) AS S FROM `Stamp` LEFT JOIN Label ON stLabel = LabelID WHERE lbDegree IN (28,30,35,40) GROUP BY lbDegree, lbType");
@@ -172,7 +179,7 @@ switch($fn){
 								$tdata[4] = $tdata[0] + $tdata[1] + $tdata[2] + $tdata[3];
 								$tdata[9] = $tdata[5] + $tdata[6] + $tdata[7] + $tdata[8];
 
-								$DB->GetData("SELECT lbFacName, stFacCode, stNumber, lbBrand, lbDegree, stAmount, stSize, stPrice, stVolume, stTax, stBookNo, stReleaseDate, faLat, faLong FROM `Stamp`,`Label`,`Factory` WHERE FactoryID = stFacCode AND stLabel = LabelID AND lbType = ? AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ? LIMIT ?,?",array("iiiisii",$menu,$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+								$DB->GetData("SELECT lbFacName, stFacCode, stNumber, lbBrand, lbDegree, stAmount, stSize, stPrice, stVolume, stTax, stBookNo, stReleaseDate, faLat, faLong FROM `Stamp`,`Label`,`Factory` WHERE FactoryID = stFacCode AND stLabel = LabelID AND ? IN (0,lbType) AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ? LIMIT ?,?",array("iiiisii",$menu,$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
                 
 								$data = new exSearch_Table;
 								$data->Init(4,$page+1,$RPP,$total,$tdata);
@@ -249,12 +256,12 @@ switch($fn){
 			break;
 	case "filter" :
 				$DB = new exDB;
-				if($_POST["src"] == 0){
+				if($_GET["src"] == 0){
 					$data = new exFilter_Bar;
 					$data->year = array();
 					$data->region = array();
 					$data->province = array();
-					$data->job = isset($_POST["job"])?$_POST["job"]:1;
+					$data->job = isset($_GET["job"])?$_GET["job"]:1;
 
 
 					if(($data->job == 1)||($data->job == 4)||($data->job == 3)){
@@ -332,7 +339,7 @@ switch($fn){
 						array_push($data->province,$sdata);
 					}
 				}else{
-					$S_region = isset($_POST["value"])?intval($_POST["value"]):0;
+					$S_region = isset($_GET["value"])?intval($_GET["value"]):0;
 					$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province` WHERE ? IN (0,pvRegion)",array("i",$S_region));
 
 					if($DB->GetNumRows()>0){
@@ -357,13 +364,13 @@ switch($fn){
 			break;
 
 	case "autocomplete" :
-				$year = isset($_POST["year"])?$_POST["year"]:date("Y");
-				switch($_POST["src"]){
+				$year = isset($_GET["year"])?$_GET["year"]:date("Y");
+				switch($_GET["src"]){
 					case 1: //โรงงาน
 							$data = array();
         
 							$DB = new exDB;
-							$DB->GetData("SELECT `FactoryID`, `faName` FROM `Factory` WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND faName LIKE ? LIMIT 10",array("is",$year,"%".$_POST["value"]."%"));
+							$DB->GetData("SELECT `FactoryID`, `faName` FROM `Factory` WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND faName LIKE ? LIMIT 10",array("is",$year,"%".$_GET["value"]."%"));
         
 							while($fdata = $DB->FetchData()){
 								$sdata = new exItem;
@@ -377,7 +384,7 @@ switch($fn){
 							$data = array();
         
 							$DB = new exDB;
-							$DB->GetData("SELECT `IllegalID`, `ilSuspect` FROM `Illegal` WHERE YEAR(ilActDate + INTERVAL 3 MONTH) = ? AND ilSuspect LIKE ? LIMIT 10",array("is",$year,"%".$_POST["value"]."%"));
+							$DB->GetData("SELECT `IllegalID`, `ilSuspect` FROM `Illegal` WHERE YEAR(ilActDate + INTERVAL 3 MONTH) = ? AND ilSuspect LIKE ? LIMIT 10",array("is",$year,"%".$_GET["value"]."%"));
         
 							while($fdata = $DB->FetchData()){
 								$sdata = new exItem;
@@ -391,8 +398,8 @@ switch($fn){
 							$data = array();
 							$sdata = new exItem;
 							$sdata->id = 0;
-							$sdata->value = $_POST["value"];
-							$sdata->label = "ค้นหาแสมป์หมายเลข ".$_POST["value"];
+							$sdata->value = $_GET["value"];
+							$sdata->label = "ค้นหาแสมป์หมายเลข ".$_GET["value"];
 							array_push($data,$sdata);
 						break;
 					default :
@@ -400,10 +407,10 @@ switch($fn){
 				}
 		break;
 	case "getgraph" :
-				$job = isset($_POST["job"])?$_POST["job"]:0;
-				$year = isset($_POST["year"])?$_POST["year"]:9999;
-				$region = isset($_POST["region"])?$_POST["region"]:0;
-				$province = isset($_POST["province"])?$_POST["province"]:0;
+				$job = isset($_GET["job"])?$_GET["job"]:0;
+				$year = isset($_GET["year"])?$_GET["year"]:9999;
+				$region = isset($_GET["region"])?$_GET["region"]:0;
+				$province = isset($_GET["province"])?$_GET["province"]:0;
 				
 				$data = new exChart;
 				$data->minvalue = 999999999999;

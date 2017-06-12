@@ -66,7 +66,6 @@ switch($fn){
         
 								$data = new exSearch_Table;
 								$data->Init(1,$page+1,$RPP,$total,array($s1,$s2,$s3,$s4,$s5,($s1+$s2+$s3+$s4+$s5)));
-        
 								if($total > 0){
 									$etcObj = new exETC;
 									for($i=0;$i<$colnum;$i++){
@@ -394,6 +393,25 @@ switch($fn){
 							$sdata->value = $_POST["value"];
 							$sdata->label = "ค้นหาแสมป์หมายเลข ".$_POST["value"];
 							array_push($data,$sdata);
+						break;
+					case 5: //โรงงาน
+							$menu = isset($_POST["menu"])?$_POST["menu"]:0;
+							$data = array();
+        
+							$DB = new exDB;
+							if($menu < 2){
+								$DB->GetData("SELECT `FactoryID` AS FID, `faName` AS FVALUE FROM `Factory` WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND faName LIKE ? LIMIT 10",array("is",$year,"%".$_POST["value"]."%"));
+							}else{
+								$DB->GetData("SELECT `LabelID` AS FID, `lbBrand` AS FVALUE FROM `Label` WHERE YEAR(lbExpireDate + INTERVAL 3 MONTH) = ? AND lbBrand LIKE ?",array("is",$year,"%".$_POST["value"]."%"));
+							}
+        
+							while($fdata = $DB->FetchData()){
+								$sdata = new exItem;
+								$sdata->id = $fdata["FID"];
+								$sdata->value = $fdata["FVALUE"];
+								$sdata->label = $fdata["FVALUE"];
+								array_push($data,$sdata);
+							}
 						break;
 					default :
 							$data = array();

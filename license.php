@@ -5,7 +5,7 @@
 	<!--MAP-->
     <div class="container-fluid">
         <div class="row">
-            <div id="map" class="map" style="position: fixed; height: 100%;"></div>
+            <div id="map" class="map" style="position: fixed; width: 100%; height: 100%;"></div>
             <!--POPUP-->
             <div id="popup" class="ol-popup">
                 <a href="#" id="popup-closer" class="ol-popup-closer"></a>

@@ -76,7 +76,7 @@
                                             <div class="input-group">
                                                 <input type="password" class="form-control" id="Password" disabled>
                                                 <span class="input-group-addon" style="padding: 0;">
-                                                    <button type="button" class="btn btn-info" id="changePasswordBtn">แก้ไข</button>
+                                                    <button type="button" class="btn btn-info" id="changePasswordBtn" title="คลิกเพื่อแก้ไข Password">แก้ไข</button>
                                                 </span>
                                             </div>
                                             <span class="error-content hide" data-label="ชื่อผู้ใช้งาน"></span>
@@ -122,7 +122,7 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/userAPI.php';
+        var ajaxUrl = 'API/userAPI.php';
         var params = {};
         var userDataOrigin;
 
@@ -133,18 +133,12 @@
         function getInit() {
             $('#addUserBtn, #insertBtn').hide();
 
-            params = {
-                fn: 'getdata',
-                id: userData.id
-            };
-            console.log(params);
-        
-            factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
+            factory.connectDBService.sendJSONObj(ajaxUrl, {}).done(function(res) {
                 if(res != undefined){
                     var data = JSON.parse(res);
                     userData = data;
                     userDataOrigin = data;
-                    
+
                     switch(userData.Level) {
                         case 0: //--ผู้ดูแลระบบ
                             $('#addUserBtn').show();

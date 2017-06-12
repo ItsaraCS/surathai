@@ -1,8 +1,8 @@
 <?php 
 
 define("_DBHOST","localhost");
-define("_DBUSER","sura");
-define("_DBPASSWORD","45Xc7JnWU8a3");
+define("_DBUSER","root");
+define("_DBPASSWORD","");
 define("_DBNAME","surathai");
 
 //Database Class

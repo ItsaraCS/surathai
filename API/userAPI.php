@@ -175,7 +175,7 @@
 			default : $user->Message = "กรุณาเข้าสู่ระบบก่อนใช้งาน";
 		}
 	}else{
-		$user->Message = "กรุณาเข้าสู่ระบบก่อนใช้งาน";
+		if($user->id == 0) $user->Message = "กรุณาเข้าสู่ระบบก่อนใช้งาน";
 	}
 
 	header("Access-Control-Allow-Origin: *");
