@@ -1,7 +1,3 @@
-<?php
-    session_start();
-    echo json_encode($_SESSION['surathai']['id']);
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
