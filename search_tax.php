@@ -121,7 +121,8 @@
                 source: new ol.source.TileWMS( {
                     url: 'http://www.dee-map.com/geoserver/gwc/service/wms/dmwms',
                     params: { 'LAYERS': 'Dee-Map', 'VERSION': '1.1.1', 'FORMAT': 'image/png8' },
-                    serverType: 'geoserver', crossOrigin: 'anonymous', noWrap: true,  wrapX: false
+                    //serverType: 'geoserver', 
+                    crossOrigin: 'anonymous', noWrap: true,  wrapX: false
                 }),  
                 extent: [ -20037508.34, -20037508.34, 20037508.34, 20037508.34 ]
             });
@@ -210,7 +211,7 @@
                     $.each(data.label, function(index, item) {
                         theadContent += '<th class="text-center text-nowrap">' +
                                 '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
-                                    '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
+                                    '<input id="'+ item +'" type="checkbox" class="select-export" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                 '</div>' +
                             '</th>';
                     });
@@ -322,7 +323,7 @@
                     $.each(data.label, function(index, item) {
                         theadContent += '<th class="text-center text-nowrap">' +
                                 '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
-                                    '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
+                                    '<input id="'+ item +'" type="checkbox" class="select-export" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                 '</div>' +
                             '</th>';
                     });
@@ -388,9 +389,8 @@
             }
 
             factory.connectDBService.sendJSONStr('API/paginatorAPI.php', params).done(function(res) {
-                if(res != undefined){
+                if(res != undefined)
                     $('.pagination').append(res);
-                }
             });
         }
 
@@ -644,8 +644,163 @@
 
         $(document).on('click', '.export-file', function(e) {
             e.preventDefault();
+            
+            var exportData = {
+                title: 'ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน',
+                menu: 'ค้นหางานภาษี',
+                summaryTableData: {
+                    header: [],
+                    body: [],
+                    footer: [],
+                    sizeWidth: []
+                },
+                detailTableData: {},
+                mapImage: '../img/noimages.png'
+            };
 
-            window.open('export/search/search_tax.pdf', '_blank');
+            //--summaryTableData
+            $.each($('.search-detail-table thead tr th'), function(index, item) {
+                exportData.summaryTableData.header.push($(item).html());
+                exportData.summaryTableData.sizeWidth.push((170 / $('.search-detail-table thead tr th').length));
+            });
+            $.each($('.search-detail-table tbody tr'), function(index, item) {
+                if(index != ($('.search-detail-table tbody tr').length - 1)) {
+                    var summaryTableDataBody = [];
+
+                    $.each($(item).find('td'), function(tdIndex, tdItem) {
+                        if($(tdItem).find('p, span').length > 0)
+                            summaryTableDataBody.push($(tdItem).find('p, span').html());
+                        else
+                            summaryTableDataBody.push($(tdItem).html());
+                    });
+
+                    exportData.summaryTableData.body[index] = summaryTableDataBody;
+                } else {
+                    $.each($(item).find('td'), function(tdIndex, tdItem) {
+                        if($(tdItem).find('p, span').length > 0)
+                            exportData.summaryTableData.footer.push($(tdItem).find('p, span').html());
+                        else
+                            exportData.summaryTableData.footer.push($(tdItem).html());
+                    });
+                }
+            });
+
+            //--detailTableData
+            var screen = 0;
+            var width = 0;
+            var total = 0;
+            var page = 1;
+
+            var detailTableDataPerPage = [];
+            var perPage = 0;
+            $.each($('.search-table thead tr th'), function(index, item) {
+                if($(item).find('.select-export').is(':checked')) {
+                    screen += $(item).innerWidth();
+                    width += $(item).innerWidth();
+                    total += 1;
+                    perPage += 1;
+
+                    if(width > 1250) {
+                        detailTableDataPerPage.push((perPage - 1));
+                        width = $(item).innerWidth();
+                        page += 1;
+                        perPage = 1;
+                    }
+                }
+            });
+
+            if(perPage > 0) 
+                detailTableDataPerPage.push(perPage);
+                
+            var detailTableDataHeader = [];
+            var detailTableDataSizeWidth = [];
+            $.each($('.search-table thead tr th'), function(index, item) {
+                if($(item).find('.select-export').is(':checked')) {
+                    detailTableDataHeader.push($(item).find('label').html());
+                    detailTableDataSizeWidth.push(($(item).innerWidth() / 4.5));
+                }
+            });
+
+            //--Get index with select export
+            var selectItem = [];
+            var selectIndex = 0;
+            $.each($('.search-table thead tr th'), function(theadIndex, theadItem) {
+                if($(theadItem).find('.select-export').is(':checked')) { 
+                    selectItem[selectIndex] = theadIndex;
+                    selectIndex++;
+                }
+            });
+
+            var detailTableDataBody = [];
+            var detailTableDataAlign = [];
+            for(var i=0; i<page; i++) { 
+                var body = [];
+                var align = [];
+
+                $.each($('.search-table tbody tr'), function(tbodyIndex, tbodyItem) { 
+                    var bodyData = [];
+                    var alignData = [];
+
+                    for(var j=0; j<detailTableDataPerPage[i]; j++) { 
+                        if(selectItem[j] != undefined) {
+                            bodyData[j] = $(tbodyItem).find('td:eq('+ selectItem[j] +')').html();
+                            alignData[j] = ({
+                                'text-left': 'L',
+                                'text-right': 'R',
+                                'text-center': 'C'
+                            })[($(tbodyItem).find('td:eq('+ selectItem[j] +')').attr('class')).replace(' text-nowrap', '')];
+                        }
+                    }
+
+                    body[tbodyIndex] = bodyData;
+                    align[tbodyIndex] = alignData;
+                });
+
+                for(var j=0; j<detailTableDataPerPage[i]; j++) {
+                    selectItem.shift();
+                }
+
+                detailTableDataBody[i] = body;
+                detailTableDataAlign[i] = align;
+            }
+
+            var body = [];
+            var align = [];
+            var row = 0;
+            for(var i=0; i<page; i++) {
+                var header = [];
+                var sizeWidth = [];
+                body = [];
+                align = [];
+
+                for(var j=0; j<detailTableDataPerPage[i]; j++) {
+                    if(detailTableDataHeader[row] != undefined && detailTableDataSizeWidth[row] != undefined) {
+                        header.push(detailTableDataHeader[row]);
+                        sizeWidth.push(detailTableDataSizeWidth[row]);
+                    }
+
+                    row++;
+                }
+
+                exportData.detailTableData[i] = {
+                    header: header,
+                    body: detailTableDataBody[i],
+                    align: detailTableDataAlign[i],
+                    sizeWidth: sizeWidth
+                }
+            }
+            console.log(exportData);
+
+            params = {
+                funcName: 'exportSearchForPDF',
+                params: exportData
+            };
+
+            factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
+                if(res != undefined) {
+                    window.open(res, '_blank');
+                }
+            });
         });
 
         $('#FactoryName').autocomplete({ 

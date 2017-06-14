@@ -10,71 +10,17 @@
             $this->pdf->AddFont('angsana', '', 'angsa.php');
 
             $data = json_decode(file_get_contents('php://input'), true);
-            //$this->exportSearchForPDF();
-
-            $summaryTableData = [
-                'header'=>['รายการ', 'ภาษี'],
-                'body'=>[
-                    [
-                        'title'=>'ก่อสร้าง',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'ผลิต',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'ขาย',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'ขน',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'แสตมป์',
-                        'value'=>'197741.1'
-                    ]
-                ],
-                'footer'=>['รวมทั้งสิ้น', '197741.1']
-            ];
-
-            $detailTableData = [
-                'header'=>['ลำดับที่', 'ชื่อสถานประกอบการ', 'ค่าธรรมเนียมใบอนุญาตก่อสร้าง', 'ค่าธรรมเนียมใบอนุญาตผลิต', 'ค่าธรรมเนียมใบอนุญาตจำหน่าย', 'ค่าธรรมเนียมใบอนุญาตขน', 'จำหน่ายแสตมป์สุรา'],
-                'body'=>[
-                    [
-                        'title'=>'ก่อสร้าง',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'ผลิต',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'ขาย',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'ขน',
-                        'value'=>'0'
-                    ],
-                    [
-                        'title'=>'แสตมป์',
-                        'value'=>'197741.1'
-                    ]
-                ],
-                'footer'=>[
-                    'title'=>'รวมทั้งสิ้น',
-                    'value'=>'197741.1'
-                ]
-            ];
-            $this->exportSearchForPDF('ระบบข้อมูลผู้ประกอบการสุราชุมชน', 'ค้นหางานภาษี', $summaryTableData);
+            $funcName = $data['funcName'];
+            $params = $data['params'];
+            $this->$funcName($params);
         }
 
-        public function exportSearchForPDF($title = '', $menu = '', $summaryTableData = [], $detailTableData = [], $mapImage = '') {
-            $title = (!empty($title)) ? $title : 'ระบบข้อมูลผู้ประกอบการสุราชุมชน';
-            $menu = (!empty($menu)) ? $menu : 'ค้นหา';
-            $mapImage = (!empty($mapImage)) ? $mapImage : '../img/noimages.png';
+        public function exportSearchForPDF($params) {
+            $title = (!empty($params['title'])) ? $params['title'] : 'ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน';
+            $menu = (!empty($params['menu'])) ? $params['menu'] : 'ค้นหา';
+            $summaryTableData = $params['summaryTableData'];
+            $detailTableData = $params['detailTableData'];
+            $mapImage = (!empty($params['mapImage'])) ? $params['mapImage'] : '../img/noimages.png';
 
             $this->pdf->AddPage();
             $this->pdf->SetFont('angsana', '', 24);
@@ -92,10 +38,10 @@
                 $this->pdf->Cell(10);
                 $this->pdf->SetFillColor(101, 115, 126);
                 $this->pdf->SetTextColor(255, 255, 255);
-                $this->pdf->SetFont('angsana', '', 14);
+                $this->pdf->SetFont('angsana', '', 12);
 
-                foreach($summaryTableData['header'] as $header) {
-                    $this->pdf->Cell(85, 8, iconv('utf-8', 'tis-620', $header), 1, 0, 'C', true);
+                foreach($summaryTableData['header'] as $key=>$val) {
+                    $this->pdf->Cell($summaryTableData['sizeWidth'][$key], 6, iconv('utf-8', 'tis-620', $val), 1, 0, 'C', true);
                 }
                 
                 $fill = false;
@@ -105,8 +51,15 @@
                 foreach($summaryTableData['body'] as $body) {
                     $this->pdf->Ln();
                     $this->pdf->Cell(10);
-                    $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', $body['title']), 1, 0, 'L', $fill);
-                    $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', number_format($body['value'], 2)), 1, 0, 'R', $fill);
+
+                    foreach($body as $key=>$val) {
+                        if($key == 0)
+                            $this->pdf->Cell($summaryTableData['sizeWidth'][$key], 6, iconv('utf-8', 'tis-620', $val), 1, 0, 'L', $fill);
+                        else {
+                            $this->pdf->Cell($summaryTableData['sizeWidth'][$key], 6, iconv('utf-8', 'tis-620', $val), 1, 0, 'C', $fill);
+                        }
+                    }
+                    
                     $fill = !$fill;
                 }
 
@@ -115,25 +68,51 @@
                 $this->pdf->SetFillColor(76, 174, 76);
                 $this->pdf->SetTextColor(255, 255, 255);
 
-                foreach($summaryTableData['footer'] as $footer) {
-                    if(is_numeric($footer))
-                        $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', number_format($footer, 2)), 1, 0, 'R', true);
-                    else
-                        $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', $footer), 1, 0, 'C', true);
+                foreach($summaryTableData['footer'] as $key=>$val) {
+                    $this->pdf->Cell($summaryTableData['sizeWidth'][$key], 6, iconv('utf-8', 'tis-620', $val), 1, 0, 'C', true);
                 }
-
-                
-                /*$this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', $summaryTableData['footer']['title']), 1, 0, 'C', true);
-                $this->pdf->Cell(85, 6, iconv('utf-8', 'tis-620', number_format($summaryTableData['footer']['value'], 2)), 1, 0, 'R', true);*/
             }
 
-            /*if(!empty($mapImage)) {
-                $this->pdf->AddPage();
-                $this->pdf->Image($mapImage, 20, 100, 170, 70);
-                //$this->pdf->Ln(35);
-            }*/
+            if(!empty($mapImage)) {
+                $this->pdf->Ln(12);
+                $this->pdf->Image($mapImage, 20, null, 170, 70);
+            }
 
-            $this->pdf->Output();
+            if(count($detailTableData) != 0) {
+                foreach($detailTableData as $page) {
+                    $this->pdf->AddPage('L');
+                    $this->pdf->SetFillColor(101, 115, 126);
+                    $this->pdf->SetTextColor(255, 255, 255);
+                    $this->pdf->SetFont('angsana', '', 12);
+                    $this->pdf->Ln();
+                    $this->pdf->Cell(10);
+                    
+                    foreach($page['header'] as $key=>$val) {
+                        $this->pdf->Cell($page['sizeWidth'][$key], 6, iconv('utf-8', 'tis-620', $val), 1, 0, 'C', true);
+                    }
+
+                    $fill = false;
+                    $this->pdf->SetFillColor(249, 249, 249);
+                    $this->pdf->SetTextColor(51, 51, 51);
+                    $bodyIndex = 0;
+
+                    foreach($page['body'] as $body) {
+                        $this->pdf->Ln();
+                        $this->pdf->Cell(10);
+
+                        foreach((array)$body as $key=>$val) {
+                            $this->pdf->Cell($page['sizeWidth'][$key], 6, iconv('utf-8', 'tis-620', $val), 1, 0, $page['align'][$bodyIndex][$key], $fill);
+                        }
+
+                        $fill = !$fill;
+                        $bodyIndex++;
+                    }
+                }
+            }
+            
+            $this->pdf->Output('../export/search/'.$menu.'.pdf', 'F');
+            $pathFile = 'export/search/'.$menu.'.pdf';
+            echo $pathFile;
         }
     }
 
