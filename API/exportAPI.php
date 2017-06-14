@@ -18,10 +18,18 @@
         public function exportSearchForPDF($params) {
             $title = (!empty($params['title'])) ? $params['title'] : 'ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน';
             $menu = (!empty($params['menu'])) ? $params['menu'] : 'ค้นหา';
+            $year = (!empty($params['year'])) ? $params['year'] : '';
+            $region = (!empty($params['region'])) ? $params['region'] : '';
+            $province = (!empty($params['province'])) ? $params['province'] : '';
             $summaryTableData = $params['summaryTableData'];
             $detailTableData = $params['detailTableData'];
-            $mapImage = (!empty($params['mapImage'])) ? $params['mapImage'] : '../img/noimages.png';
 
+            if(!empty($params['mapImage'])) {
+                file_put_contents('../export/search/map/'.$menu.'.png', base64_decode(str_replace('data:image/png;base64,', '', $params['mapImage'])));
+                $mapImage = '../export/search/map/'.$menu.'.png';
+            } else 
+                $mapImage = '../img/noimages.png';
+                
             $this->pdf->AddPage();
             $this->pdf->SetFont('angsana', '', 24);
             $this->pdf->Image('../img/logoheader.png', 18, 15, 14, 18);
@@ -32,6 +40,14 @@
             $this->pdf->Ln(9);
             $this->pdf->Cell(25);
             $this->pdf->Cell(0, 0, iconv('utf-8', 'tis-620', $menu), 0, 'L');
+
+            $this->pdf->SetFont('angsana', '', 14);
+            
+            $this->pdf->Line(20, 45, 210-20, 45);
+            $this->pdf->Ln(12);
+            $this->pdf->Cell(10);
+            $headerDetail = 'ปีงบประมาณ : '.$year.'         ภาค : '.$region.'         จังหวัด : '.$province;
+            $this->pdf->Cell(0, 0, iconv('utf-8', 'tis-620', $headerDetail), 0, 'L');
 
             if(count($summaryTableData) != 0) {
                 $this->pdf->Ln(10);
@@ -75,7 +91,7 @@
 
             if(!empty($mapImage)) {
                 $this->pdf->Ln(12);
-                $this->pdf->Image($mapImage, 20, null, 170, 70);
+                $this->pdf->Image($mapImage, 20, null, 170, 40);
             }
 
             if(count($detailTableData) != 0) {

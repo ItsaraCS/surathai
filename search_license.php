@@ -61,12 +61,14 @@
         </div>
     </div>
 </div>
+<!--HTML2CANVAS-->
+<script src="lib/html2canvas/html2canvas.js" type="text/javascript"></script>
 <!--JS-->  
 <script type="text/javascript">
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/searchAPI.php';
+        var ajaxUrl = 'API/searchAPI.php';
         var params = {};
         var year = $('.nav-menu #year').val() || '';
         var region = $('.nav-menu #region').val() || 0;
@@ -152,9 +154,9 @@
                 //overlays: [overlay],//for popup
                 target : 'map',
                 view: new ol.View({
-                center: [13.0, 100.5],
-                projection: projection,
-                zoom: 6
+                    center: [13.0, 100.5],
+                    projection: projection,
+                    zoom: 6
                 })
             });
 			
@@ -210,7 +212,7 @@
                     $.each(data.label, function(index, item) {
                         theadContent += '<th class="text-center text-nowrap">' +
                                 '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
-                                    '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
+                                    '<input id="'+ item +'" type="checkbox" class="select-export" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                 '</div>' +
                             '</th>';
                     });
@@ -322,7 +324,7 @@
                     $.each(data.label, function(index, item) {
                         theadContent += '<th class="text-center text-nowrap">' +
                                 '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
-                                    '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
+                                    '<input id="'+ item +'" type="checkbox" class="select-export" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                 '</div>' +
                             '</th>';
                     });
@@ -645,7 +647,9 @@
         $(document).on('click', '.export-file', function(e) {
             e.preventDefault();
 
-            window.open('export/search/search_license.pdf', '_blank');
+            factory.dataService.exportFile('search', {
+                menu: 'ค้นหาใบอนุญาต'
+            });
         });
 
         $('#LicenseNumber').autocomplete({ 
