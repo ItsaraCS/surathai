@@ -264,9 +264,8 @@
         }
 
         //--Event
-        $(document).on('keyup', 'input[required], textarea[required], input[email-only]', function(e) {
+        $(document).on('keyup', 'input[required], textarea[required]', function(e) {
             factory.initService.setError($(this), 'required'); 
-            factory.initService.setError($(this), 'email-only'); 
         });
 
         $(document).on('change', 'select[required]', function(e) {
@@ -277,10 +276,29 @@
             factory.initService.setError($(this), 'numbered');
         });
 
+        $(document).on('keyup', 'input[email-only]', function(e) {
+            factory.initService.setError($(this), 'email-only'); 
+        });
+
         $(document).on('click', '#changePasswordBtn', function(e) {
             e.preventDefault();
 
             $('#Password').prop('disabled', false);
+        });
+
+        $(document).on('keyup', '#Fullname', function(e) {
+            e.preventDefault();
+
+            $('#FullnameTXT').html($(this).val());
+        });
+
+        $(document).on('change', '#Gender', function(e) {
+            e.preventDefault();
+
+            if($(this).val() == '1')
+                $('#ProfileImage').attr('src', 'img/user-male.png');
+            else
+                $('#ProfileImage').attr('src', 'img/user-female.png');
         });
 
         $(document).on('click', '#addUserBtn', function(e) {
@@ -294,6 +312,8 @@
             $('#Password').prop('disabled', false);
             $('#Password').prop('required', true);
             $('#Password').closest('tr').find('td:eq(0) p').append('<span style="font-size: 20px; color: #fe3d3d;"> *</span>');
+            $('#ProfileImage').attr('src', 'img/noimages.png');
+            $('#FullnameTXT').html('');
         });
 
         $(document).on('click', '#insertBtn', function(e) {

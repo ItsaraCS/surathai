@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบบริการฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
     <!--jQuery-->
     <script src="lib/jquery/jquery-11.0.min.js" type="text/javascript"></script>
@@ -17,13 +18,6 @@
     <script src="lib/openlayer/ol.js" type="text/javascript"></script>
     <!--ChartJS-->
     <script src="lib/chartjs/Chart.min.js" type="text/javascript"></script>
-    <!--TableExport-->
-    <script src="lib/table-export/tableExport.js" type="text/javascript"></script>
-    <script src="lib/table-export/jquery.base64.js" type="text/javascript"></script>
-    <script src="lib/table-export/html2canvas.js" type="text/javascript"></script>
-    <script src="lib/table-export/jspdf/jspdf.js" type="text/javascript"></script>
-    <script src="lib/table-export/jspdf/libs/sprintf.js" type="text/javascript"></script>
-    <script src="lib/table-export/jspdf/libs/base64.js" type="text/javascript"></script>
     <!--Font Awesome-->
     <link href="lib/fontawesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <!--CSS-->
@@ -32,6 +26,7 @@
     <!--JS-->
     <script src="js/chart.js" type="text/javascript"></script>
     <script src="js/factory.js" type="text/javascript"></script>
+    <script src="js/table_to_excel.js" type="text/javascript"></script>
     <!--MAP-->
     <link href="css/layer_toggler.css" rel="stylesheet" type="text/css">
 	<link href="css/search_layer_toggler.css" rel="stylesheet" type="text/css">
@@ -41,6 +36,8 @@
     <script src="js/local_shared.js" type="text/javascript"></script>
     <script src="js/search_map_lib.js" type="text/javascript"></script>
     <script src="js/e_map_lib.js" type="text/javascript"></script>
+    <!--HTML2Canvas-->
+    <script src="lib/html2canvas/html2canvas.js" type="text/javascript"></script>
     <!--CHECK USER-->
     <script type="text/javascript">
         var factory = new Factory();

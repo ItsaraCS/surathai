@@ -4,7 +4,7 @@
 <div class="section hide">
     <!--TABLE REPORT-->
     <div class="col-md-12 table-responsive table-report" style="height: 32vh; margin-bottom: 15px;">
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered bg-info" id="getexc">
             <thead><tr></tr></thead>
             <tbody></tbody>
         </table>
@@ -26,7 +26,7 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/reportAPI.php';
+        var ajaxUrl = 'API/reportAPI.php';
         var params = {};
         var year = $('.nav-menu #year').val() || '';
         var region = $('.nav-menu #region').val() || 0;
@@ -99,8 +99,8 @@
 
                         var theadContent = '';
                         $.each(data.label, function(index, item) {
-                            theadContent += '<th class="text-center text-nowrap">' +
-                                    '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
+                            theadContent += '<th class="text-center text-nowrap bg-primary">' +
+                                    '<div class="checkbox checkbox-success" style="margin: 0 auto;">' +
                                         '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                     '</div>' +
                                 '</th>';
@@ -114,7 +114,7 @@
                             var index = 0;
 
                             for(var i=1; i<=row; i++) {
-                                tbodyContent = '<tr>';
+                                tbodyContent = '<tr class="tr'+i+'">';
 
                                 for(var j=1; j<=data.label.length; j++) {
                                     tdAlign = ({
@@ -264,11 +264,11 @@
             getChart();
         });
 
-        $(document).on('click', '.export-file', function(e) {
+        /*$(document).on('click', '.export-file', function(e) {
             e.preventDefault();
 
-            window.open('export/report/reportcase.xlsx', '_blank');
-        });
+            window.location.href = 'export/report/reportcase.xlsx';
+        });*/
 
         $(document).on('click', '#changeChartBtn', function(e) {
             e.preventDefault();

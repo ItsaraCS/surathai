@@ -484,11 +484,12 @@ ul.ui-autocomplete li div {
 .table thead th {
   vertical-align: middle !important;
   padding: 3px 10px  !important;
+  font-size: 18px;
 }
 .table tbody td {
   vertical-align: middle !important;
   padding: 4px 10px !important;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .search-detail-table tbody tr.search-detail-total {
@@ -500,10 +501,10 @@ ul.ui-autocomplete li div {
 .search-table tbody tr:hover,
 .eform-table tbody tr:hover {
   cursor: pointer;
-  background-color: #d3e3f0;
+  background-color: #D3E3F0;
 }
 .active-row {
-  background-color: #d7eed7 !important;
+  background-color: #ffe9a6 !important;
 }
 
 .user-menu img {
@@ -540,10 +541,8 @@ ul.ui-autocomplete li div {
   border-radius: 50%;
 }
 .user-menu-detail-label {
-  color: #F9F9F9
-}
-.user-menu-detail-label span {
-  font-size: 18px;
+  color: #F9F9F9;
+  font-size: 20px;
 }
 .user-menu-detail-btn {
   background-color: #ECF0F5;
@@ -563,4 +562,7 @@ ul.ui-autocomplete li div {
    height: 100px;
    margin-top: -50px;
    margin-left: -50px;
+}
+.popup-info {
+  font-size: 20px;
 }

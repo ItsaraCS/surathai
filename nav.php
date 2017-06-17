@@ -132,7 +132,7 @@
             <div class="row">
                 <a href="#" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"> Export <span class="caret"></span></a>&nbsp;
                 <ul class="dropdown-menu" style="min-width: 100px;">
-                    <li><a href="#" class="export-file">Excel</a></li>
+                    <li><a href="#" class="export-file" onclick="tableToExcel('getexc')">Excel</a></li>
                 </ul>
             </div>
         </div>

@@ -35,7 +35,7 @@ switch($fn){
 	case "autocomplete" :
 				$data = null;
 				if(strlen($_POST["label"]) > 1){ $DB = new exDB;
-					$DB->GetData("SELECT `LabelID`, `lbBrand` FROM `Label` WHERE lbBrand LIKE ?",array("s","%".$_POST["label"]."%"));
+					$DB->GetData("SELECT `LabelID`, `lbBrand` FROM `Label` WHERE lbBrand LIKE ? GROUP BY lbBrand",array("s","%".$_POST["label"]."%"));
 					if($DB->GetNumRows() > 0){
 						$data = array();
 						while($fdata = $DB->FetchData()){

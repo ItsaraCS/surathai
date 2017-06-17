@@ -8,7 +8,7 @@
             <div class="col-md-4">
                 <div class="panel panel-default" style="border-radius: 0; border: 0;">
                     <div class="panel-body" style="padding: 0;">
-                        <table class="table table-striped search-detail-table" style="margin-top: 0; margin-bottom: 0;">
+                        <table class="table table-striped search-detail-table bg-info" style="margin-top: 0; margin-bottom: 0;">
                             <thead><tr></tr></thead>
                             <tbody></tbody>
                         </table>
@@ -50,7 +50,7 @@
             <div class="panel panel-default" style="height: 36vh;">
                 <div class="panel-body" style="padding: 0;">
                     <div class="table-responsive" style="height: 26vh;">
-                        <table class="table table-striped table-bordered search-table" style="margin-top: 0;"> 
+                        <table class="table table-striped table-bordered search-table bg-info" style="margin-top: 0;"> 
                             <thead><tr></tr></thead>
                             <tbody></tbody>
                         </table>
@@ -61,8 +61,6 @@
         </div>
     </div>
 </div>
-<!--HTML2CANVAS-->
-<script src="lib/html2canvas/html2canvas.js" type="text/javascript"></script>
 <!--JS-->  
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -123,7 +121,8 @@
                 source: new ol.source.TileWMS( {
                     url: 'http://www.dee-map.com/geoserver/gwc/service/wms/dmwms',
                     params: { 'LAYERS': 'Dee-Map', 'VERSION': '1.1.1', 'FORMAT': 'image/png8' },
-                    serverType: 'geoserver', crossOrigin: 'anonymous', noWrap: true,  wrapX: false
+                    //serverType: 'geoserver', 
+                    crossOrigin: 'anonymous', noWrap: true,  wrapX: false
                 }),  
                 extent: [ -20037508.34, -20037508.34, 20037508.34, 20037508.34 ]
             });
@@ -210,8 +209,8 @@
 
                     var theadContent = '';
                     $.each(data.label, function(index, item) {
-                        theadContent += '<th class="text-center text-nowrap">' +
-                                '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
+                        theadContent += '<th class="text-center text-nowrap bg-primary">' +
+                                '<div class="checkbox checkbox-success" style="margin: 0 auto;">' +
                                     '<input id="'+ item +'" type="checkbox" class="select-export" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                 '</div>' +
                             '</th>';
@@ -292,9 +291,9 @@
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
                         if(index == 0) {
-                            searchDetailTableContent += '<th class="text-center text-nowrap">'+ item.subject +'</th>';
+                            searchDetailTableContent += '<th class="text-center text-nowrap bg-primary">'+ item.subject +'</th>';
                                 $.each(item.value, function(indexValue, itemValue) {
-                                    searchDetailTableContent += '<th class="text-center text-nowrap">'+ itemValue +'</th>';
+                                    searchDetailTableContent += '<th class="text-center text-nowrap bg-primary">'+ itemValue +'</th>';
                                 });
                             $('.search-detail-table thead tr').append(searchDetailTableContent);
                             searchDetailTableContent = '';
@@ -322,8 +321,8 @@
 
                     var theadContent = '';
                     $.each(data.label, function(index, item) {
-                        theadContent += '<th class="text-center text-nowrap">' +
-                                '<div class="checkbox checkbox-primary" style="margin: 0 auto;">' +
+                        theadContent += '<th class="text-center text-nowrap bg-primary">' +
+                                '<div class="checkbox checkbox-success" style="margin: 0 auto;">' +
                                     '<input id="'+ item +'" type="checkbox" class="select-export" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                 '</div>' +
                             '</th>';
@@ -555,7 +554,7 @@
             lon = parseFloat($(this).attr('data-lon')) || 0;
             
             if((lat != 0) && (lon != 0))
-                e_set_factory_location(ol, map, lat, lon, marker_geom, 18, true);
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 13, true);
             else {
                 Factory.prototype.utilityService.getPopup({
                     infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
@@ -600,7 +599,7 @@
             e.preventDefault();
 
             var regex = /[^\d\,]/;
-            var numPage = $('ul.pagination').attr('data-num-page') || 0;
+            var numPage = Number($('ul.pagination').attr('data-num-page')) || 0;
 
             if((regex.test($(this).val())) || ($(this).val() > numPage))
                 $(this).val('');

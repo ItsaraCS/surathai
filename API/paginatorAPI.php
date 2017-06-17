@@ -1,5 +1,5 @@
 <?php
-	class Paginator {
+	class PaginatorAPI {
 		public $page;
 		public $perPage;
 		public $splitPage;
@@ -72,5 +72,5 @@
 		}
 	}
 
-	new Paginator;
+	new PaginatorAPI;
 ?>

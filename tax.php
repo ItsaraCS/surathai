@@ -48,7 +48,7 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/taxmapAPI.php';
+        var ajaxUrl = 'API/taxmapAPI.php';
         var params = {};
 		var year = $('.nav-menu #year').val() || '';
         var region = $('.nav-menu #region').val() || 0;
@@ -158,7 +158,9 @@
         $(document).on('click', '.export-file', function(e) {
             e.preventDefault();
 
-            window.open('export/map/tax.pdf', '_blank');
+            factory.dataService.exportFile('map', {
+                menu: 'แผนที่งานภาษี'
+            });
         });
     });
 </script>

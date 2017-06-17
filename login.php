@@ -19,7 +19,7 @@
     <div class="container">
         <div class="col-sm-6 text-center"><img src="img/logo.png" width="90%"/></div>
         <div class="col-sm-6">
-            <div class="title"><img src="img/logoheader.png" width="12%"><h2 class="title-mobile text-nowrap text-white">ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</h2></div><br>        
+            <div class="title"><h2 class="title-mobile text-nowrap text-white"><img src="img/logoheader.png" width="12%"  style="margin: 10px;">ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</h2></div><br>
             <form name="loginForm" novalidate>
                 <div class="form-group row">
                     <div class="col-sm-10 position-center">
@@ -52,6 +52,7 @@
         //--Function
         function getInit() {
             $('#username, #password').val('');
+            $('#username, #password').attr('autocomplete', 'off');
         }
     });
 </script>

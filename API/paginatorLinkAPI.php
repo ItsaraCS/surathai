@@ -1,5 +1,5 @@
 <?php
-	class Paginator {
+	class PaginatorLinkAPI {
 		public $queryParams;
 		public $page;
 		public $perPage;
@@ -88,5 +88,5 @@
 		}
 	}
 
-	new Paginator;
+	new PaginatorLinkAPI;
 ?>

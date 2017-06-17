@@ -3,7 +3,7 @@
 <!--SECTION-->
 <div class="section" style="margin-top: 10px;">
     <!--FORM DATA-->
-    <div class="col-md-5">
+    <div class="col-md-4">
         <form name="insertForm" enctype="multipart/form-data" novalidate>
             <div class="panel panel-default" style="height: 67vh; overflow-y: scroll; border-radius: 0;">
                 <div class="panel-body">
@@ -28,7 +28,7 @@
                                 <td class="col-md-5"><p class="data-important">ประเภทสหกรณ์</p></td>
                                 <td class="col-md-7">
                                     <select class="form-control input-sm" id="SuraType" required>
-                                        <option value="">--เลือกประเภทสหกรณ์--</option>
+                                        <option value="">เลือกประเภทสหกรณ์</option>
                                         <option value="1">สุรากลั่น</option>
                                         <option value="2">สุราแช่</option>
                                         <option value="3">สุรากลั่น และสุราแช่</option>
@@ -147,7 +147,7 @@
     </div>
 
     <!--MAP AND TABLE DATA-->
-    <div class="col-md-7">
+    <div class="col-md-8">
         <div class="panel panel-default" style="height: 51vh; border-radius: 0; padding: 0;">
             <div class="panel-body" style="padding-top: 0; padding-bottom: 0;">
                 <div class="row">
@@ -164,7 +164,7 @@
         <div class="panel panel-default" style="height: 25vh; border-radius: 0; padding: 0;">
             <div class="panel-body" style="padding: 0;">
                 <div class="table-responsive" style="height: 25vh; overflow-y: hidden;">
-                    <table class="table table-striped table-bordered eform-table" style="margin-top: 0;"> 
+                    <table class="table table-striped table-bordered eform-table bg-info" style="margin-top: 0;"> 
                         <thead><tr></tr></thead>
                         <tbody></tbody>
                     </table>
@@ -181,7 +181,7 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/eformAPI.php';
+        var ajaxUrl = 'API/eformAPI.php';
         var params = {};
         var lat = $('#Lat').val() || 0;
         var lon = $('#Lon').val() || 0;
@@ -218,7 +218,8 @@
                 source: new ol.source.TileWMS({
                     url: 'http://www.dee-map.com/geoserver/gwc/service/wms/dmwms',
                     params: { 'LAYERS': 'Dee-Map', 'VERSION': '1.1.1', 'FORMAT': 'image/png8' },
-                    serverType: 'geoserver', crossOrigin: 'anonymous', noWrap: true,  wrapX: false
+                    //serverType: 'geoserver', 
+                    crossOrigin: 'anonymous', noWrap: true,  wrapX: false
                 }),  
                 extent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
             });
@@ -295,9 +296,9 @@
                     var data = JSON.parse(res);
                     console.log(data);
 
-                    var theadContent = '<th class="text-center text-nowrap" style="padding: 4px 10px;">#</th>';
+                    var theadContent = '<th class="text-center text-nowrap bg-primary" style="padding: 4px 10px;">#</th>';
                     $.each(data.label, function(index, item) {
-                        theadContent += '<th class="text-center text-nowrap" style="padding: 4px 10px;">'+ item +'</th>';
+                        theadContent += '<th class="text-center text-nowrap bg-primary" style="padding: 4px 10px;">'+ item +'</th>';
                     });
                     $('.eform-table thead tr').append(theadContent);
 

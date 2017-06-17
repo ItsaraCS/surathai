@@ -3,7 +3,7 @@
 <!--SECTION-->
 <div class="section" style="margin-top: 10px;">
     <!--FORM DATA-->
-    <div class="col-md-5">
+    <div class="col-md-4">
         <form name="insertForm" novalidate>
             <div class="panel panel-default" style="border-radius: 0;">
                 <div class="panel-body">
@@ -65,14 +65,14 @@
     </div>
 
     <!--MAP AND TABLE DATA-->
-    <div class="col-md-7">
-        <div class="panel panel-default" style="height: 77vh; border-radius: 0; padding: 0;">
-            <div class="panel-heading text-center header-table">
-                <h3>รายการข้อมูล</h3>
-            </div>
+    <div class="col-md-8">
+        <div class="panel panel-default" style="border-radius: 0; padding: 0;">
+            <!--<div class="panel-heading text-center header-table">
+                <h3>รายการข้อมูลล่าสุด</h3>
+            </div>-->
             <div class="panel-body" style="padding: 0;">
-                <div class="table-responsive" style="height: 77vh;">
-                    <table class="table table-striped table-bordered eform-table" style="margin-top: 0;"> 
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered eform-table bg-info" style="margin-top: 0; margin-bottom: 0;"> 
                         <thead><tr></tr></thead>
                         <tbody></tbody>
                     </table>
@@ -86,7 +86,7 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/eformAPI.php';
+        var ajaxUrl = 'API/eformAPI.php';
         var params = {};
         var stampType = $('.nav .nav-menu').find('a[href="e_stamp.php"]').data('stamp-type');
 
@@ -120,9 +120,9 @@
                 if(res != undefined){
                     var data = JSON.parse(res);
 
-                    var theadContent = '<th class="text-center text-nowrap" style="padding: 4px 10px;">#</th>';
+                    var theadContent = '<th class="text-center text-nowrap bg-primary" style="padding: 4px 10px;">#</th>';
                     $.each(data.label, function(index, item) {
-                        theadContent += '<th class="text-center text-nowrap" style="padding: 4px 10px;">'+ item +'</th>';
+                        theadContent += '<th class="text-center text-nowrap bg-primary" style="padding: 4px 10px;">'+ item +'</th>';
                     });
                     $('.eform-table thead tr').append(theadContent);
 

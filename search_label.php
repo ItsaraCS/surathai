@@ -51,21 +51,21 @@
             <div class="panel panel-default" style="height: 18vh;">
                 <div class="panel-body" style="padding: 0;">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered search-table" style="margin: 0 auto; overflow-y: hidden;"> 
+                        <table class="table table-striped table-bordered search-table bg-info" style="margin: 0 auto; overflow-y: hidden;"> 
                             <thead>
                                 <tr>
-                                    <th class="text-center text-nowrap">ชื่อสถานประกอบการโรงงาน</th>
-                                    <th class="text-center text-nowrap">รหัสทะเบียนโรงงาน</th>
-                                    <th class="text-center text-nowrap">ชื่อผู้ขออนุญาตผลิต</th>
-                                    <th class="text-center text-nowrap">เลขที่ใบอนุญาตผลิต</th>
-                                    <th class="text-center text-nowrap">ยี่ห้อที่ผลิต</th>
-                                    <th class="text-center text-nowrap">ดีกรี</th>
-                                    <th class="text-center text-nowrap">ประเภท</th>
-                                    <th class="text-center text-nowrap">วันที่อนุญาต</th>
-                                    <th class="text-center text-nowrap">วันที่ต่อใบอนุญาต</th>
-                                    <th class="text-center text-nowrap">สถานที่ตั้ง</th>
-                                    <th class="text-center text-nowrap">รูปผังโรงงาน</th>
-                                    <th class="text-center text-nowrap">ผลตรวจ</th>
+                                    <th class="text-center text-nowrap bg-primary">ชื่อสถานประกอบการโรงงาน</th>
+                                    <th class="text-center text-nowrap bg-primary">รหัสทะเบียนโรงงาน</th>
+                                    <th class="text-center text-nowrap bg-primary">ชื่อผู้ขออนุญาตผลิต</th>
+                                    <th class="text-center text-nowrap bg-primary">เลขที่ใบอนุญาตผลิต</th>
+                                    <th class="text-center text-nowrap bg-primary">ยี่ห้อที่ผลิต</th>
+                                    <th class="text-center text-nowrap bg-primary">ดีกรี</th>
+                                    <th class="text-center text-nowrap bg-primary">ประเภท</th>
+                                    <th class="text-center text-nowrap bg-primary">วันที่อนุญาต</th>
+                                    <th class="text-center text-nowrap bg-primary">วันที่ต่อใบอนุญาต</th>
+                                    <th class="text-center text-nowrap bg-primary">สถานที่ตั้ง</th>
+                                    <th class="text-center text-nowrap bg-primary">รูปผังโรงงาน</th>
+                                    <th class="text-center text-nowrap bg-primary">ผลตรวจ</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -81,7 +81,7 @@
     $(document).ready(function(e) {
         //--Variable
         var factory = new Factory();
-        var ajaxUrl = 'http://210.4.143.51/Surathai01/API/labelAPI.php';
+        var ajaxUrl = 'API/labelAPI.php';
         var params = {};
         var lat = 0;
         var lon = 0;
@@ -107,7 +107,8 @@
                 source: new ol.source.TileWMS( {
                     url: 'http://www.dee-map.com/geoserver/gwc/service/wms/dmwms',
                     params: { 'LAYERS': 'Dee-Map', 'VERSION': '1.1.1', 'FORMAT': 'image/png8' },
-                    serverType: 'geoserver', crossOrigin: 'anonymous', noWrap: true,  wrapX: false
+                    //serverType: 'geoserver', 
+                    crossOrigin: 'anonymous', noWrap: true,  wrapX: false
                 }),  
                 extent: [ -20037508.34, -20037508.34, 20037508.34, 20037508.34 ]
             });
@@ -212,7 +213,7 @@
                                     '<td class="text-center text-nowrap">'+ data.extend_date +'</td>' +
                                     '<td class="text-center text-nowrap">'+ data.address +'</td>' +
                                     '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((data.plan != 'data/factoryplan/') ? data.plan : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
-                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((data.picture != 'data/label/') ? data.picture : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
+                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="img/noimages.png" style="width: 50px; height: 50px;"></a></td>' +
                                 '</tr>');
                         }
                     }
@@ -226,6 +227,9 @@
             if($(this).val() == '') {
                 $('#BrandImage').attr('src', 'img/noimages.png');
                 $('.search-table tbody tr').remove();
+                
+                map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
+                map.getView().setZoom(4.5);
             }
         });
 
@@ -249,7 +253,7 @@
             lon = parseFloat($(this).attr('data-lon')) || 0;
             
             if((lat != 0) && (lon != 0))
-                e_set_factory_location(ol, map, lat, lon, marker_geom, 18, true);
+                e_set_factory_location(ol, map, lat, lon, marker_geom, 15, true);
             else {
                 Factory.prototype.utilityService.getPopup({
                     infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
