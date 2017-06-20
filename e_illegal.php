@@ -186,6 +186,32 @@
         </div>
     </div>
 </div>
+<!--STYLE-->
+<style>
+    .pan {
+        top: 70px;
+        left: 0.5em;
+    }
+    .ol-touch .pan {
+        top: 80px;
+    }
+
+    .zoom-box {
+        top: 100px;
+        left: 0.5em;
+    }
+    .ol-touch .zoom-box {
+        top: 110px;
+    }
+
+    .defaultZoom {
+        top: 130px;
+        left: 0.5em;
+    }
+    .ol-touch .defaultZoom {
+        top: 140px;
+    }
+</style>
 <!--JS-->
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -274,7 +300,131 @@
 			});
 			// ===========================================
 			
+                         //ADD By AM
+            window.app = {};
+            var app = window.app;
+            var dragBox;// Global var
+            app.Pan = function(opt_options) {
+                var options = opt_options || {};
+                var button = document.createElement('button');
+                button.innerHTML = '<i class="fa fa-hand-paper-o"></i>';
+
+                var self = this;
+                var handlePan = function(e) {
+                // active Btn
+                        //Remove BG-BTN-Color
+                        $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.5);");
+
+                        //Fill BG-BTN-Color
+                        
+                        $('.pan button').attr("style","background-color: rgba(0,60,136,.9);");
+                // active Btn   
+
+                    map.removeInteraction(dragBox);
+                };
+
+                button.addEventListener('click', handlePan, false);
+                button.addEventListener('touchstart', handlePan, false);
+
+                var element = document.createElement('div');
+                element.className = 'pan ol-unselectable ol-control';
+                element.title = 'Pan';
+                element.appendChild(button);
+
+                ol.control.Control.call(this, {
+                    element: element,
+                    target: options.target
+                });
+            };
+
+            app.ZoomBox = function(opt_options) {
+                var options = opt_options || {};
+                var button = document.createElement('button');
+                button.innerHTML = '<i class="fa fa-search-plus"></i>';
+
+                var handleZoomBox = function(e) {
+                    // active Btn
+                        //Remove BG-BTN-Color
+                        $('.pan button').attr("style","background-color: rgba(0,60,136,.5);");
+
+                        //Fill BG-BTN-Color
+                        $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.9);");
+
+                    // active Btn
+
+                    var select = new ol.interaction.Select();
+                    map.addInteraction(select);
+
+                    var selectedFeatures = select.getFeatures();
+                    dragBox = new ol.interaction.DragBox({
+                        condition: ol.events.condition.mouseOnly
+                    });
+                    map.addInteraction(dragBox);
+
+                    dragBox.on('boxend', function() {
+                        var extent = dragBox.getGeometry().getExtent();
+                        map.getView().fit(extent, map.getSize());
+                    });
+                    
+                    dragBox.on('boxstart', function() {
+                        selectedFeatures.clear();
+                    });
+                };
+
+                button.addEventListener('click', handleZoomBox, false);
+                button.addEventListener('touchstart', handleZoomBox, false);
+
+                var element = document.createElement('div');
+                element.className = 'zoom-box ol-unselectable ol-control';
+                element.title = 'Zoom Box';
+                element.appendChild(button);
+
+                ol.control.Control.call(this, {
+                    element: element,
+                    target: options.target
+                });
+            };
+            app.defaultZoom = function(opt_options) {
+
+                var options = opt_options || {};
+
+                var defaultZoomBtn = document.createElement('button');
+                defaultZoomBtn.innerHTML = '<i class="fa fa-globe" aria-hidden="true"></i>';
+
+                var handledefaultZoom = function(e) {
+                    map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
+                    map.getView().setZoom(4.5);
+                };
+
+                defaultZoomBtn.addEventListener('click', handledefaultZoom, false);
+
+                var element = document.createElement('div');
+                element.className = 'defaultZoom ol-unselectable ol-control';
+                element.appendChild(defaultZoomBtn);
+
+                ol.control.Control.call(this, {
+                    element: element,
+                    target: options.target
+                });
+
+            };
+
+            ol.inherits(app.Pan, ol.control.Control);
+            ol.inherits(app.ZoomBox, ol.control.Control);
+            ol.inherits(app.defaultZoom, ol.control.Control);
+
+           
+
             map = new ol.Map({
+                controls: ol.control.defaults({
+                    attributionOptions: ({
+                        collapsible: false
+                    })
+                }).extend([
+                    new app.Pan(),
+                    new app.ZoomBox(),
+                    new app.defaultZoom()
+                ]),
                 layers : [ layers_deemap, layers_marker ],
                 //overlays: [overlay], //--for popup
                 target : 'map',
@@ -284,12 +434,29 @@
                     zoom: 16
                 })
             });
+
+            //ADD By AM
+
+
+
+			// ===========================================
+			
+            // map = new ol.Map({
+            //     layers : [ layers_deemap, layers_marker ],
+            //     //overlays: [overlay], //--for popup
+            //     target : 'map',
+            //     view: new ol.View({
+            //         center: [99.697123, 17.231792],
+            //         projection: projection,
+            //         zoom: 16
+            //     })
+            // });
             
             $('#dvloading').hide().fadeOut();
             
             //--Zoom Slider
-            zoomslider = new ol.control.ZoomSlider();
-            map.addControl(zoomslider);
+            // zoomslider = new ol.control.ZoomSlider();
+            // map.addControl(zoomslider);
             
             map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
             map.getView().setZoom(9.0);

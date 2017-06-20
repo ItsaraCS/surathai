@@ -25,14 +25,16 @@
             $province = (!empty($params['province'])) ? $params['province'] : '';
 
             if(!empty($params['mapImage']['map'])) {
-                file_put_contents('../export/map/map/'.$menu.'.png', base64_decode(str_replace('data:image/png;base64,', '', $params['mapImage']['map'])));
-                $mapImage = '../export/map/map/'.$menu.'.png';
+                $mapImagePath = '../export/map/map/'.$menu.'_'.rand().'.png';
+                file_put_contents($mapImagePath, base64_decode(str_replace('data:image/png;base64,', '', $params['mapImage']['map'])));
+                $mapImage = $mapImagePath;
             } else 
                 $mapImage = '../img/noimages.png';
 
             if(!empty($params['chartImage'])) {
-                file_put_contents('../export/map/chart/'.$menu.'.png', base64_decode(str_replace('data:image/png;base64,', '', $params['chartImage'])));
-                $chartImage = '../export/map/chart/'.$menu.'.png';
+                $chartImagePath = '../export/map/chart/'.$menu.'_'.rand().'.png';
+                file_put_contents( $chartImagePath, base64_decode(str_replace('data:image/png;base64,', '', $params['chartImage'])));
+                $chartImage =  $chartImagePath;
             } else 
                 $chartImage = '../img/noimages.png';
                 
@@ -132,9 +134,14 @@
                 $this->pdf->Image($chartImage, 20, null, 250, 40);
             }
             
-            $this->pdf->Output('../export/map/'.$menu.'.pdf', 'F');
-            $pathFile = 'export/map/'.$menu.'.pdf';
-            echo $pathFile;
+            $filePath = 'export/map/'.$menu.'_'.rand().'.pdf';
+            $this->pdf->Output('../'.$filePath, 'F');
+
+            echo json_encode([
+                'pdf'=>$filePath,
+                'map'=>$mapImagePath,
+                'chart'=>$chartImagePath
+            ], JSON_UNESCAPED_UNICODE);
         }
 
         public function exportSearchForPDF($params) {
@@ -147,8 +154,9 @@
             $detailTableData = $params['detailTableData'];
 
             if(!empty($params['mapImage'])) {
-                file_put_contents('../export/search/map/'.$menu.'.png', base64_decode(str_replace('data:image/png;base64,', '', $params['mapImage'])));
-                $mapImage = '../export/search/map/'.$menu.'.png';
+                $mapImagePath = '../export/search/map/'.$menu.'_'.rand().'.png';
+                file_put_contents($mapImagePath, base64_decode(str_replace('data:image/png;base64,', '', $params['mapImage'])));
+                $mapImage = $mapImagePath;
             } else 
                 $mapImage = '../img/noimages.png';
                 
@@ -282,9 +290,25 @@
                 }
             }
             
-            $this->pdf->Output('../export/search/'.$menu.'.pdf', 'F');
-            $pathFile = 'export/search/'.$menu.'.pdf';
-            echo $pathFile;
+            $filePath = 'export/search/'.$menu.'_'.rand().'.pdf';
+            $this->pdf->Output('../'.$filePath, 'F');
+
+            echo json_encode([
+                'pdf'=>$filePath,
+                'map'=>$mapImagePath
+            ], JSON_UNESCAPED_UNICODE);
+        }
+
+        public function removeFilePath($params) {
+            if(count($params) != 0) {
+                $status = false;
+
+                foreach($params as $key=>$val) {
+                    $status = unlink($val);
+                }
+
+                echo $status;
+            }
         }
     }
 

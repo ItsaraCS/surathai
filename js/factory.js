@@ -561,85 +561,34 @@ Factory.prototype.dataService = {
 
                         factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
                             if(res != undefined) {
-                                window.open(res, '_blank');
-                                $('#chart_title').trigger('click');
+                                var data = JSON.parse(res);
+                                var winCur = window.open(data['pdf'], '_blank');
+
+                                if(winCur) {
+                                    $('#chart_title').trigger('click');
+
+                                    params = {
+                                        funcName: 'removeFilePath',
+                                        params: [
+                                            '../'+ data['pdf'], 
+                                            data['map'],
+                                            data['chart']
+                                        ]
+                                    };
+
+                                    factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
+                                        if(res != undefined) {
+                                            if(res)
+                                                console.log('Open and remove file success');
+                                            else
+                                                console.log(res);
+                                        }
+                                    });
+                                }
                             }
                         });
                     }  
                 }, 1000);
-
-                /*$('#chart_title').trigger('click');
-                $('#collapse1').addClass('in');*/
-
-                /*if(!($('#my_chart').closest('#collapse1').hasClass('in'))) {
-                    $('#chart_title').trigger('click');
-                    $('#collapse1').addClass('in');
-                }*/
-
-                /*var map = html2canvas($('#map'));
-                var mapCanvas = map.render(map.parse());
-                var mapImage = mapCanvas.toDataURL('image/png');
-                
-                var chart = html2canvas($('#my_chart'));
-                var chartCanvas = chart.render(chart.parse());
-                var chartImage = chartCanvas.toDataURL('image/png');
-
-                var exportData = {
-                    title: params.title || 'ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน',
-                    menu: params.menu || 'แผนที่',
-                    year: ($('.nav-menu #year').val() != '') ? (Number($('.nav-menu #year').val()) + 543) : (Number($('.nav-menu #year option:eq(1)').attr('value')) + 543),
-                    region: ($('.nav-menu #region').val() != '') ? $('.nav-menu #region option[value="'+ $('.nav-menu #region').val() +'"]').text() : $('.nav-menu #region option:eq(1)').text(),
-                    province: ($('.nav-menu #area').val() != '') ? $('.nav-menu #area option[value="'+ $('.nav-menu #area').val() +'"]').text() : $('.nav-menu #area option:eq(1)').text(),
-                    mapImage: {
-                        map: mapImage,
-                        legend: [],
-                        layer: []
-                    },
-                    chartImage: chartImage
-                };
-
-                if($('#map_legend .map_legend_box').length != 0) {
-                    var legend = [];
-                    var backgroundColor;
-
-                    $.each($('#map_legend .map_legend_box'), function(index, item) {
-                        backgroundColor = ($(item).find('.map_legend_legend_box').css('background-color')).split(', ');
-                        
-                        legend[index] = {
-                            colorR: Number(backgroundColor[0].replace('rgba(', '')),
-                            colorG: Number(backgroundColor[1]),
-                            colorB: Number(backgroundColor[2].replace(')', '')),
-                            value: $(item).find('.map_legend_legend_text').html()
-                        };
-                    });
-
-                    exportData.mapImage.legend = legend;
-                }
-
-                if($('#map_layer_toggler_container .layer_block').length != 0) {
-                    var layer = [];
-
-                    $.each($('#map_layer_toggler_container .layer_block'), function(index, item) {
-                        layer[index] = {
-                            status: $(item).find('input[type="checkbox"]').is(':checked') || false,
-                            text: $(item).text()
-                        }
-                    });
-
-                    exportData.mapImage.layer = layer;
-                }
-                console.log(exportData);
-
-                params = {
-                    funcName: 'exportMapForPDF',
-                    params: exportData
-                };
-
-                factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
-                    if(res != undefined) {
-                        window.open(res, '_blank');
-                    }
-                });*/
 
                 break;
             case 'search':
@@ -808,7 +757,27 @@ Factory.prototype.dataService = {
 
                         factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
                             if(res != undefined) {
-                                window.open(res, '_blank');
+                                var data = JSON.parse(res);
+                                var winCur = window.open(data['pdf'], '_blank');
+
+                                if(winCur) {
+                                    params = {
+                                        funcName: 'removeFilePath',
+                                        params: [
+                                            '../'+ data['pdf'], 
+                                            data['map']
+                                        ]
+                                    };
+
+                                    factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
+                                        if(res != undefined) {
+                                            if(res)
+                                                console.log('Open and remove file success');
+                                            else
+                                                console.log(res);
+                                        }
+                                    });
+                                }
                             }
                         });
                     }

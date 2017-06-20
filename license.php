@@ -36,6 +36,17 @@
         </div>
     </div>
 </div>
+<!--ADD by AM-->
+<style>
+    .defaultZoom {
+        top: 70px;
+        left: 0.5em;
+    }
+    .ol-touch .defaultZoom {
+        top: 80px;
+    }
+</style>
+<!--ADD by AM-->
 <!--MAP LIBRARY-->
 <link href="css/popup.css" rel="stylesheet" type="text/css">
 <link href="css/map_legend.css" rel="stylesheet" type="text/css">

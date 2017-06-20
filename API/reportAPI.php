@@ -101,11 +101,11 @@ switch($fn){
 									$total = 12;
 									$rdata = array(10,11,12,1,2,3,4,5,6,7,8,9);
 
-									$DB->GetData("SELECT MONTH(ilActDate) AS M, COUNT(IllegalID) ,SUM(`ilComparativeMoney`), SUM(`ilFine`), SUM(`ilOfficer`), SUM(`ilBribe`), SUM(`IlReward`), SUM(`ilReturn`) FROM `Illegal` WHERE ? IN (0,ilRegion) AND ? IN (0,ilArea) AND YEAR(ilActDate + INTERVAL 3 MONTH) = ? GROUP BY M ORDER BY ilActDate",array("iii",$region,$province,$year));
+									$DB->GetData("SELECT MONTH(ilActDate) AS M, COUNT(IllegalID) ,SUM(`ilComparativeMoney`), SUM(`ilFine`), SUM(`ilOfficer`), SUM(`ilBribe`), SUM(`IlReward`), SUM(`ilReturn`) FROM `Illegal`,`Area` WHERE AreaID = ilArea AND ? IN (0,ilRegion) AND ? IN (0,arProvince) AND YEAR(ilActDate + INTERVAL 3 MONTH) = ? GROUP BY M ORDER BY ilActDate",array("iii",$region,$province,$year));
 								}else{
 									$total = 5;
 									$rdata = array(1,2,3,4,5);
-									$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS Y, COUNT(IllegalID),SUM(`ilComparativeMoney`),SUM(`ilFine`),SUM(`ilOfficer`),SUM(`ilBribe`),SUM(`IlReward`),SUM(`ilReturn`) FROM `Illegal` WHERE ? IN (0,ilRegion) AND ? IN (0,ilArea) AND YEAR(ilActDate + INTERVAL 3 MONTH) BETWEEN ? AND ? GROUP BY Y",array("iiii",$region,$province,$year-4,$year));
+									$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS Y, COUNT(IllegalID),SUM(`ilComparativeMoney`),SUM(`ilFine`),SUM(`ilOfficer`),SUM(`ilBribe`),SUM(`IlReward`),SUM(`ilReturn`) FROM `Illegal`,`Area` WHERE AreaID = ilArea AND ? IN (0,ilRegion) AND ? IN (0,arProvince) AND YEAR(ilActDate + INTERVAL 3 MONTH) BETWEEN ? AND ? GROUP BY Y",array("iiii",$region,$province,$year-4,$year));
 								}
         
 								$data = new exReport_Table;
@@ -165,7 +165,7 @@ switch($fn){
 								if($mode==0){
 									$total = 12;
 									$rdata = array(10,11,12,1,2,3,4,5,6,7,8,9);
-									$DB->GetData("SELECT ? AS Y, ? AS R, ? AS P,gmValue AS M,(SELECT COUNT(FactoryID) FROM `Factory` WHERE MONTH(faIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE MONTH(lbIssueDate) = gmValue AND R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE MONTH(slIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, 0 AS Transpot FROM GovMonth",array("iii",$year,$region,$province));
+									$DB->GetData("SELECT ? AS Y, ? AS R, ? AS P,gmValue AS M,(SELECT COUNT(FactoryID) FROM `Factory` WHERE MONTH(faIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE MONTH(lbIssueDate) = gmValue AND R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE MONTH(slIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, (SELECT COUNT(TransportID) FROM Transport WHERE MONTH(tpDate) = gmValue AND YEAR(tpDate + INTERVAL 3 MONTH) = Y AND R IN (0,tpRegion) AND P IN (0,tpProvince)) AS Transpot FROM GovMonth",array("iii",$year,$region,$province));
 
 									$data = new exReport_Table;
 									$data->Init(1,$total,$total);
@@ -221,7 +221,7 @@ switch($fn){
 									}
 
 									for($Y=$year-4;$Y<=$year;$Y++){
-										$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,(SELECT COUNT(FactoryID) FROM `Factory` WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, 0 AS Transpot ",array("iii",$Y,$region,$province));
+										$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,(SELECT COUNT(FactoryID) FROM `Factory` WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, (SELECT COUNT(TransportID) FROM Transport WHERE YEAR(tpDate + INTERVAL 3 MONTH) = Y AND R IN (0,tpRegion) AND P IN (0,tpProvince)) AS Transpot ",array("iii",$Y,$region,$province));
 
 
 										$data->AddCell("ปีงบประมาณ ".($Y + 543));
@@ -444,7 +444,7 @@ switch($fn){
 						array_push($data->region,$sdata);
 					}
 
-					if($data->job == 2){
+/*					if($data->job == 2){
 						$sdata = new exItem;
 						$sdata->id = 0;
 						$sdata->value = 0;
@@ -459,7 +459,7 @@ switch($fn){
 							$sdata->label = $fdata["arName"];
 							array_push($data->province,$sdata);
 						}
-					}else{
+					}else{*/
 						$sdata = new exItem;
 						$sdata->id = 0;
 						$sdata->value = 0;
@@ -474,17 +474,17 @@ switch($fn){
 							$sdata->label = $fdata["pvName"];
 							array_push($data->province,$sdata);
 						}
-					}
+//					}
 				}else{
 					$S_region = isset($_POST["value"])?intval($_POST["value"]):0;
 
-					if($_POST["job"] == 2){
+/*					if($_POST["job"] == 2){
 						$filterLabel = "ทุกพื้นที่";
 						$DB->GetData("SELECT `AreaID`, `arName` FROM `Area` WHERE ? IN (0,arRegion)",array("i",$S_region));
-					}else{
+					}else{*/
 						$filterLabel = "ทุกจังหวัด";
 						$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province` WHERE ? IN (0,pvRegion)",array("i",$S_region));
-					}
+//					}
 					
 
 					if($DB->GetNumRows()>0){
@@ -570,7 +570,7 @@ switch($fn){
 					case 3 :
 							$tmpData = array(array());
 							if($mode==0){
-								$DB->GetData("SELECT ? AS Y, ? AS R, ? AS P,gmValue AS H,(SELECT COUNT(FactoryID) FROM `Factory` WHERE MONTH(faIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE MONTH(lbIssueDate) = gmValue AND R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE MONTH(slIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, 0 AS Transpot FROM GovMonth",array("iii",$year,$region,$province));
+								$DB->GetData("SELECT ? AS Y, ? AS R, ? AS P,gmValue AS H,(SELECT COUNT(FactoryID) FROM `Factory` WHERE MONTH(faIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE MONTH(lbIssueDate) = gmValue AND R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE MONTH(slIssueDate) = gmValue AND R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, (SELECT COUNT(TransportID) FROM `Transport` WHERE MONTH(tpDate) = gmValue AND R IN (0,tpRegion) AND P IN (0,tpProvince) AND YEAR(tpDate + INTERVAL 3 MONTH) = Y) AS Transpot FROM GovMonth",array("iii",$year,$region,$province));
 								while($fdata = $DB->FetchData()){
 									for($x=3;$x<=7;$x++){
 										$tmpData[$x-3][$fdata["H"]] = $fdata[$x];
@@ -580,7 +580,7 @@ switch($fn){
 								}
 							}else{
 								for($Y=$year-4;$Y<=$year;$Y++){
-									$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,(SELECT COUNT(FactoryID) FROM `Factory` WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale, 0 AS Transpot ",array("iii",$Y,$region,$province));
+									$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,(SELECT COUNT(FactoryID) FROM `Factory` WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS Construction,(SELECT COUNT(lbLicense) FROM `Label` WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbIssueDate + INTERVAL 3 MONTH) = Y) AS Production,(SELECT COUNT(SaleLicenseID) FROM (SELECT `SaleLicenseID`, `slIssueDate`, `faProvince`,`faRegion` FROM `SaleLicense`,`Factory` WHERE FactoryID = slFactoryID) AS SL WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(slIssueDate + INTERVAL 3 MONTH) = Y) AS Sale,(SELECT COUNT(TransportID) FROM `Transport` WHERE R IN (0,tpRegion) AND P IN (0,tpProvince) AND YEAR(tpDate + INTERVAL 3 MONTH) = Y) AS Transpot ",array("iii",$Y,$region,$province));
 
 
 									$tmpData[1][$Y] = $fdata["Construction"];

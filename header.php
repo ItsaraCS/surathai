@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบริการฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
+    <title>ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
     <!--jQuery-->
     <script src="lib/jquery/jquery-11.0.min.js" type="text/javascript"></script>
     <script src="lib/jquery/jquery-ui-1.12.1.custom/jquery-ui.js" type="text/javascript"></script>
@@ -89,7 +89,7 @@
 
                         <ul class="nav navbar-nav navbar-left">
                             <li>
-                                <h2 style="margin-top: 5px; font-size: 20px; margin-left: 10px;">ฐานข้อมูลผู้ประกอบการสุราชุมชน</h2>
+                                <h2 style="margin-top: 5px; font-size: 20px; margin-left: 10px;">ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</h2>
                                 <h3 class="header-menu-title" style="margin-top: 0px; margin-left: 10px;"><i class="fa fa-caret-right text-right-indent"></i> <span style="font-size: 18px;"></span></h3>
                             </li>
                         </ul>

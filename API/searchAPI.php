@@ -18,7 +18,12 @@ switch($fn){
 				$Keyword = isset($_POST["keyword"])?$_POST["keyword"]:"";
 				if(!in_array($job,array(1,2,3,4,5))) $job = 1;
 				$title = array(
-					10 => array("ลำดับที่","ชื่อสถานประกอบการ","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา"),
+					1 => array("ลำดับที่","ชื่อสถานประกอบการ","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา"),
+					2 => array("ลำดับที่","พรบ","วันที่เกิดเหตุ","ผู้กล่าวหา/ผู้ต้องหา","สถานที่เกิดเหตุ","ข้อกล่าวหา","ของกลาง/จำนวน","เปรียบเทียบปรับ","ศาลปรับ","พนักงานสอบสวน","เงินสินบน","เงินรางวัล","เงินส่งคลัง"),
+					3 => array("ลำดับที่","ชื่อสถานประกอบการโรงงาน","รหัสทะเบียนโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","เลขที่ใบอนุญาตผลิต","เลขที่ใบอนุญาตจำหน่ายสุรา","เลขที่ใบอนุญาตขนสุรา"),
+					4 => array("ลำดับที่","เล่มที่/เลขที่แสตมป์ที่จ่าย","ชื่อสถานประกอบการโรงงาน","รหัสทะเบียนโรงงาน","เลขรับที่และวันที่รับเรื่อง","ชื่อยี่ห่อ","ดีกรี","จำนวนขวด(ดวง)","ขนาดบรรจุ","ราคาแสตมป์ดวงละ","ปริมาณน้ำสุรา","ค่าภาษีสุรา","วันที่จ่ายแสตมป์"),
+					5 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน","ยี่ห้อ","รูปฉลาก","แผนผังโรงงานและอุปกรณ์","ผลตรวจโรงงาน"),
+/*					10 => array("ลำดับที่","ชื่อสถานประกอบการ","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา"),
 					11 => array("ลำดับที่","ชื่อสถานประกอบการ","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา"),
 					12 => array("ลำดับที่","ชื่อสถานประกอบการ","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา"),
 					13 => array("ลำดับที่","ชื่อสถานประกอบการ","ค่าธรรมเนียมใบอนุญาตก่อสร้าง","ค่าธรรมเนียมใบอนุญาตผลิต","ค่าธรรมเนียมใบอนุญาตจำหน่าย","ค่าธรรมเนียมใบอนุญาตขน","จำหน่ายแสตมป์สุรา"),
@@ -33,15 +38,16 @@ switch($fn){
 /*					31 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน"),
 					32 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขออนุญาตผลิต","เลขที่ใบอนุญาตผลิต","ยี่ห่อที่ผลิต","ดีกรี","ประเภท","วันที่อนุญาต","วันที่ต่อใบอนุญาต","สถานที่ตั้ง"),
 					33 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขออนุญาตจำหน่าย","เลขที่ใบอนุญาตจำหน่ายสุรา","ประเภทใบอนุญาต","วันที่อนุญาต","วันที่ต่อใบอนุญาต","สถานที่ตั้งโรงงาน"),
-					34 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขออนุญาตออกใบขน","เลขที่ใบอนุญาตขนสุรา","ประเภท","วันที่ออกใบขน","ชื่อยี่ห่อสินค้า","ดีกรี","จำนวน(ขวด)","เล่มที่/เลขที่แสตมป์สุราที่ขน","สถานที่ปลายทางในการขนสุรา"),*/
+					34 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขออนุญาตออกใบขน","เลขที่ใบอนุญาตขนสุรา","ประเภท","วันที่ออกใบขน","ชื่อยี่ห่อสินค้า","ดีกรี","จำนวน(ขวด)","เล่มที่/เลขที่แสตมป์สุราที่ขน","สถานที่ปลายทางในการขนสุรา"),
 					40 => array("ลำดับที่","เล่มที่/เลขที่แสตมป์ที่จ่าย","ชื่อสถานประกอบการโรงงาน","รหัสทะเบียนโรงงาน","เลขรับที่และวันที่รับเรื่อง","ชื่อยี่ห่อ","ดีกรี","จำนวนขวด(ดวง)","ขนาดบรรจุ","ราคาแสตมป์ดวงละ","ปริมาณน้ำสุรา","ค่าภาษีสุรา","วันที่จ่ายแสตมป์"),
 					41 => array("ลำดับที่","เล่มที่/เลขที่แสตมป์ที่จ่าย","ชื่อสถานประกอบการโรงงาน","รหัสทะเบียนโรงงาน","เลขรับที่และวันที่รับเรื่อง","ชื่อยี่ห่อ","ดีกรี","จำนวนขวด(ดวง)","ขนาดบรรจุ","ราคาแสตมป์ดวงละ","ปริมาณน้ำสุรา","ค่าภาษีสุรา","วันที่จ่ายแสตมป์"),
 					42 => array("ลำดับที่","เล่มที่/เลขที่แสตมป์ที่จ่าย","ชื่อสถานประกอบการโรงงาน","รหัสทะเบียนโรงงาน","เลขรับที่และวันที่รับเรื่อง","ชื่อยี่ห่อ","ดีกรี","จำนวนขวด(ดวง)","ขนาดบรรจุ","ราคาแสตมป์ดวงละ","ปริมาณน้ำสุรา","ค่าภาษีสุรา","วันที่จ่ายแสตมป์"),
 					50 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน","ยี่ห้อ","รูปฉลาก","แผนผังโรงงานและอุปกรณ์","ผลตรวจโรงงาน"),
 					51 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน","ยี่ห้อ","รูปฉลาก","แผนผังโรงงานและอุปกรณ์","ผลตรวจโรงงาน"),
-					52 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน","ยี่ห้อ","รูปฉลาก","แผนผังโรงงานและอุปกรณ์","ผลตรวจโรงงาน"),
+					52 => array("ลำดับที่","ชื่อสถานประกอบการ","รหัสทะเบียนโรงงาน","ชื่อผู้ขอก่อตั้งโรงงาน","เลขที่ใบอนุญาตก่อตั้งโรงงาน","ประเภท","วันที่อนุญาต","สถานที่ตั้งโรงงาน","ยี่ห้อ","รูปฉลาก","แผนผังโรงงานและอุปกรณ์","ผลตรวจโรงงาน"),*/
 				);
-				$TitleShow = $title[$job*10 + $menu];
+				//$TitleShow = $title[$job*10 + $menu];
+				$TitleShow = $title[$job];
 				$colnum = count($TitleShow);
 
 
@@ -131,13 +137,34 @@ switch($fn){
         
 								$ldata = array();
         
-								list($total,$ldata[0],$ldata[1],$ldata[2],$ldata[3]) = $DB->GetDataOneRow("SELECT COUNT(faName), COUNT(FL), SUM(IF(ISNULL(PL),0,1)), SUM(IF(ISNULL(TL),0,1)), SUM(IF(ISNULL(SL),0,1))  FROM (SELECT ? AS Y, faName, faCode, '' AS FL,(SELECT lbLicense FROM `Label` WHERE lbFacCode = FactoryID AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS PL,(SELECT tpLicense FROM Transport WHERE tpFactory = FactoryID AND YEAR(tpDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS TL, (SELECT SaleLicenseID FROM SaleLicense WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS SL FROM Factory WHERE ? IN (0,faRegion) AND ? IN (0,faProvince)) AS AllData WHERE CONCAT(FL,'@',IF(ISNULL(PL),'',PL),'@',IF(ISNULL(TL),'',TL),'@',IF(ISNULL(SL),'',SL)) LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
-        
-        
-								array_push($ldata,$total);
-        
+								//list($total,$ldata[0],$ldata[1],$ldata[2],$ldata[3]) = $DB->GetDataOneRow("SELECT COUNT(faName), COUNT(FL), SUM(IF(ISNULL(PL),0,1)), SUM(IF(ISNULL(TL),0,1)), SUM(IF(ISNULL(SL),0,1))  FROM (SELECT ? AS Y, faName, faCode, '' AS FL,(SELECT lbLicense FROM `Label` WHERE lbFacCode = FactoryID AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS PL,(SELECT tpLicense FROM Transport WHERE tpFactory = FactoryID AND YEAR(tpDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS TL, (SELECT SaleLicenseID FROM SaleLicense WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS SL FROM Factory WHERE ? IN (0,faRegion) AND ? IN (0,faProvince)) AS AllData WHERE CONCAT(FL,'@',IF(ISNULL(PL),'',PL),'@',IF(ISNULL(TL),'',TL),'@',IF(ISNULL(SL),'',SL)) LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+								$ldata[0] = $DB->GetDataOneField("SELECT COUNT(FactoryID) FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND  ? IN (0,faProvince) AND faCode LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+								$ldata[1] = $DB->GetDataOneField("SELECT COUNT(LabelID) FROM Label WHERE YEAR(lbIssueDate+ INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND  ? IN (0,lbProvince) AND lbLicense LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+								$ldata[2] = $DB->GetDataOneField("SELECT COUNT(SaleLicenseID) FROM SaleLicense, Factory WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND  ? IN (0,faProvince) AND SaleLicenseID LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+								$ldata[3] = $DB->GetDataOneField("SELECT COUNT(TransportID) FROM Transport WHERE YEAR(tpDate + INTERVAL 3 MONTH) = ? AND ? IN (0,tpRegion) AND ? IN (0,tpProvince) AND tpLicense LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+								$ldata[4] = $ldata[0] + $ldata[1] + $ldata[2] + $ldata[3];
+
         
 								$DB->GetData("SELECT faName, faCode, FL, PL, TL, SL, faLat, faLong  FROM (SELECT ? AS Y, faName, faCode, faCode AS FL,(SELECT lbLicense FROM `Label` WHERE lbFacCode = FactoryID AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS PL,(SELECT tpLicense FROM Transport WHERE tpFactory = FactoryID AND YEAR(tpDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS TL, (SELECT SaleLicenseID FROM SaleLicense WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS SL, faLat, faLong FROM Factory WHERE ? IN (0,faRegion) AND ? IN (0,faProvince)) AS AllData WHERE CONCAT(FL,'@',IF(ISNULL(PL),'',PL),'@',IF(ISNULL(TL),'',TL),'@',IF(ISNULL(SL),'',SL)) LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+
+								switch($menu){
+									case 4 :
+										$total = $ldata[3];
+										$DB->GetData("SELECT faName, faLat, faLong, tpFactory, tpLicense AS TL, (SELECT faCode FROM Factory WHERE FactoryID = tpFactory LIMIT 1) AS FL, (SELECT lbLicense FROM `Label` WHERE tpFactory = lbFacCode LIMIT 1) AS PL, (SELECT SaleLicenseID FROM SaleLicense WHERE slFactoryID = tpFactory LIMIT 1) AS SL FROM (SELECT tpFactory, tpLicense FROM Transport WHERE YEAR(tpDate + INTERVAL 3 MONTH) = ? AND ? IN (0,tpRegion) AND ? IN (0,tpProvince) AND tpLicense LIKE ?) AS ALLData LEFT JOIN Factory ON FactoryID = tpFactory LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+										break;
+									case 3 :
+										$total = $ldata[2];
+										$DB->GetData("SELECT faName, faLat, faLong, slFactoryID, SaleLicenseID AS SL, faCode AS FL, (SELECT tpLicense FROM Transport WHERE tpFactory = slFactoryID LIMIT 1) AS TL, (SELECT lbLicense FROM `Label` WHERE slFactoryID = lbFacCode LIMIT 1) AS PL FROM SaleLicense, Factory WHERE FactoryID = slFactoryID AND YEAR(slIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND SaleLicenseID LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+										break;
+									case 2 :
+										$total = $ldata[1];
+										$DB->GetData("SELECT faName, faLat, faLong, lbFacCode, lbLicense AS PL, (SELECT faCode FROM Factory WHERE FactoryID = lbFacCode LIMIT 1) AS FL, (SELECT tpLicense FROM Transport WHERE tpFactory = lbFacCode LIMIT 1) AS TL, (SELECT SaleLicenseID FROM SaleLicense WHERE slFactoryID = lbFacCode LIMIT 1) AS SL FROM (SELECT lbFacCode, lbLicense FROM `Label` WHERE YEAR(lbIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbLicense LIKE ?) AS ALLData LEFT JOIN Factory ON FactoryID = lbFacCode LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+										break;
+									case 1 :
+									default :
+										$total = $ldata[0];
+										$DB->GetData("SELECT faName, faCode, FL, PL, TL, SL, faLat, faLong  FROM (SELECT ? AS Y, faName, faCode, faCode AS FL,(SELECT lbLicense FROM `Label` WHERE lbFacCode = FactoryID AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS PL,(SELECT tpLicense FROM Transport WHERE tpFactory = FactoryID AND YEAR(tpDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS TL, (SELECT SaleLicenseID FROM SaleLicense WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS SL, faLat, faLong FROM Factory WHERE ? IN (0,faRegion) AND ? IN (0,faProvince)) AS AllData WHERE FL LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+								}
         
 								$data = new exSearch_Table;
 								$data->Init(3,$page+1,$RPP,$total,$ldata);
@@ -149,12 +176,12 @@ switch($fn){
 									}
 									for($x=($page * $RPP + 1);$fdata = $DB->FetchData();$x++){
 										$data->AddCell($x,1);
-										$data->AddCell($fdata["faName"]);
-										$data->AddCell($fdata["faCode"]);
+										$data->AddCell(isset($fdata["faName"])?$fdata["faName"]:"-");
+										$data->AddCell(isset($fdata["faCode"])?$fdata["faCode"]:"-",2);
 										$data->AddCell(isset($fdata["FL"])?$fdata["FL"]:"-",2);
 										$data->AddCell(isset($fdata["PL"])?$fdata["PL"]:"-",2);
-										$data->AddCell(isset($fdata["TL"])?$fdata["TL"]:"-",2);
 										$data->AddCell(isset($fdata["SL"])?$fdata["SL"]:"-",2);
+										$data->AddCell(isset($fdata["TL"])?$fdata["TL"]:"-",2);
 										$data->AddLatLong($x,$fdata["faLat"],$fdata["faLong"]);
 									}
 								}
@@ -357,6 +384,7 @@ switch($fn){
 
 	case "autocomplete" :
 				$year = isset($_POST["year"])?$_POST["year"]:date("Y");
+				$menu = isset($_POST["menu"])?intval($_POST["menu"]):0;
 				switch($_POST["src"]){
 					case 1: //โรงงาน
 							$data = array();
@@ -383,6 +411,34 @@ switch($fn){
 								$sdata->id = $fdata["IllegalID"];
 								$sdata->value = $fdata["ilSuspect"];
 								$sdata->label = $fdata["ilSuspect"];
+								array_push($data,$sdata);
+							}
+						break;
+					case 3: //ใบอนุญาต
+							$data = array();
+        
+							$DB = new exDB;
+							switch($menu){
+								case 4 :
+										$DB->GetData("SELECT TransportID AS LNO, tpLicense AS LSHOW FROM Transport WHERE YEAR(tpDate + INTERVAL 3 MONTH) = ? AND tpLicense LIKE ? LIMIT 10",array("is",$year,$_POST["value"]."%"));
+									break;
+								case 3 :
+										$DB->GetData("SELECT SaleLicenseID AS LNO, SaleLicenseID AS LSHOW FROM SaleLicense, Factory WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = ? AND SaleLicenseID LIKE ? LIMIT 10",array("is",$year,$_POST["value"]."%"));
+									break;
+								case 2 :
+										$DB->GetData("SELECT LabelID AS LNO, lbLicense AS LSHOW FROM Label WHERE YEAR(lbIssueDate+ INTERVAL 3 MONTH) = ? AND lbLicense LIKE ? LIMIT 10",array("is",$year,$_POST["value"]."%"));
+									break;
+								case 1 :
+								default :
+										$DB->GetData("SELECT FactoryID AS LNO, faCode AS LSHOW FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND faCode LIKE ? LIMIT 10",array("is",$year,$_POST["value"]."%"));
+							}
+
+        
+							while($fdata = $DB->FetchData()){
+								$sdata = new exItem;
+								$sdata->id = $fdata["LNO"];
+								$sdata->value = $fdata["LSHOW"];
+								$sdata->label = $fdata["LSHOW"];
 								array_push($data,$sdata);
 							}
 						break;

@@ -87,17 +87,41 @@ function search_point_style_function(feature, resolution) {
 		outlineWidth:   '4',
 		maxreso:        '200'
 	};
+
+	var headerMenuTitle = (window.location.pathname).split('/Surathai01/')[1];
+	var imageStyle;
+	if(resolution > 100) {
+		image = new ol.style.Circle({
+			radius: 2,
+			fill: new ol.style.Fill({color: 'rgba(255, 0, 0, 0.8)'}),
+			stroke: new ol.style.Stroke({color:  'rgba(255, 0, 0, 0.8)', width: 1})
+		});
+	} else {
+
+		if(headerMenuTitle == 'search_case.php') {
+			image = new ol.style.Icon({
+				opacity: 1,
+				scale: 0.12,
+				src: 'img/marker-case.png'
+			});
+		} else {
+			image = new ol.style.Icon({
+				opacity: 1,
+				scale: 0.05,
+				src: 'img/marker-factory.png'
+			});
+		}
+	}
+
 	return new ol.style.Style({
-				image: new ol.style.Circle({
-					radius: 2,
-					fill: new ol.style.Fill({color: 'rgba(255, 0, 0, 0.8)'}),
-					stroke: new ol.style.Stroke({color:  'rgba(255, 0, 0, 0.8)', width: 1})
-				}),
-				text: search_create_text_style(feature, 
-									  resolution,
-									  my_dom,
-									  'FACTORY_TNAME')
-				});
+		image,
+		text: search_create_text_style(
+			feature, 
+			resolution,
+			my_dom,
+			'FACTORY_TNAME'
+		)
+	});
 }
 
 function search_create_text_style(feature, resolution, dom, field) {
@@ -113,17 +137,19 @@ function search_create_text_style(feature, resolution, dom, field) {
 	var outlineColor = dom.outline;
 	var outlineWidth = parseInt(dom.outlineWidth, 10);
 
-	return new ol.style.Text({
-		textAlign: align,
-		textBaseline: baseline,
-		font: font,
-		text: search_get_text(feature, resolution, dom, field),
-		fill: new ol.style.Fill({color: fillColor}),
-		stroke: new ol.style.Stroke({color: outlineColor, width: outlineWidth}),
-		offsetX: offsetX,
-		offsetY: offsetY,
-		rotation: rotation
-	});
+	if(resolution < 20) {
+		return new ol.style.Text({
+			textAlign: align,
+			textBaseline: baseline,
+			font: font,
+			text: search_get_text(feature, resolution, dom, field),
+			fill: new ol.style.Fill({color: fillColor}),
+			stroke: new ol.style.Stroke({color: outlineColor, width: outlineWidth}),
+			offsetX: offsetX,
+			offsetY: offsetY,
+			rotation: rotation
+		});
+	}
 }
 
 /**
@@ -151,6 +177,5 @@ function search_get_text(feature, resolution, dom, field) {
 	}
 	
 	//console.log('resolution', resolution, 'maxreso', maxResolution);
-
 	return text;
 }

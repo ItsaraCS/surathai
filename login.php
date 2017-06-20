@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>เข้าสู่ระบบ</title>
+    <title>ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
     <!--jQuery-->
     <script src="lib/jquery/jquery-11.0.min.js" type="text/javascript"></script>
     <script src="lib/jquery/jquery-ui-1.12.1.custom/jquery-ui.js" type="text/javascript"></script>

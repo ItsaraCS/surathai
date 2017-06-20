@@ -206,17 +206,65 @@ function process_loaded_data() {
 
 	var projection = ol.proj.get('EPSG:3857');
 
-	// Map instance.
-	map = new ol.Map({
+	//ADD By AM
+	window.app = {};
+    var app = window.app;
+    app.defaultZoom = function(opt_options) {
+
+        var options = opt_options || {};
+
+        var defaultZoomBtn = document.createElement('button');
+        defaultZoomBtn.innerHTML = '<i class="fa fa-globe" aria-hidden="true"></i>';
+
+        var handledefaultZoom = function(e) {
+            map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
+			map.getView().setZoom(5.5);
+        };
+
+        defaultZoomBtn.addEventListener('click', handledefaultZoom, false);
+
+        var element = document.createElement('div');
+        element.className = 'defaultZoom ol-unselectable ol-control';
+        element.appendChild(defaultZoomBtn);
+
+        ol.control.Control.call(this, {
+            element: element,
+            target: options.target
+        });
+
+    };
+    ol.inherits(app.defaultZoom, ol.control.Control);
+
+    map = new ol.Map({
+        controls: ol.control.defaults({
+            attributionOptions: ({
+                collapsible: false
+            })
+        }).extend([
+            new app.defaultZoom()
+        ]),
 		layers : [vec_region_polygon],
 		overlays: [overlay],//for popup
 		target : 'map',
 		view: new ol.View({
-		center: [100, 13],
-		projection: projection,
-		zoom: 3
+			center: [100, 13],
+			projection: projection,
+			zoom: 3
 		})
 	});
+	//ADD By AM
+
+	// Map instance.
+	// map = new ol.Map({
+	// 	layers : [vec_region_polygon],
+	// 	overlays: [overlay],//for popup
+	// 	target : 'map',
+	// 	view: new ol.View({
+	// 	center: [100, 13],
+	// 	projection: projection,
+	// 	zoom: 3
+	// 	})
+	// });
 	
 	// Add other layers
 	map.addLayer(vec_area_polygon);
