@@ -155,19 +155,8 @@
             });
 
             var projection = ol.proj.get('EPSG:3857');
-
             marker_geom = new ol.geom.Point([0, 0]);
 			marker_feature = new ol.Feature({geometry: marker_geom});
-			marker_style = new ol.style.Style({
-				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-					anchor: [0.5, 16],
-					anchorXUnits: 'fraction',
-					anchorYUnits: 'pixels',
-					opacity: 0.7,
-					src: 'img/marker-search.png'
-				}))
-			});
-			marker_feature.setStyle(marker_style);
 			marker_source = new ol.source.Vector({
 				features: [marker_feature]
 			});
@@ -177,7 +166,8 @@
 
             window.app = {};
             var app = window.app;
-            var dragBox;// Global var
+            var dragBox;
+
             app.Pan = function(opt_options) {
                 var options = opt_options || {};
                 var button = document.createElement('button');
@@ -185,14 +175,11 @@
 
                 var self = this;
                 var handlePan = function(e) {
-                // active Btn
-                        //Remove BG-BTN-Color
-                        $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.5);");
-
-                        //Fill BG-BTN-Color
-                        
-                        $('.pan button').attr("style","background-color: rgba(0,60,136,.9);");
-                // active Btn   
+                    //--Active Btn
+                    //--Remove BG-BTN-Color
+                    $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.5);");
+                    //--Fill BG-BTN-Color
+                    $('.pan button').attr("style","background-color: rgba(0,60,136,.9);");
 
                     map.removeInteraction(dragBox);
                 };
@@ -210,21 +197,17 @@
                     target: options.target
                 });
             };
-
             app.ZoomBox = function(opt_options) {
                 var options = opt_options || {};
                 var button = document.createElement('button');
                 button.innerHTML = '<i class="fa fa-search-plus"></i>';
 
                 var handleZoomBox = function(e) {
-                    // active Btn
-                        //Remove BG-BTN-Color
-                        $('.pan button').attr("style","background-color: rgba(0,60,136,.5);");
-
-                        //Fill BG-BTN-Color
-                        $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.9);");
-
-                    // active Btn
+                    //--Active Btn
+                    //--Remove BG-BTN-Color
+                    $('.pan button').attr("style","background-color: rgba(0,60,136,.5);");
+                    //--Fill BG-BTN-Color
+                    $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.9);");
 
                     var select = new ol.interaction.Select();
                     map.addInteraction(select);
@@ -259,17 +242,16 @@
                 });
             };
             app.defaultZoom = function(opt_options) {
-
                 var options = opt_options || {};
-
                 var defaultZoomBtn = document.createElement('button');
+
                 defaultZoomBtn.innerHTML = '<i class="fa fa-globe" aria-hidden="true"></i>';
 
                 var handledefaultZoom = function(e) {
                     map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
                     map.getView().setZoom(4.5);
                 };
-
+                
                 defaultZoomBtn.addEventListener('click', handledefaultZoom, false);
 
                 var element = document.createElement('div');
@@ -282,7 +264,6 @@
                 });
 
             };
-
             ol.inherits(app.Pan, ol.control.Control);
             ol.inherits(app.ZoomBox, ol.control.Control);
             ol.inherits(app.defaultZoom, ol.control.Control);
@@ -306,10 +287,7 @@
                     zoom: 6
                 })
             });
-			
-			// ==========================================================
-			// ADDED BY KUMPEE - 2017-06-04
-			// ==========================================================
+            
 			getJSON(
 				'data/geojson/factory_2126_point.geojson',
 				function(data) {
@@ -321,13 +299,8 @@
 				function(xhr) {
 				}
 			);
-			// ==========================================================
 
             $('#dvloading').hide().fadeOut();
-
-            /* Zoom Slider */ 
-            //zoomslider = new ol.control.ZoomSlider();
-            //map.addControl(zoomslider);
 
             map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
             map.getView().setZoom(4.5);
@@ -360,15 +333,16 @@
                     });
                     
                     if(hit) {
-                        jTarget.css('cursor', 'pointer');
-                        console.log(hit.get('FACTORY_TNAME'));
+                        if(hit.get('FACTORY_TNAME') != undefined) {
+                            jTarget.css('cursor', 'pointer');
 
-                        $(element).popover({
-                            placement: 'top',
-                            html: true,
-                            content: '<h4 style="width: 200px; color: #333333; margin: 0; font-weight: normal; text-align: center;">' + hit.get('FACTORY_TNAME') +'</h4>'
-                        });
-                        $(element).popover('show');
+                            $(element).popover({
+                                placement: 'top',
+                                html: true,
+                                content: '<h4 style="width: 200px; color: #333333; margin: 0; font-weight: normal; text-align: center;">' + hit.get('FACTORY_TNAME') +'</h4>'
+                            });
+                            $(element).popover('show');
+                        }
                     } else {
                         jTarget.css('cursor', '');
                         $(element).popover('destroy');
@@ -744,9 +718,19 @@
             lat = parseFloat($(this).attr('data-lat')) || 0;
             lon = parseFloat($(this).attr('data-lon')) || 0;
             
-            if((lat != 0) && (lon != 0))
+            if((lat != 0) && (lon != 0)) {
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 13, true);
-            else {
+
+                marker_style = new ol.style.Style({
+                    image: new ol.style.Icon(({
+                        opacity: 1,
+                        scale: 1,
+                        src: 'img/marker-search.png'
+                    }))
+                });
+                map.getLayers().setAt(map.getLayers().getArray().length, layers_marker);
+                marker_feature.setStyle(marker_style);
+            } else {
                 Factory.prototype.utilityService.getPopup({
                     infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
                     btnMsg: 'ปิด'

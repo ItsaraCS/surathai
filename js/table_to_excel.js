@@ -44,7 +44,8 @@ function tableToExcel(){
             if(res != undefined) {
                 returnImgName = res.ImageName;
                 
-                var graphJpg ='<img src="http://localhost/Surathai01/export/report/'+returnImgName+'.png">';
+                //var graphJpg ='<img src="http://localhost/Surathai01/export/report/'+returnImgName+'.png">';
+                var graphJpg ='<img src="http://210.4.143.51/Surathai01/export/report/'+returnImgName+'.png">';
                 // alert(graphJpg);
                 //Get Title
                 var ttitle = '<caption style="font-size:14px;"><b>'+exportTitle+'ประจำ'+yearStr +" "+ regionStr +" "+provinceName+' </b></caption>';

@@ -90,6 +90,7 @@ function search_point_style_function(feature, resolution) {
 
 	var headerMenuTitle = (window.location.pathname).split('/Surathai01/')[1];
 	var imageStyle;
+	
 	if(resolution > 100) {
 		image = new ol.style.Circle({
 			radius: 2,
@@ -97,7 +98,6 @@ function search_point_style_function(feature, resolution) {
 			stroke: new ol.style.Stroke({color:  'rgba(255, 0, 0, 0.8)', width: 1})
 		});
 	} else {
-
 		if(headerMenuTitle == 'search_case.php') {
 			image = new ol.style.Icon({
 				opacity: 1,

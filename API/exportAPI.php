@@ -225,7 +225,7 @@
                         }
                     }
                     
-                    $fill = !$fill;
+                    //$fill = !$fill;
                 }
 
                 $this->pdf->Ln();

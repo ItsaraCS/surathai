@@ -552,7 +552,6 @@ Factory.prototype.dataService = {
 
                             exportData.mapImage.layer = layer;
                         }
-                        console.log(exportData);
 
                         params = {
                             funcName: 'exportMapForPDF',
