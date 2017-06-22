@@ -1,8 +1,6 @@
 <!--NAV-->
 <?php 
-    //$page = explode('/Surathai01/', $_SERVER['SCRIPT_NAME'])[1];
-	// ADDED BY KUMPEE
-	$p = explode('/', $_SERVER['SCRIPT_NAME']);
+    $p = explode('/', $_SERVER['SCRIPT_NAME']);
 	$page = $p[count($p)-1];
 	
     switch($page) {

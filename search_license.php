@@ -168,7 +168,7 @@
             var app = window.app;
             var dragBox;
 
-            app.Pan = function(opt_options) {
+            app.pan = function(opt_options) {
                 var options = opt_options || {};
                 var button = document.createElement('button');
                 button.innerHTML = '<i class="fa fa-hand-paper-o"></i>';
@@ -197,7 +197,7 @@
                     target: options.target
                 });
             };
-            app.ZoomBox = function(opt_options) {
+            app.zoomBox = function(opt_options) {
                 var options = opt_options || {};
                 var button = document.createElement('button');
                 button.innerHTML = '<i class="fa fa-search-plus"></i>';
@@ -256,6 +256,7 @@
 
                 var element = document.createElement('div');
                 element.className = 'defaultZoom ol-unselectable ol-control';
+                element.title = 'Zoom Full';
                 element.appendChild(defaultZoomBtn);
 
                 ol.control.Control.call(this, {
@@ -264,8 +265,8 @@
                 });
 
             };
-            ol.inherits(app.Pan, ol.control.Control);
-            ol.inherits(app.ZoomBox, ol.control.Control);
+            ol.inherits(app.pan, ol.control.Control);
+            ol.inherits(app.zoomBox, ol.control.Control);
             ol.inherits(app.defaultZoom, ol.control.Control);
 
             map = new ol.Map({
@@ -274,8 +275,8 @@
                         collapsible: false
                     })
                 }).extend([
-                    new app.Pan(),
-                    new app.ZoomBox(),
+                    new app.pan(),
+                    new app.zoomBox(),
                     new app.defaultZoom()
                 ]),
                 layers : [ layers_deemap, layers_marker ],
@@ -372,7 +373,10 @@
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined) {
                     var data = JSON.parse(res);
-                    console.log(data);
+                    
+                    map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
+                    map.getView().setZoom(4.5);
+                    marker_source.removeFeature(marker_feature);
 
                     var theadContent = '';
                     $.each(data.label, function(index, item) {
@@ -453,6 +457,10 @@
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined) {
                     var data = JSON.parse(res);
+
+                    map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
+                    map.getView().setZoom(4.5);
+                    marker_source.removeFeature(marker_feature);
                     
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
@@ -721,6 +729,13 @@
             if((lat != 0) && (lon != 0)) {
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 13, true);
 
+                marker_feature = new ol.Feature({geometry: marker_geom});
+                marker_source = new ol.source.Vector({
+                    features: [marker_feature]
+                });
+                layers_marker = new ol.layer.Vector({
+                    source: marker_source
+                });
                 marker_style = new ol.style.Style({
                     image: new ol.style.Icon(({
                         opacity: 1,
@@ -728,8 +743,8 @@
                         src: 'img/marker-search.png'
                     }))
                 });
-                map.getLayers().setAt(map.getLayers().getArray().length, layers_marker);
                 marker_feature.setStyle(marker_style);
+                map.getLayers().setAt(3, layers_marker);
             } else {
                 Factory.prototype.utilityService.getPopup({
                     infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',

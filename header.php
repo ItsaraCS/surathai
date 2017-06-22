@@ -43,7 +43,8 @@
         var factory = new Factory();
         var ajaxUrl = 'API/userAPI.php';
         var userData;
-        var pathFile = (window.location.pathname).split('/Surathai01/')[1];
+        var path = (window.location.pathname).split('/');
+        var pathFile = path[path.length - 1];
         var userID = JSON.parse(sessionStorage.getItem('userID'));
         
         if(userID == null)

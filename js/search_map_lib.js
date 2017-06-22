@@ -88,7 +88,8 @@ function search_point_style_function(feature, resolution) {
 		maxreso:        '200'
 	};
 
-	var headerMenuTitle = (window.location.pathname).split('/Surathai01/')[1];
+	var path = (window.location.pathname).split('/');
+	var headerMenuTitle = path[path.length - 1];
 	var imageStyle;
 	
 	if(resolution > 100) {

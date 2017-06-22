@@ -173,7 +173,6 @@
         </div>
     </div>
 </div>
-
 <!--STYLE-->
 <style>
     .pan {
@@ -200,10 +199,6 @@
         top: 140px;
     }
 </style>
-
-<!--MAP LIBRARY-->
-<script src="js/search_map_lib.js" type="text/javascript"></script>
-<script src="js/e_map_lib.js" type="text/javascript"></script>
 <!--JS-->
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -231,43 +226,19 @@
         }
 
         function getMap() {
-            var vectorLayer_region = null;
-            var vectorLayer_province = null;
-            var dataGJson_world = null;
-            var dataGJson_point_region = null;
-            var style_region = null;
-            var zoomslider;
-            var container = $('#popup');
-            var content = $('#popup-content');
-            var closer = $('#popup-closer');
-            
-            //--DEE-MAP
-            var layers_deemap = new ol.layer.Tile({ 
-                source: new ol.source.TileWMS({
+            var layers_deemap =  new ol.layer.Tile({ 
+                source: new ol.source.TileWMS( {
                     url: 'http://www.dee-map.com/geoserver/gwc/service/wms/dmwms',
                     params: { 'LAYERS': 'Dee-Map', 'VERSION': '1.1.1', 'FORMAT': 'image/png8' },
                     //serverType: 'geoserver', 
                     crossOrigin: 'anonymous', noWrap: true,  wrapX: false
                 }),  
-                extent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+                extent: [ -20037508.34, -20037508.34, 20037508.34, 20037508.34 ]
             });
-    
-            var projection = ol.proj.get('EPSG:3857');
 
-			// ===========================================
-			// ADDED BY KUMPEE
-			marker_geom = new ol.geom.Point([0, 0]);
+            var projection = ol.proj.get('EPSG:3857');
+            marker_geom = new ol.geom.Point([0, 0]);
 			marker_feature = new ol.Feature({geometry: marker_geom});
-			marker_style = new ol.style.Style({
-				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-					anchor: [0.5, 46],
-					anchorXUnits: 'fraction',
-					anchorYUnits: 'pixels',
-					opacity: 0.7,
-					src: 'img/marker-eform.png'
-				}))
-			});
-			marker_feature.setStyle(marker_style);
 			marker_source = new ol.source.Vector({
 				features: [marker_feature]
 			});
@@ -275,25 +246,22 @@
 				source: marker_source
 			});
 
-             //ADD By AM
             window.app = {};
             var app = window.app;
-            var dragBox;// Global var
-            app.Pan = function(opt_options) {
+            var dragBox;
+
+            app.pan = function(opt_options) {
                 var options = opt_options || {};
                 var button = document.createElement('button');
                 button.innerHTML = '<i class="fa fa-hand-paper-o"></i>';
 
                 var self = this;
                 var handlePan = function(e) {
-                // active Btn
-                        //Remove BG-BTN-Color
-                        $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.5);");
-
-                        //Fill BG-BTN-Color
-                        
-                        $('.pan button').attr("style","background-color: rgba(0,60,136,.9);");
-                // active Btn   
+                    //--Active Btn
+                    //--Remove BG-BTN-Color
+                    $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.5);");
+                    //--Fill BG-BTN-Color
+                    $('.pan button').attr("style","background-color: rgba(0,60,136,.9);");
 
                     map.removeInteraction(dragBox);
                 };
@@ -311,21 +279,17 @@
                     target: options.target
                 });
             };
-
-            app.ZoomBox = function(opt_options) {
+            app.zoomBox = function(opt_options) {
                 var options = opt_options || {};
                 var button = document.createElement('button');
                 button.innerHTML = '<i class="fa fa-search-plus"></i>';
 
                 var handleZoomBox = function(e) {
-                    // active Btn
-                        //Remove BG-BTN-Color
-                        $('.pan button').attr("style","background-color: rgba(0,60,136,.5);");
-
-                        //Fill BG-BTN-Color
-                        $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.9);");
-
-                    // active Btn
+                    //--Active Btn
+                    //--Remove BG-BTN-Color
+                    $('.pan button').attr("style","background-color: rgba(0,60,136,.5);");
+                    //--Fill BG-BTN-Color
+                    $('.zoom-box button').attr("style","background-color: rgba(0,60,136,.9);");
 
                     var select = new ol.interaction.Select();
                     map.addInteraction(select);
@@ -360,21 +324,21 @@
                 });
             };
             app.defaultZoom = function(opt_options) {
-
                 var options = opt_options || {};
-
                 var defaultZoomBtn = document.createElement('button');
+
                 defaultZoomBtn.innerHTML = '<i class="fa fa-globe" aria-hidden="true"></i>';
 
                 var handledefaultZoom = function(e) {
-                    map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
-                    map.getView().setZoom(4.5);
+                    map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
+                    map.getView().setZoom(9);
                 };
 
                 defaultZoomBtn.addEventListener('click', handledefaultZoom, false);
 
                 var element = document.createElement('div');
                 element.className = 'defaultZoom ol-unselectable ol-control';
+                element.title = 'Zoom Full';
                 element.appendChild(defaultZoomBtn);
 
                 ol.control.Control.call(this, {
@@ -383,12 +347,9 @@
                 });
 
             };
-
-            ol.inherits(app.Pan, ol.control.Control);
-            ol.inherits(app.ZoomBox, ol.control.Control);
+            ol.inherits(app.pan, ol.control.Control);
+            ol.inherits(app.zoomBox, ol.control.Control);
             ol.inherits(app.defaultZoom, ol.control.Control);
-
-           
 
             map = new ol.Map({
                 controls: ol.control.defaults({
@@ -396,58 +357,69 @@
                         collapsible: false
                     })
                 }).extend([
-                    new app.Pan(),
-                    new app.ZoomBox(),
+                    new app.pan(),
+                    new app.zoomBox(),
                     new app.defaultZoom()
                 ]),
                 layers : [ layers_deemap, layers_marker ],
-                //overlays: [overlay], //--for popup
+                //overlays: [overlay],//for popup
                 target : 'map',
                 view: new ol.View({
-                    center: [99.697123, 17.231792],
+                    center: [13.0, 100.5],
                     projection: projection,
-                    zoom: 16
+                    zoom: 6
                 })
             });
 
-            //ADD By AM
-
-
-
-			// ===========================================
-			
-            // map = new ol.Map({
-            //     layers : [ layers_deemap, layers_marker ],
-            //     //overlays: [overlay], //--for popup
-            //     target : 'map',
-            //     view: new ol.View({
-            //         center: [99.697123, 17.231792],
-            //         projection: projection,
-            //         zoom: 16
-            //     })
-            // });
-            
             $('#dvloading').hide().fadeOut();
-            
-            //--Zoom Slider
-            // zoomslider = new ol.control.ZoomSlider();
-            // map.addControl(zoomslider);
-            
+
             map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
-            map.getView().setZoom(9.0);
-			
-			// ===========================================
-			// ADDED BY KUMPEE
-			map.on('singleclick', function(event) {
-				// lonlat[0] : Longitude
-				// lonlat[1] : Latitude
-				var lonlat = e_get_factory_location(ol, map, event, marker_geom, 9, false);
-				console.log('lat:', lonlat[1], 'lon:', lonlat[0]);
-                
-                $('#Lat').val(lonlat[1]);
-                $('#Lon').val(lonlat[0]);
-			});
-			// ===========================================
+            map.getView().setZoom(9);
+
+            var target = map.getTarget();
+            var jTarget = typeof target === 'string' ? $("#" + target) : $(target);
+
+            var element = document.getElementById('label-popup');
+            var popup = new ol.Overlay({
+                element: element,
+                positioning: 'bottom-center',
+                stopEvent: false
+            });
+            map.addOverlay(popup);
+            
+            $(map.getViewport()).on('mousemove', function(e) {
+                var view = map.getView();
+                var resolution = view.getResolution();
+
+                if(resolution < 100) {
+                    var pixel = map.getEventPixel(e.originalEvent);
+                    var hit = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+                        if(feature) {
+                            var geometry = feature.getGeometry();
+                            var coord = geometry.getCoordinates();
+                            popup.setPosition(coord);
+                        }
+                        
+                        return feature;
+                    });
+                    
+                    if(hit) {
+                        if(hit.get('FACTORY_TNAME') != undefined) {
+                            jTarget.css('cursor', 'pointer');
+
+                            $(element).popover({
+                                placement: 'top',
+                                html: true,
+                                content: '<h4 style="width: 200px; color: #333333; margin: 0; font-weight: normal; text-align: center;">' + hit.get('FACTORY_TNAME') +'</h4>'
+                            });
+                            $(element).popover('show');
+                        }
+                    } else {
+                        jTarget.css('cursor', '');
+                        $(element).popover('destroy');
+                    }
+                }
+            });
         }
 
         function getTable() {
@@ -568,6 +540,19 @@
                 lon = parseFloat($('#Lon').val()) || 0;
 
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
+
+                marker_style = new ol.style.Style({
+                    image: new ol.style.Icon(({
+                        opacity: 0.8,
+                        scale: 1,
+                        src: 'img/marker-eform.png'
+                    }))
+                });
+                marker_feature.setStyle(marker_style);
+            } else {
+                map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
+                map.getView().setZoom(9);
+                marker_feature.removeLayer(marker_style);
             }
         });
 
@@ -580,9 +565,18 @@
             lat = parseFloat($(this).attr('data-lat')) || 0;
             lon = parseFloat($(this).attr('data-lon')) || 0;
 
-            if((lat != 0) && (lon != 0))
+            if((lat != 0) && (lon != 0)) {
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 9, true);
-            else {
+
+                marker_style = new ol.style.Style({
+                    image: new ol.style.Icon(({
+                        opacity: 0.8,
+                        scale: 0.07,
+                        src: 'img/marker-factory.png'
+                    }))
+                });
+                marker_feature.setStyle(marker_style);
+            } else {
                 Factory.prototype.utilityService.getPopup({
                     infoMsg: 'ไม่พบค่าพิกัดที่ตั้ง',
                     btnMsg: 'ปิด'
@@ -647,6 +641,10 @@
             factory.initService.setError($('input, select, textarea'), 'clear');
             $('input, select, textarea').val('');
             $('.thumbnail-upload img').remove();
+
+            map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
+            map.getView().setZoom(9);
+            marker_feature.removeLayer(marker_style);
         });
 
         $('#FactoryName').autocomplete({ 

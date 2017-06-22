@@ -1,1 +1,1 @@
-<?php header( "refresh: 0; url=/Surathai01/login.php" ); exit(0); ?>
+<?php header( "refresh: 0; url=".$_SERVER['REQUEST_URI']."login.php" ); exit(0); ?>

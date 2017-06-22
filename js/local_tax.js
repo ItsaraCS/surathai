@@ -86,6 +86,8 @@ function on_page_loaded() {
 	// Load map data
 	// ------------------------------------------------------------
 	// vector data
+	var path = window.location.origin +'/'+ (window.location.pathname).split('/')[1];
+	
 	load_data_region_polygon('data/geojson/excise_region.geojson');
 	load_data_region_point('data/geojson/point_region.geojson');
 	load_data_area_point('data/geojson/excise_area_centroid_compact.geojson');

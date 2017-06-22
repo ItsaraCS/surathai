@@ -116,7 +116,8 @@ Factory.prototype.initService = {
         }
     },
     setMenu: function() {
-        var headerMenuTitle = (window.location.pathname).split('/Surathai01/')[1];
+        var path = (window.location.pathname).split('/');
+        var headerMenuTitle = path[path.length - 1];
         
         $('.header .header-menu ul li a span').css({ 'color': '#2A7CBF' });
         $('.nav .nav-menu').find('a').removeClass('active disabled');

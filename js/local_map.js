@@ -93,6 +93,8 @@ function on_page_loaded() {
 	// Load map data
 	// ------------------------------------------------------------
 	// vector data
+	var path = window.location.origin +'/'+ (window.location.pathname).split('/')[1];
+
 	load_data_region_polygon('data/geojson/excise_region.geojson');
 	load_data_region_point('data/geojson/point_region.geojson');
 	load_data_area_point('data/geojson/excise_area_centroid_compact.geojson');
@@ -104,9 +106,7 @@ function on_page_loaded() {
 	load_data_thaiwhisky_point('data/geojson/thaiwhisky_point.geojson');
 	
 	// Attribute data
-	//--EDIT BY ITSARA
-	//load_data_case('data/geojson/overall_sum_by_reg_code.geojson');
-	load_data_case('http://210.4.143.51/Surathai01/API/taxmapAPI.php?data=overall_reg&year=2017');
+	load_data_case(path +'/API/taxmapAPI.php?data=overall_reg&year=2017');
 	load_data_case_monthly('data/geojson/overall_sum_by_reg_code_month.geojson');
 	load_data_area('data/geojson/overall_sum_by_area_code.geojson');
 	
