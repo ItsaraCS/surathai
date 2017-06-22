@@ -376,7 +376,10 @@
                     
                     map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
                     map.getView().setZoom(4.5);
-                    marker_source.removeFeature(marker_feature);
+                    
+                    marker_style = new ol.style.Style();
+                    marker_feature.setStyle(marker_style);
+                    map.getLayers().setAt(3, layers_marker);
 
                     var theadContent = '';
                     $.each(data.label, function(index, item) {
@@ -460,7 +463,10 @@
 
                     map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
                     map.getView().setZoom(4.5);
-                    marker_source.removeFeature(marker_feature);
+                    
+                    marker_style = new ol.style.Style();
+                    marker_feature.setStyle(marker_style);
+                    map.getLayers().setAt(3, layers_marker);
                     
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
@@ -729,13 +735,6 @@
             if((lat != 0) && (lon != 0)) {
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 13, true);
 
-                marker_feature = new ol.Feature({geometry: marker_geom});
-                marker_source = new ol.source.Vector({
-                    features: [marker_feature]
-                });
-                layers_marker = new ol.layer.Vector({
-                    source: marker_source
-                });
                 marker_style = new ol.style.Style({
                     image: new ol.style.Icon(({
                         opacity: 1,
