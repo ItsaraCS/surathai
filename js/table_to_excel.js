@@ -43,9 +43,10 @@ function tableToExcel(){
         success: function(res){
             if(res != undefined) {
                 returnImgName = res.ImageName;
-                var path = window.location.origin +'/'+ (window.location.pathname).split('/')[1];
+                var dir = (/[a-z0-9\-\_]+.php/).test((window.location.pathname).split('/')[1]) ? '' : (window.location.pathname).split('/')[1] +'/';
+                var path = window.location.origin +'/'+ dir;
                 
-                var graphJpg ='<img src="'+ path +'/export/report/'+returnImgName+'.png">';
+                var graphJpg ='<img src="'+ path +'export/report/'+returnImgName+'.png">';
                 // alert(graphJpg);
                 //Get Title
                 var ttitle = '<caption style="font-size:14px;"><b>'+exportTitle+'ประจำ'+yearStr +" "+ regionStr +" "+provinceName+' </b></caption>';

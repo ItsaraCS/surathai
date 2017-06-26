@@ -6,7 +6,7 @@
         <div class="row">
             <!--DATA-->
             <div class="col-md-4">
-                <div class="panel panel-default" style="height: 58vh; border-radius: 0;">
+                <div class="panel panel-default" style="height: 54vh; border-radius: 0;">
                     <div class="panel-body" style="padding: 0;">
                         <table class="table table-striped search-label-detail-table" style="margin-top: 0; margin-bottom: 0;">
                             <tbody>
@@ -16,8 +16,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="col-md-12 text-center" style="height: 50vh; padding: 10px !important; border: 0;">
-                                        <img src="" id="BrandImage" style="width: 100%; height: 46vh;">
+                                    <td class="col-md-12 text-center" style="height: 43vh; padding: 10px !important; border: 0;">
+                                        <img src="" id="BrandImage" style="width: 100%; height: 43vh;">
                                     </td>
                                 </tr>
                             </tbody>
@@ -28,10 +28,10 @@
 
             <!--MAP-->
             <div class="col-md-8 get-map">
-                <div class="panel panel-default" style="height: 58vh; border-radius: 0; padding: 0;">
+                <div class="panel panel-default" style="height: 54vh; border-radius: 0; padding: 0;">
                     <div class="panel-body" style="padding-top: 0; padding-bottom: 0;">
                         <div class="row">
-                            <div id="map" class="map" style="width: 100%; height: 58vh;"></div>
+                            <div id="map" class="map" style="width: 100%; height: 54vh;"></div>
                                 <div id="label-popup"></div>
                                 <div id="popup" class="ol-popup">
                                     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -49,10 +49,10 @@
     <!--TABLE DATA-->
     <div class="col-md-12" style="margin-top: 10px;">
         <div class="row">
-            <div class="panel panel-default" style="height: 18vh;">
+            <div class="panel panel-default" style="height: 22vh;">
                 <div class="panel-body" style="padding: 0;">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered search-table bg-info" style="margin: 0 auto; overflow-y: hidden;"> 
+                    <div class="table-responsive" style="height: 22vh;">
+                        <table class="table table-striped table-bordered search-table bg-info" style="margin: 0 auto; overflow-y: scroll;"> 
                             <thead>
                                 <tr>
                                     <th class="text-center text-nowrap bg-primary">ชื่อสถานประกอบการโรงงาน</th>
@@ -362,26 +362,29 @@
                 factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                     if(res != undefined){
                         var data = JSON.parse(res);
-                        data = data[0];
-                        console.log(data)
 
                         if(data.length != 0) {
                             $('.search-table tbody tr').remove();
                             $('#BrandImage').attr('src', ((data.picture != 'data/label/') ? data.picture : 'img/noimages.png'));
-                            $('.search-table tbody').append('<tr data-lat="'+ data.lat +'" data-lon="'+ data.long +'">' + 
-                                    '<td class="text-center text-nowrap">'+ data.factory_name +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.factory_code +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.contact +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.license +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.brand +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.degree +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.type +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.issue_date +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.extend_date +'</td>' +
-                                    '<td class="text-center text-nowrap">'+ data.address +'</td>' +
-                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((data.plan != 'data/factoryplan/') ? data.plan : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
-                                    '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="img/noimages.png" style="width: 50px; height: 50px;"></a></td>' +
-                                '</tr>');
+
+                            var tbodyContent = '';
+                            $.each(data, function(index, item) {
+                                tbodyContent += '<tr data-lat="'+ item.lat +'" data-lon="'+ item.long +'">' + 
+                                        '<td class="text-center text-nowrap">'+ item.factory_name +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.factory_code +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.contact +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.license +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.brand +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.degree +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.type +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.issue_date +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.extend_date +'</td>' +
+                                        '<td class="text-center text-nowrap">'+ item.address +'</td>' +
+                                        '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((item.plan != 'data/factoryplan/') ? item.plan : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
+                                        '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="img/noimages.png" style="width: 50px; height: 50px;"></a></td>' +
+                                    '</tr>';
+                            });
+                            $('.search-table tbody').append(tbodyContent);
                         }
                     }
                 });
@@ -397,10 +400,7 @@
                 
                 map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
                 map.getView().setZoom(4.5);
-                
-                marker_style = new ol.style.Style();
-                marker_feature.setStyle(marker_style);
-                map.getLayers().setAt(3, layers_marker);
+                marker_source.removeFeature(marker_feature);
             }
         });
 
@@ -426,6 +426,13 @@
             if((lat != 0) && (lon != 0)) {
                 e_set_factory_location(ol, map, lat, lon, marker_geom, 15, true);
 
+                marker_feature = new ol.Feature({geometry: marker_geom});
+                marker_source = new ol.source.Vector({
+                    features: [marker_feature]
+                });
+                layers_marker = new ol.layer.Vector({
+                    source: marker_source
+                });
                 marker_style = new ol.style.Style({
                     image: new ol.style.Icon(({
                         opacity: 1,

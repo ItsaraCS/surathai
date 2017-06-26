@@ -748,7 +748,6 @@ Factory.prototype.dataService = {
                                 sizeWidth: sizeWidth
                             }
                         }
-                        console.log(exportData);
 
                         params = {
                             funcName: 'exportSearchForPDF',

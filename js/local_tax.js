@@ -86,8 +86,6 @@ function on_page_loaded() {
 	// Load map data
 	// ------------------------------------------------------------
 	// vector data
-	var path = window.location.origin +'/'+ (window.location.pathname).split('/')[1];
-	
 	load_data_region_polygon('data/geojson/excise_region.geojson');
 	load_data_region_point('data/geojson/point_region.geojson');
 	load_data_area_point('data/geojson/excise_area_centroid_compact.geojson');
@@ -99,9 +97,9 @@ function on_page_loaded() {
 	load_data_thaiwhisky_point('data/geojson/thaiwhisky_point.geojson');
 	
 	// Attribute data
-	load_data_region('data/geojson/tax_sum_by_reg_code.geojson');
-	load_data_region_monthly('data/geojson/tax_sum_by_reg_code_month.geojson');
-	load_data_area('data/geojson/tax_sum_by_area_code.geojson');
+	load_data_region('API/taxmapAPI.php?data=tax_reg&year=2017');
+	load_data_region_monthly('API/taxmapAPI.php?data=tax_month&year=2017');
+	load_data_area('API/taxmapAPI.php?data=tax_area&year=2017');
 	
 	// Done
 	console.log('Done.');
