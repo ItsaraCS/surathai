@@ -25,19 +25,18 @@
             $province = (!empty($params['province'])) ? $params['province'] : '';
 
             if(!file_exists('../export/map')) {
-                mkdir('../export/map/map', 0777, true);
-                mkdir('../export/map/chart', 0777, true);
+                mkdir('../export/map', 0777, true);
             }
 
             if(!empty($params['mapImage']['map'])) {
-                $mapImagePath = '../export/map/map/map_'.rand().'.png';
+                $mapImagePath = '../export/map/map_img_'.rand().'.png';
                 file_put_contents($mapImagePath, base64_decode(str_replace('data:image/png;base64,', '', $params['mapImage']['map'])));
                 $mapImage = $mapImagePath;
             } else 
                 $mapImage = '../img/noimages.png';
 
             if(!empty($params['chartImage'])) {
-                $chartImagePath = '../export/map/chart/map_'.rand().'.png';
+                $chartImagePath = '../export/map/chart_img_'.rand().'.png';
                 file_put_contents( $chartImagePath, base64_decode(str_replace('data:image/png;base64,', '', $params['chartImage'])));
                 $chartImage =  $chartImagePath;
             } else 
@@ -160,11 +159,10 @@
 
             if(!file_exists('../export/search')) {
                 mkdir('../export/search', 0777, true);
-                mkdir('../export/search/map', 0777, true);
             }
 
             if(!empty($params['mapImage'])) {
-                $mapImagePath = '../export/search/map/search_'.rand().'.png';
+                $mapImagePath = '../export/search/search_img_'.rand().'.png';
                 file_put_contents($mapImagePath, base64_decode(str_replace('data:image/png;base64,', '', $params['mapImage'])));
                 $mapImage = $mapImagePath;
             } else 

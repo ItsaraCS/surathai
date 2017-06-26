@@ -576,14 +576,16 @@ Factory.prototype.dataService = {
                                         ]
                                     };
 
-                                    factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
-                                        if(res != undefined) {
-                                            if(res)
-                                                console.log('Open and remove file success');
-                                            else
-                                                console.log(res);
-                                        }
-                                    });
+                                    setTimeout(function() {
+                                        factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
+                                            if(res != undefined) {
+                                                if(res)
+                                                    console.log('Open and remove file success');
+                                                else
+                                                    console.log(res);
+                                            }
+                                        });
+                                    }, 1000);
                                 }
                             }
                         });
@@ -638,114 +640,116 @@ Factory.prototype.dataService = {
                         });
 
                         //--detailTableData
-                        var screen = 0;
-                        var width = 0;
-                        var total = 0;
-                        var page = 1;
+                        if($('.search-table tbody tr').length > 1) {
+                            var screen = 0;
+                            var width = 0;
+                            var total = 0;
+                            var page = 1;
 
-                        var detailTableDataPerPage = [];
-                        var perPage = 0;
-                        $.each($('.search-table thead tr th'), function(index, item) {
-                            if($(item).find('.select-export').is(':checked')) {
-                                screen += $(item).innerWidth();
-                                width += $(item).innerWidth();
-                                total += 1;
-                                perPage += 1;
+                            var detailTableDataPerPage = [];
+                            var perPage = 0;
+                            $.each($('.search-table thead tr th'), function(index, item) {
+                                if($(item).find('.select-export').is(':checked')) {
+                                    screen += $(item).innerWidth();
+                                    width += $(item).innerWidth();
+                                    total += 1;
+                                    perPage += 1;
 
-                                if(width > 1100) {
-                                    detailTableDataPerPage.push((perPage - 1));
-                                    width = $(item).innerWidth();
-                                    page += 1;
-                                    perPage = 1;
-                                }
-                            }
-                        });
-
-                        if(perPage > 0) 
-                            detailTableDataPerPage.push(perPage);
-                            
-                        var detailTableDataHeader = [];
-                        var detailTableDataSizeWidth = [];
-                        $.each($('.search-table thead tr th'), function(index, item) {
-                            if($(item).find('.select-export').is(':checked')) {
-                                detailTableDataHeader.push($(item).find('label').html());
-                                detailTableDataSizeWidth.push(($(item).innerWidth() / 4));
-                            }
-                        });
-
-                        //--Get index with select export
-                        var selectItem = [];
-                        var selectIndex = 0;
-                        $.each($('.search-table thead tr th'), function(theadIndex, theadItem) {
-                            if($(theadItem).find('.select-export').is(':checked')) { 
-                                selectItem[selectIndex] = theadIndex;
-                                selectIndex++;
-                            }
-                        });
-
-                        var detailTableDataBody = [];
-                        var detailTableDataAlign = [];
-                        for(var i=0; i<page; i++) { 
-                            var body = [];
-                            var align = [];
-
-                            $.each($('.search-table tbody tr'), function(tbodyIndex, tbodyItem) { 
-                                var bodyData = [];
-                                var alignData = [];
-
-                                for(var j=0; j<detailTableDataPerPage[i]; j++) { 
-                                    if(selectItem[j] != undefined) {
-                                        if($(tbodyItem).find('td:eq('+ selectItem[j] +')').find('a').length > 0) {
-                                            if($(tbodyItem).find('td:eq('+ selectItem[j] +')').find('a img').length > 0)
-                                                bodyData[j] = $(tbodyItem).find('td:eq('+ selectItem[j] +') a img').attr('src');
-                                            else
-                                                bodyData[j] = $(tbodyItem).find('td:eq('+ selectItem[j] +') a').text();
-                                        } else
-                                            bodyData[j] = $(tbodyItem).find('td:eq('+ selectItem[j] +')').html();
-
-                                        alignData[j] = ({
-                                            'text-left': 'L',
-                                            'text-right': 'R',
-                                            'text-center': 'C'
-                                        })[($(tbodyItem).find('td:eq('+ selectItem[j] +')').attr('class')).replace(' text-nowrap', '')];
+                                    if(width > 1100) {
+                                        detailTableDataPerPage.push((perPage - 1));
+                                        width = $(item).innerWidth();
+                                        page += 1;
+                                        perPage = 1;
                                     }
                                 }
-
-                                body[tbodyIndex] = bodyData;
-                                align[tbodyIndex] = alignData;
                             });
 
-                            for(var j=0; j<detailTableDataPerPage[i]; j++) {
-                                selectItem.shift();
-                            }
+                            if(perPage > 0) 
+                                detailTableDataPerPage.push(perPage);
+                                
+                            var detailTableDataHeader = [];
+                            var detailTableDataSizeWidth = [];
+                            $.each($('.search-table thead tr th'), function(index, item) {
+                                if($(item).find('.select-export').is(':checked')) {
+                                    detailTableDataHeader.push($(item).find('label').html());
+                                    detailTableDataSizeWidth.push(($(item).innerWidth() / 4));
+                                }
+                            });
 
-                            detailTableDataBody[i] = body;
-                            detailTableDataAlign[i] = align;
-                        }
+                            //--Get index with select export
+                            var selectItem = [];
+                            var selectIndex = 0;
+                            $.each($('.search-table thead tr th'), function(theadIndex, theadItem) {
+                                if($(theadItem).find('.select-export').is(':checked')) { 
+                                    selectItem[selectIndex] = theadIndex;
+                                    selectIndex++;
+                                }
+                            });
 
-                        var body = [];
-                        var align = [];
-                        var row = 0;
-                        for(var i=0; i<page; i++) {
-                            var header = [];
-                            var sizeWidth = [];
-                            body = [];
-                            align = [];
+                            var detailTableDataBody = [];
+                            var detailTableDataAlign = [];
+                            for(var i=0; i<page; i++) { 
+                                var body = [];
+                                var align = [];
 
-                            for(var j=0; j<detailTableDataPerPage[i]; j++) {
-                                if(detailTableDataHeader[row] != undefined && detailTableDataSizeWidth[row] != undefined) {
-                                    header.push(detailTableDataHeader[row]);
-                                    sizeWidth.push(detailTableDataSizeWidth[row]);
+                                $.each($('.search-table tbody tr'), function(tbodyIndex, tbodyItem) { 
+                                    var bodyData = [];
+                                    var alignData = [];
+
+                                    for(var j=0; j<detailTableDataPerPage[i]; j++) { 
+                                        if(selectItem[j] != undefined) {
+                                            if($(tbodyItem).find('td:eq('+ selectItem[j] +')').find('a').length > 0) {
+                                                if($(tbodyItem).find('td:eq('+ selectItem[j] +')').find('a img').length > 0)
+                                                    bodyData[j] = $(tbodyItem).find('td:eq('+ selectItem[j] +') a img').attr('src');
+                                                else
+                                                    bodyData[j] = $(tbodyItem).find('td:eq('+ selectItem[j] +') a').text();
+                                            } else
+                                                bodyData[j] = $(tbodyItem).find('td:eq('+ selectItem[j] +')').html();
+
+                                            alignData[j] = ({
+                                                'text-left': 'L',
+                                                'text-right': 'R',
+                                                'text-center': 'C'
+                                            })[($(tbodyItem).find('td:eq('+ selectItem[j] +')').attr('class')).replace(' text-nowrap', '')];
+                                        }
+                                    }
+
+                                    body[tbodyIndex] = bodyData;
+                                    align[tbodyIndex] = alignData;
+                                });
+
+                                for(var j=0; j<detailTableDataPerPage[i]; j++) {
+                                    selectItem.shift();
                                 }
 
-                                row++;
+                                detailTableDataBody[i] = body;
+                                detailTableDataAlign[i] = align;
                             }
 
-                            exportData.detailTableData[i] = {
-                                header: header,
-                                body: detailTableDataBody[i],
-                                align: detailTableDataAlign[i],
-                                sizeWidth: sizeWidth
+                            var body = [];
+                            var align = [];
+                            var row = 0;
+                            for(var i=0; i<page; i++) {
+                                var header = [];
+                                var sizeWidth = [];
+                                body = [];
+                                align = [];
+
+                                for(var j=0; j<detailTableDataPerPage[i]; j++) {
+                                    if(detailTableDataHeader[row] != undefined && detailTableDataSizeWidth[row] != undefined) {
+                                        header.push(detailTableDataHeader[row]);
+                                        sizeWidth.push(detailTableDataSizeWidth[row]);
+                                    }
+
+                                    row++;
+                                }
+
+                                exportData.detailTableData[i] = {
+                                    header: header,
+                                    body: detailTableDataBody[i],
+                                    align: detailTableDataAlign[i],
+                                    sizeWidth: sizeWidth
+                                }
                             }
                         }
 
@@ -768,14 +772,16 @@ Factory.prototype.dataService = {
                                         ]
                                     };
 
-                                    factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
-                                        if(res != undefined) {
-                                            if(res)
-                                                console.log('Open and remove file success');
-                                            else
-                                                console.log(res);
-                                        }
-                                    });
+                                    setTimeout(function() {
+                                        factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
+                                            if(res != undefined) {
+                                                if(res)
+                                                    console.log('Open and remove file success');
+                                                else
+                                                    console.log(res);
+                                            }
+                                        });
+                                    }, 1000);
                                 }
                             }
                         });

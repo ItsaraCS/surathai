@@ -18,6 +18,7 @@
 				<div id="map_layer_title">ชั้นข้อมูล</div>
 				<div id="map_layer_toggler"></div>
 			</div>
+            <div id="map_feature_name" style="display: none;"></div>
         </div>
     </div>
 
@@ -37,8 +38,6 @@
     </div>
 </div>
 <!--STYLE-->
-
-<!--ADD by AM-->
 <style>
     .defaultZoom {
         top: 70px;
@@ -48,13 +47,11 @@
         top: 80px;
     }
 </style>
-<!--ADD by AM-->
-
-
 <!--MAP LIBRARY-->
 <link href="css/popup.css" rel="stylesheet" type="text/css">
 <link href="css/map_legend.css" rel="stylesheet" type="text/css">
 <link href="css/layer_toggler.css" rel="stylesheet" type="text/css">
+<link href="css/style_feature_label.css" rel="stylesheet" type="text/css">
 <script src="js/mouselib.js" type="text/javascript"></script>
 <script src="js/mappopup.js" type="text/javascript"></script>
 <script src="js/local_map.js" type="text/javascript"></script>

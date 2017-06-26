@@ -66,7 +66,7 @@ function on_map_mouse_up(event) {
 /**
  * @param event
  */
-function on_map_mouse_move(event) {
+function _on_map_mouse_move(event) {
 	// Pixel
 	mouse_new_px = event.pixel;
 	

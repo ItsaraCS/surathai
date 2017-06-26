@@ -405,6 +405,26 @@
             map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
             map.getView().setZoom(9);
 
+            map.on('singleclick', function(event) {
+				var lonlat = e_get_factory_location(ol, map, event, marker_geom, 9, false);
+				//console.log('lat:', lonlat[1], 'lon:', lonlat[0]);
+                
+                $('#Lat').val(lonlat[1]);
+                $('#Lon').val(lonlat[0]);
+
+                marker_style = new ol.style.Style({
+                    image: new ol.style.Icon(({
+                        anchor: [0.5, 46],
+                        anchorXUnits: 'fraction',
+					    anchorYUnits: 'pixels',
+                        opacity: 0.8,
+                        scale: 1,
+                        src: 'img/marker-eform.png'
+                    }))
+                });
+                marker_feature.setStyle(marker_style);
+			});
+
             var target = map.getTarget();
             var jTarget = typeof target === 'string' ? $("#" + target) : $(target);
 
@@ -463,7 +483,6 @@
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
                 if(res != undefined){
                     var data = JSON.parse(res);
-                    console.log(data);
 
                     var theadContent = '<th class="text-center text-nowrap bg-primary" style="padding: 4px 10px;">#</th>';
                     $.each(data.label, function(index, item) {
@@ -642,6 +661,7 @@
             factory.initService.setError($('input, select, textarea'), 'clear');
             $('input, select, textarea').val('');
             $('#AccidentDate').val(factory.dataService.getCurrentDateTH('short'));
+            $('.eform-table tbody tr').removeClass('active-row');
 
             map.getView().setCenter(ol.proj.transform([99.697123, 17.231792], 'EPSG:4326', 'EPSG:3857'));
             map.getView().setZoom(9);
@@ -661,8 +681,10 @@
             minLength: 1,
             select: function(e, ui) { 
                 e.preventDefault(); 
+
+                $(this).val(ui.item.value);
                 
-                params = {
+                /*params = {
                     fn: 'getdata',
                     data: 2,
                     id: ui.item.id
@@ -673,7 +695,7 @@
                         var data = JSON.parse(res);
                         console.log(data);
 
-                        /*$('#FactoryName').val(data.FactoryName);
+                        $('#FactoryName').val(data.FactoryName);
                         $('#AccidentDate').val(data.AccidentDate);
                         $('#ActType').val(data.ActType);
                         $('#SuspectName').val(data.SuspectName);
@@ -692,9 +714,9 @@
                         $('#Area').val(data.Area);
                         $('#OperatorCode').val(data.OperatorCode);
                         $('.nav-menu #Province').attr('data-provice', data.Province);
-                        $('#ProvinceTXT').html(data.ProvinceTXT);*/
+                        $('#ProvinceTXT').html(data.ProvinceTXT);
                     }
-                });
+                });*/
             }
         });
     });

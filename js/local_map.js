@@ -205,7 +205,7 @@ function process_loaded_data() {
 
         var handledefaultZoom = function(e) {
             map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
-			map.getView().setZoom(5.5);
+			map.getView().setZoom(5);
         };
 
         defaultZoomBtn.addEventListener('click', handledefaultZoom, false);
@@ -276,12 +276,12 @@ function process_loaded_data() {
 	$('#dvloading').hide().fadeOut();
 	
 	map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
-	map.getView().setZoom(5.5);
+	map.getView().setZoom(5);
 	
 	// Add mouse event listeners
 	//map.on('pointerdown', on_map_mouse_down);
 	//map.on('pointerup', on_map_mouse_up);
-	//map.on('pointermove', on_map_mouse_move);
+	map.on('pointermove', on_map_mouse_move);
 	//map.on('click', on_map_mouse_up);
 	map.on('singleclick', show_feature_info);	
 	
@@ -449,6 +449,48 @@ function show_map() {
 // ----------------------------------------------------------------
 // OpenLayer's mouse functions.
 // ----------------------------------------------------------------
+function on_map_mouse_move(event) {
+	var i;
+	var reg_code;
+	var area_name;
+	var mouse_px = event.pixel;
+	//console.log(event);
+	
+	var ele = document.getElementById('map_feature_name');
+	ele.style.left = parseInt(mouse_px[0] + 10) + 'px';
+	ele.style.top = parseInt(mouse_px[1] + 10) + 'px';
+	
+	// Get feature information
+	var coordinate = event.coordinate;
+	var hdms = ol.coordinate.toStringHDMS(
+					ol.proj.transform(
+						coordinate, 
+						'EPSG:3857', 
+						'EPSG:4326'));
+	
+	
+	var pixel = get_map_mouse_pixel(map, coordinate);
+	var f = get_feature_info(map, pixel);
+	
+	// Return if user donot select any feature.
+	if(f.length == 0) {
+		$('#map_feature_name').hide();
+		return;
+	} else {
+		$('#map_feature_name').show().css({ 'display': 'inline-block' });
+	}
+	
+	// If there is no area code, show region code.
+	// Otherwise, show area (provice) name.
+	if(typeof f[0].get('AREA_CODE') == 'undefined') {
+		reg_code = parseInt(f[0].get('REG_CODE'));
+		ele.innerHTML = 'สำนักงานสรรพสามิตรภาคที่ ' + reg_code;
+	} else {
+		area_name = f[0].get('AREA_TNAME');
+		ele.innerHTML = area_name;
+	}
+}
+
 /**
  *
  */
