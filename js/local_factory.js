@@ -486,7 +486,7 @@ function on_map_mouse_move(event) {
 		reg_code = parseInt(f[0].get('REG_CODE'));
 		ele.innerHTML = 'สำนักงานสรรพสามิตรภาคที่ ' + reg_code;
 	} else {
-		area_name = f[0].get('AREA_TNAME');
+		area_name = f[0].get('AREA_TNAME') || f[0].get('BRAN_TNAME');
 		ele.innerHTML = area_name;
 	}
 }
