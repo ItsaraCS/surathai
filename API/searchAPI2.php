@@ -384,7 +384,7 @@ switch($fn){
 
 	case "autocomplete" :
 				$year = isset($_GET["year"])?$_GET["year"]:date("Y");
-				$menu = isset($_GET["menu"])?$_GET["menu"]:0;
+				$menu = isset($_GET["menu"])?intval($_GET["menu"]):0;
 				switch($_GET["src"]){
 					case 1: //โรงงาน
 							$data = array();

@@ -365,11 +365,11 @@
 
                         if(data.length != 0) {
                             $('.search-table tbody tr').remove();
-                            $('#BrandImage').attr('src', ((data.picture != 'data/label/') ? data.picture : 'img/noimages.png'));
+                            $('#BrandImage').attr('src', ((data[0].picture != 'data/label/') ? data[0].picture : 'img/noimages.png'));
 
                             var tbodyContent = '';
                             $.each(data, function(index, item) {
-                                tbodyContent += '<tr data-lat="'+ item.lat +'" data-lon="'+ item.long +'">' + 
+                                tbodyContent += '<tr data-picture="'+ item.picture +'" data-lat="'+ item.lat +'" data-lon="'+ item.long +'">' + 
                                         '<td class="text-center text-nowrap">'+ item.factory_name +'</td>' +
                                         '<td class="text-center text-nowrap">'+ item.factory_code +'</td>' +
                                         '<td class="text-center text-nowrap">'+ item.contact +'</td>' +
@@ -380,7 +380,7 @@
                                         '<td class="text-center text-nowrap">'+ item.issue_date +'</td>' +
                                         '<td class="text-center text-nowrap">'+ item.extend_date +'</td>' +
                                         '<td class="text-center text-nowrap">'+ item.address +'</td>' +
-                                        '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((item.plan != 'data/factoryplan/') ? item.plan : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
+                                        '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="'+ ((item.plan != '') ? item.plan : 'img/noimages.png') +'" style="width: 50px; height: 50px;"></a></td>' +
                                         '<td class="text-center text-nowrap"><a href="#" title="คลิกเพื่อดูรูป" class="show-image"><img src="img/noimages.png" style="width: 50px; height: 50px;"></a></td>' +
                                     '</tr>';
                             });
@@ -416,6 +416,8 @@
 
         $(document).on('click', '.search-table tbody tr', function(e) {
             e.preventDefault();
+
+            $('#BrandImage').attr('src', (($(this).attr('data-picture') != 'data/label/') ? $(this).attr('data-picture') : 'img/noimages.png'));
 
             $(this).closest('tbody').find('tr').removeClass('active-row');
             $(this).addClass('active-row');

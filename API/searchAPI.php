@@ -227,14 +227,19 @@ switch($fn){
 							break;
 						case 5:
 									$DB = new exDB;
-									$total = $DB->GetDataOneField("SELECT count(FactoryID) FROM `Factory` WHERE YEAR(faIssueDate) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND ? IN (0,faSuraType) AND faName LIKE ?",array("iiiis",$year,$region,$province,$menu,"%".$Keyword."%"));
+									$totalfac = $DB->GetDataOneField("SELECT count(FactoryID) FROM `Factory`,`SuraType`,`Label` WHERE SuraTypeID = faSuraType AND lbFacCode = FactoryID AND YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+									$totallabel = $DB->GetDataOneField("SELECT count(LabelID) FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID WHERE YEAR(lbExpireDate + INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+									if($menu < 2){
+										$total = $totalfac;
+										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, lbBrand, lbPicture, faLat, faLong  FROM `Factory`,`SuraType`,`Label` WHERE SuraTypeID = faSuraType AND lbFacCode = FactoryID AND YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+									}else{
+										$total = $totallabel;
+										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, lbBrand, lbPicture, faLat, faLong FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID LEFT JOIN SuraType ON SuraTypeID = faSuraType WHERE YEAR(lbExpireDate + INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+									}
 
-									$tdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P, (SELECT COUNT(LabelID) FROM Label WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y) AS brand, (SELECT COUNT(FactoryID) FROM `Factory` WHERE R IN (0,faRegion) AND P IN (0,faProvince) AND YEAR(faIssueDate + INTERVAL 3 MONTH) = Y) AS FAC
-",array("iii",$year,$region,$province));
-									$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, lbBrand, lbPicture, faLat, faLong FROM `Factory`,`SuraType`,`Label` WHERE faSuraType = SuraTypeID AND lbFacCode = FactoryID AND ? IN (0,faSuraType) AND YEAR(faIssueDate) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiiisii",$menu,$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
-                
+
 									$data = new exSearch_Table;
-									$data->Init(5,$page+1,$RPP,$total,array($tdata["FAC"],$tdata["brand"],$tdata["FAC"]+$tdata["brand"]));
+									$data->Init(5,$page+1,$RPP,$total,array($totalfac,$totallabel,$totalfac+$totallabel));
 									if($total > 0){
 										$etcObj = new exETC;
 										for($i=0;$i<$colnum;$i++){
