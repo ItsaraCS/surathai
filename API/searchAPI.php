@@ -255,12 +255,12 @@ switch($fn){
 											$data->AddCell($etcObj->GetShortDate(exETC::C_TH,$fdata["faIssueDate"]));
 											$data->AddCell($fdata["faAddress"]);
 											$data->AddCell($fdata["lbBrand"]);
-											if(file_exists("data/label/".$fdata["lbPicture"])){
+											if(file_exists("../data/label/".$fdata["lbPicture"])){
 												$data->AddCell("data/label/".$fdata["lbPicture"],3);
 											}else{
 												$data->AddCell("",3);
 											}
-											if(file_exists("data/factoryplan/".$fdata["lbPicture"])){
+											if(file_exists("../data/factoryplan/".$fdata["lbPicture"])){
 												$data->AddCell("data/factoryplan/".$fdata["lbPicture"],3);
 											}else{
 												$data->AddCell("",3);

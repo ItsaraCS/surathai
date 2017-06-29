@@ -4,9 +4,10 @@
 <div class="section" style="margin-top: 10px;">
     <!--FORM DATA-->
     <div class="col-md-4">
+        <h3 class="report-mobile">ฟอร์มบันทึกข้อมูล</h3>
         <form name="insertForm" novalidate>
-            <div class="panel panel-default" style="border-radius: 0;">
-                <div class="panel-body">
+            <div class="panel panel-default panel-panel-default-eForm">
+                <div class="panel-body" style="padding: 0;">
                     <table class="table table-striped" style="margin-top: 0; margin-bottom: 0;">
                         <tbody>
                             <tr>
@@ -66,10 +67,8 @@
 
     <!--MAP AND TABLE DATA-->
     <div class="col-md-8">
+        <h3 class="report-mobile">ตารางแสดงข้อมูลบันทึกล่าสุด</h3>
         <div class="panel panel-default" style="border-radius: 0; padding: 0;">
-            <!--<div class="panel-heading text-center header-table">
-                <h3>รายการข้อมูลล่าสุด</h3>
-            </div>-->
             <div class="panel-body" style="padding: 0;">
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered eform-table bg-info" style="margin-top: 0; margin-bottom: 0;"> 

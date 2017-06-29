@@ -19,15 +19,15 @@
 		}
 
 		public function createPagination() {
-			$html = '<div class="col-md-3 text-left" style="display: inline-block; margin: 0;">';
+			$html = '<div class="col-md-3 text-left " style="display: inline-block; margin: 0;">';
 			$html .= '<p style="display: inline-block; text-align: left;">พบข้อมูลทั้งสิ้น '.number_format($this->total).' รายการ</p>';
 			$html .= '</div>';
 
 			$html .= '<div class="col-md-9 text-right">';
-			$html .= '<div style="display: inline-block;">';
+			$html .= '<div class="NumPagination">';
 			$html .= '<p style="display: inline-block;">หน้าที่ '.number_format($this->page).' จาก '.number_format($this->numPage).' หน้า</p>';
 			$html .= '</div>';
-			$html .= '<div style="display: inline-block;">';
+			$html .= '<div class="NumPagination">';
 			$html .= '<input type="text" class="form-control input-sm text-center page-go-to" value="'.number_format($this->page).'" style="width: 70px; display: inline-block; margin: 0 10px;">';
 			$html .= '</div>';
 			$html .= '<div style="display: inline-block;">';

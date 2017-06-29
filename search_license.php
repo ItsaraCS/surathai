@@ -48,9 +48,9 @@
     <!--TABLE DATA-->
     <div class="col-md-12" style="margin-top: 10px;">
         <div class="row">
-            <div class="panel panel-default" style="height: 36vh;">
+            <div class="panel panel-default panel-data-table-res">
                 <div class="panel-body" style="padding: 0;">
-                    <div class="table-responsive" style="height: 26vh;">
+                    <div class="table-responsive table-data-res">
                         <table class="table table-striped table-bordered search-table bg-info" style="margin-top: 0;"> 
                             <thead><tr></tr></thead>
                             <tbody></tbody>

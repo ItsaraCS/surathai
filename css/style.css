@@ -404,13 +404,18 @@ p {
 }
 
 .header ul > li > a {
-  color: #2A7CBF !important; 
+  color: #2A7CBF ; 
   padding-top: 30px; 
   padding-bottom: 0; 
   font-size: 22px;
 }
-.header ul > li > a:hover {
-  color: #f17022 !important;
+
+.header .header-menu ul li a{
+  color: #2A7CBF;
+}
+
+.header .header-menu ul li a:hover {
+  color: #f17022 ;
 }
 
 .text-right-indent {
@@ -484,12 +489,12 @@ ul.ui-autocomplete li div {
 .table thead th {
   vertical-align: middle !important;
   padding: 3px 10px  !important;
-  font-size: 18px;
+  font-size: 2.5vh;
 }
 .table tbody td {
   vertical-align: middle !important;
   padding: 4px 10px !important;
-  font-size: 16px;
+  font-size: 2.5vh;
 }
 
 .search-detail-table tbody tr.search-detail-total {
@@ -505,6 +510,10 @@ ul.ui-autocomplete li div {
 }
 .active-row {
   background-color: #ffe9a6 !important;
+}
+
+.user-menu{
+  margin-top: -10px;
 }
 
 .user-menu img {
@@ -566,3 +575,83 @@ ul.ui-autocomplete li div {
 .popup-info {
   font-size: 20px;
 }
+
+ ul.nav-sec li a:link:hover{
+  background-color: #f17022;
+  color : white;
+}
+
+ul.nav-sec li a:link:active{
+  background-color: #f17022;
+  color : white;
+}
+
+.header > .nav > ul > li > a{
+  background-color: red;
+}
+
+
+#changeChartBtn{
+  float: right;
+}
+
+.my-chart h3#chartType{
+  display: inline-block;
+}
+
+.map-eForm{
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.panel-body-eForm{
+  padding: 0;
+  margin: 0;
+
+}
+
+@media screen and (min-width: 0px) and (max-width: 680px) {
+  .export-menu { display : none;} 
+  .nav-sec li{ margin-left: 1em;margin-right: 1em;text-align: center;}
+  .nav-select {width: 42%;float: left;padding: 0; margin-left: 15px;}
+  .nav-select select{font-size:15px;}
+  .nav-select-year {margin-bottom: 5px;}
+  .nav-select-year select{font-size:15px;text-align: center;font-weight: bold;}
+  .NumPagination {display : none;}
+  .panel-data-table-res{height: auto;}
+  .table-data-res{height: auto;}
+  .pagination{padding: 0;margin:0;}
+  .table-data-res{margin:0;}
+  td img{ width: 15px; height: 15px;}
+  #chartType{font-size: 17px;}
+  button#changeChartBtn{font-size: 12px;}
+  .section .table-report{height: auto;margin-bottom: 15px;}
+  h3.report-mobile{text-align: center;font-size: 20px;}
+  .panel-panel-default-eForm{height: auto;}
+  .user-form{height: auto;}
+  .panel-body-user{padding: 0;}
+  .user-form .panel-body{padding-bottom: 0;}
+  .search-user{margin-top: 15px;}
+  .hidden-mobile{display:none;}
+  .user-menu ul{float: right;}
+  .user-menu-detail{display: none;}
+  .btn-mobile-center{width: 80%; margin-top: 5px;margin-left: 5vh;}
+  .map-mobile{height: auto;}
+  .map{border: solid;}
+
+}
+
+@media screen and (min-width: 680px) and (max-width: 9999px) {
+  .problem { padding: 0; } 
+  .NumPagination {display:inline-block;}
+  .panel-data-table-res{height: 36vh;}
+  .table-data-res{height: 26vh;}
+  td img{ width: 20px; height: 20px;}
+  .section .table-report{height: 32vh;margin-bottom: 15px;}
+  h3.report-mobile{display: none;}
+  .panel-panel-default-eForm{height: 67vh; overflow-y: scroll;}
+  .user-form{height: 70vh;}
+  .ul-user-mobile{display:none;}
+  .user-menu ul {display:none;}
+}
+

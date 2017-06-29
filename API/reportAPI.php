@@ -546,7 +546,7 @@ switch($fn){
 									
 								}
 							}else{
-								$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,0,0,0,0,(SELECT SUM(stTax) FROM (SELECT lbRegion, lbProvince, stTax, stReleaseDate FROM `Label`,`Stamp` WHERE LabelID = stLabel) AS ST WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = Y) AS STAX ",array("iii",$Y,$region,$province));
+								$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,0,0,0,0,(SELECT SUM(stTax) FROM (SELECT lbRegion, lbProvince, stTax, stReleaseDate FROM `Label`,`Stamp` WHERE LabelID = stLabel) AS ST WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = Y) AS STAX ",array("iii",$year,$region,$province));
 								for($Y=$year-4;$Y<=$year;$Y++){
 									$fdata = $DB->GetDataOneRow("SELECT ? AS Y, ? AS R, ? AS P,0 AS Construction,0 AS Production,0 AS Sale, 0 AS Transpot,(SELECT SUM(stTax) FROM (SELECT lbRegion, lbProvince, stTax, stReleaseDate FROM `Label`,`Stamp` WHERE LabelID = stLabel) AS ST WHERE R IN (0,lbRegion) AND P IN (0,lbProvince) AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = Y) AS STAX",array("iii",$Y,$region,$province));
 

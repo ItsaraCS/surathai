@@ -1,11 +1,11 @@
 <?php require('header.php'); ?>
 <!--SECTION-->
 <div class="section" style="margin-top: 10px;">
-    <div class="col-md-6" style="height: 70vh;">
+    <div class="col-md-6 user-form">
         <div class="panel panel-info">
             <div class="panel-heading">
                 <p style="display: inline-block; font-weight: bold; font-size: 25px;" class="panel-title"><i class="fa fa-user text-right-indent"></i> จัดการข้อมูลผู้ใช้</p> 
-                <a class="btn btn-sm btn-success" id="addUserBtn" style="float: right;">เพิ่มผู้ใช้</a>
+                <a class="btn btn-sm btn-success" id="addUserBtn" style="float: right; font-size: 19px;">เพิ่มผู้ใช้</a>
             </div>
             <div class="panel-body">
                 <div class="row">
@@ -14,7 +14,8 @@
                             <img class="img-circle img-responsive" id="ProfileImage"> 
                             <p style="margin-top: 15px; font-size: 20px;"><span id="FullnameTXT"></sapn></p>
                         </div>
-                        <div class="col-md-9 table-responsive" style="height: 57vh;"> 
+                        <div class="col-md-9 table-responsive panel-body-user"> 
+                        <h3 class="report-mobile" style="background-color: #31708f; border-radius: 10px; color: white;" >ฟอร์มข้อมูลผู้ใช้</h3>
                             <table class="table table-striped" style="overflow-y: scroll;">
                                 <tbody>
                                     <tr>
@@ -99,7 +100,7 @@
           </div>
         </div>
     </div>
-    <div class="col-md-6" style="height: 70vh;">
+    <div class="col-md-6 search-user" style="height: 70vh;">
        <div class="panel panel-info">
            <div class="panel-heading">
                <p style="font-weight: bold; font-size: 25px;" class="panel-title"><i class="fa fa-search text-right-indent"></i> ค้นหาข้อมูลพนักงาน</p>

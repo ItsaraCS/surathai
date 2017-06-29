@@ -465,10 +465,9 @@ function chartReport(chartReportData) {
     $('#myChart').remove();
     $('.my-chart').append('<canvas id="myChart"><canvas>');
     var ctx = $("#myChart");
-    Chart.defaults.global.legend.labels.usePointStyle = true;
-    Chart.defaults.global.legend.position = 'right';
-    Chart.defaults.global.legend.labels.fontSize = 14;
-    Chart.defaults.global.animation.duration = 0;
+    Chart.defaults.global.legend.position = 'bottom';
+    Chart.defaults.global.legend.labels.fontSize = 11;
+    Chart.defaults.global.animation.duration = 1000;
 
     var chartData = {
         type: 'line',

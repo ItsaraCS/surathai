@@ -103,7 +103,12 @@
                                 <li class="navbar-icon">
                                     <a href="#" data-header-menu="ผู้ใช้งานระบบ">
                                         <div class="user-menu">
-                                            <img> <i class="fa fa-caret-down"></i>
+                                            <img class="img-responsive" style="display: inline-block;"><i class="fa fa-caret-down hidden-mobile"></i>
+                                            <ul>
+                                                <a class="btn btn-default" href="user.php" style="color: black;">ตั้งค่าบัญชี</a>
+                                                <a class="btn btn-default" id="logoutBtn" href="#" style="color: black;">ออกจากระบบ</a>
+                                            </ul>
+                                            
                                         </div>
                                     </a>
                                 </li>
