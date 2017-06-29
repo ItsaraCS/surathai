@@ -198,7 +198,7 @@ switch($fn){
 								$tdata[4] = $tdata[0] + $tdata[1] + $tdata[2] + $tdata[3];
 								$tdata[9] = $tdata[5] + $tdata[6] + $tdata[7] + $tdata[8];
 
-								$DB->GetData("SELECT lbFacName, stFacCode, stNumber, lbBrand, lbDegree, stAmount, stSize, stPrice, stVolume, stTax, stBookNo, stReleaseDate, faLat, faLong FROM `Stamp`,`Label`,`Factory` WHERE FactoryID = stFacCode AND stLabel = LabelID AND ? IN (0,lbType) AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ? LIMIT ?,?",array("iiiisii",$menu,$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+								$DB->GetData("SELECT lbFacName, stFacCode, stNumber, lbBrand, lbDegree, stAmount, stSize, stPrice, stVolume, stTax, stBookNo, stReleaseDate, faLat, faLong FROM `Stamp` INNER JOIN `Label` ON stLabel = LabelID LEFT JOIN `Factory` ON FactoryID = stFacCode WHERE ? IN (0,lbType) AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ? LIMIT ?,?",array("iiiisii",$menu,$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
                 
 								$data = new exSearch_Table;
 								$data->Init(4,$page+1,$RPP,$total,$tdata);
@@ -227,11 +227,11 @@ switch($fn){
 							break;
 						case 5:
 									$DB = new exDB;
-									$totalfac = $DB->GetDataOneField("SELECT count(FactoryID) FROM `Factory`,`SuraType`,`Label` WHERE SuraTypeID = faSuraType AND lbFacCode = FactoryID AND YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+									$totalfac = $DB->GetDataOneField("SELECT count(FactoryID) FROM `Factory` INNER JOIN SuraType ON SuraTypeID = faSuraType LEFT JOIN `Label` ON lbFacCode = FactoryID WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
 									$totallabel = $DB->GetDataOneField("SELECT count(LabelID) FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID WHERE YEAR(lbExpireDate + INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
 									if($menu < 2){
 										$total = $totalfac;
-										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, lbBrand, lbPicture, faLat, faLong  FROM `Factory`,`SuraType`,`Label` WHERE SuraTypeID = faSuraType AND lbFacCode = FactoryID AND YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, IF(ISNULL(lbBrand),'',lbBrand) AS lbBrand,IF(ISNULL(lbPicture),'',lbPicture) AS lbPicture, faLat, faLong FROM `Factory` INNER JOIN SuraType ON SuraTypeID = faSuraType LEFT JOIN `Label` ON lbFacCode = FactoryID WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
 									}else{
 										$total = $totallabel;
 										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, lbBrand, lbPicture, faLat, faLong FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID LEFT JOIN SuraType ON SuraTypeID = faSuraType WHERE YEAR(lbExpireDate + INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
@@ -255,8 +255,16 @@ switch($fn){
 											$data->AddCell($etcObj->GetShortDate(exETC::C_TH,$fdata["faIssueDate"]));
 											$data->AddCell($fdata["faAddress"]);
 											$data->AddCell($fdata["lbBrand"]);
-											$data->AddCell("",3);
-											$data->AddCell("",3);
+											if(file_exists("data/label/".$fdata["lbPicture"])){
+												$data->AddCell("data/label/".$fdata["lbPicture"],3);
+											}else{
+												$data->AddCell("",3);
+											}
+											if(file_exists("data/factoryplan/".$fdata["lbPicture"])){
+												$data->AddCell("data/factoryplan/".$fdata["lbPicture"],3);
+											}else{
+												$data->AddCell("",3);
+											}
 											$data->AddCell("",4);
 											$data->AddLatLong($x,$fdata["faLat"],$fdata["faLong"]);
 										}
@@ -339,12 +347,14 @@ switch($fn){
 					$sdata->label = "ทุกภาค";
 					array_push($data->region,$sdata);
 
-					$DB->GetData("SELECT RegionID, rgNameTH FROM `Region`");
+					$DB->GetData("SELECT RegionID, rgNameTH, rgLat, rgLong FROM `Region`");
 					while($fdata = $DB->FetchData()){
 						$sdata = new exItem;
 						$sdata->id = $fdata["RegionID"];
 						$sdata->value = $fdata["RegionID"];
 						$sdata->label = $fdata["rgNameTH"];
+						$sdata->lat = $fdata["rgLat"];
+						$sdata->long = $fdata["rgLong"];
 						array_push($data->region,$sdata);
 					}
 
@@ -354,17 +364,19 @@ switch($fn){
 					$sdata->label = "ทุกจังหวัด";
 					array_push($data->province,$sdata);
 
-					$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province`");
+					$DB->GetData("SELECT `ProvinceID`, `pvName`, pvLat, pvLong FROM `Province`");
 					while($fdata = $DB->FetchData()){
 						$sdata = new exItem;
 						$sdata->id = $fdata["ProvinceID"];
 						$sdata->value = $fdata["ProvinceID"];
 						$sdata->label = $fdata["pvName"];
+						$sdata->lat = $fdata["pvLat"];
+						$sdata->long = $fdata["pvLong"];
 						array_push($data->province,$sdata);
 					}
 				}else{
 					$S_region = isset($_POST["value"])?intval($_POST["value"]):0;
-					$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province` WHERE ? IN (0,pvRegion)",array("i",$S_region));
+					$DB->GetData("SELECT `ProvinceID`, `pvName`, pvLat, pvLong FROM `Province` WHERE ? IN (0,pvRegion)",array("i",$S_region));
 
 					if($DB->GetNumRows()>0){
 						$data = array();
@@ -379,6 +391,8 @@ switch($fn){
 							$sdata->id = $fdata["ProvinceID"];
 							$sdata->value = $fdata["ProvinceID"];
 							$sdata->label = $fdata["pvName"];
+							$sdata->lat = $fdata["pvLat"];
+							$sdata->long = $fdata["pvLong"];
 							array_push($data,$sdata);
 						}
 					}else{

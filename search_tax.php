@@ -118,19 +118,20 @@
             };
 
             factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                if(res != undefined){
+                if(res != undefined) {
                     var data = JSON.parse(res);
+                    console.log(data);
 
                     $.each(data.year, function(index, item) {
                         $('.nav-menu #year').append('<option value="'+ item.value +'">'+ item.label +'</option>');
                     });
 
                     $.each(data.region, function(index, item) {
-                        $('.nav-menu #region').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                        $('.nav-menu #region').append('<option value="'+ item.id +'" data-lat="'+ item.lat +'" data-lon="'+ item.long +'">'+ item.label +'</option>');
                     });
                     
                     $.each(data.province, function(index, item) {
-                        $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                        $('.nav-menu #province').append('<option value="'+ item.id +'" data-lat="'+ item.lat +'" data-lon="'+ item.long +'">'+ item.label +'</option>');
                     });
 
                     $('.nav-menu #year, ' +
@@ -374,12 +375,7 @@
                 if(res != undefined) {
                     var data = JSON.parse(res);
 
-                    map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
-                    map.getView().setZoom(4.5);
-
-                    marker_style = new ol.style.Style();
-                    marker_feature.setStyle(marker_style);
-                    map.getLayers().setAt(3, layers_marker);
+                    zoomMapByArea();
 
                     var theadContent = '';
                     $.each(data.label, function(index, item) {
@@ -461,12 +457,7 @@
                 if(res != undefined) {
                     var data = JSON.parse(res);
                     
-                    map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
-                    map.getView().setZoom(4.5);
-
-                    marker_style = new ol.style.Style();
-                    marker_feature.setStyle(marker_style);
-                    map.getLayers().setAt(3, layers_marker);
+                    zoomMapByArea();
                     
                     var searchDetailTableContent = '';
                     $.each(data.menu, function(index, item) {
@@ -574,10 +565,34 @@
             }
 
             factory.connectDBService.sendJSONStr('API/paginatorAPI.php', params).done(function(res) {
-                if(res != undefined){
+                if(res != undefined) {
                     $('.pagination').append(res);
                 }
             });
+        }
+
+        function zoomMapByArea() {
+            region = $('.nav-menu #region').val() || $('.nav-menu #region option:eq(1)').attr('value');
+            province = $('.nav-menu #province').val() || $('.nav-menu #province option:eq(1)').attr('value');
+            var regionLat = parseFloat($('.nav-menu #region option:selected').attr('data-lat')) || 13.231792;
+            var regionLon = parseFloat($('.nav-menu #region option:selected').attr('data-lon')) || 103.697123;
+            var provinceLat = parseFloat($('.nav-menu #province option:selected').attr('data-lat')) || 13.231792;
+            var provinceLon = parseFloat($('.nav-menu #province option:selected').attr('data-lon')) || 103.697123;
+
+            if(region != 0 && province != 0) {
+                map.getView().setCenter(ol.proj.transform([provinceLon, provinceLat], 'EPSG:4326', 'EPSG:3857'));
+                map.getView().setZoom(10);
+            } else if(region != 0) {
+                map.getView().setCenter(ol.proj.transform([regionLon, regionLat], 'EPSG:4326', 'EPSG:3857'));
+                map.getView().setZoom(7);
+            } else {
+                map.getView().setCenter(ol.proj.transform([103.697123, 13.231792], 'EPSG:4326', 'EPSG:3857'));
+                map.getView().setZoom(4.5);
+            }
+
+            marker_style = new ol.style.Style();
+            marker_feature.setStyle(marker_style);
+            map.getLayers().setAt(3, layers_marker);
         }
 
         //--Event
@@ -604,11 +619,11 @@
                     };
 
                     factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                        if(res != undefined){
+                        if(res != undefined) {
                             var data = JSON.parse(res);
 
                             $.each(data, function(index, item) {
-                                $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                                $('.nav-menu #province').append('<option value="'+ item.id +'" data-lat="'+ item.lat +'" data-lon="'+ item.long +'">'+ item.label +'</option>');
                             });
                             $('.nav-menu #province').find('option:eq(1)').prop('selected', true);
 
@@ -657,11 +672,11 @@
                 };
             
                 factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                    if(res != undefined){
+                    if(res != undefined) {
                         var data = JSON.parse(res);
 
                         $.each(data, function(index, item) {
-                            $('.nav-menu #province').append('<option value="'+ item.id +'">'+ item.label +'</option>');
+                            $('.nav-menu #province').append('<option value="'+ item.id +'" data-lat="'+ item.lat +'" data-lon="'+ item.long +'">'+ item.label +'</option>');
                         });
                         $('.nav-menu #province').find('option:eq(1)').prop('selected', true);
 

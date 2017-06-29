@@ -360,7 +360,7 @@
                 };
 
                 factory.connectDBService.sendJSONObj(ajaxUrl, params).done(function(res) {
-                    if(res != undefined){
+                    if(res != undefined) {
                         var data = JSON.parse(res);
 
                         if(data.length != 0) {

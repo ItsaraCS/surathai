@@ -7,6 +7,7 @@
  * @param lon  Longitude (vertical)
  * @param z    Target zoom level
  */
+
 function zoom_to_factory(o, m, lat, lon, z) {
 	m.getView().setCenter(o.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
 	m.getView().setZoom(z);
@@ -137,8 +138,8 @@ function search_create_text_style(feature, resolution, dom, field) {
 	var fillColor = dom.color;
 	var outlineColor = dom.outline;
 	var outlineWidth = parseInt(dom.outlineWidth, 10);
-
-	if(resolution < 20) {
+	
+	if(resolution < 10) {
 		return new ol.style.Text({
 			textAlign: align,
 			textBaseline: baseline,

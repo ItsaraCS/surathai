@@ -32,6 +32,12 @@ class taxmap{
 		array_push($this->features,$dat);
 	}
 
+	public function AddOverAllMonthTax($vta,$vc,$vl,$vs,$vf,$vto,$reg,$area){
+		$dat = new OverAllMonthtaxobj;
+		$dat->AddProperties($vta,$vc,$vl,$vs,$vf,$vto,$reg,$area);
+		array_push($this->features,$dat);
+	}
+
 	public function AddAreaTax($a,$r,$p,$v){
 		$dat = new TaxAreaObj;
 		$dat->AddProperties($a,$r,$p,$v);
@@ -119,6 +125,30 @@ class OverAlltaxobj{
 	}
 }
 
+class OverAllMonthtaxobj{
+	public $type;
+	public $properties;
+	public $geometry;
+
+	function __construct() {
+		$this->type = "Feature";
+		$this->geometry = null;
+	}
+
+	public function AddProperties($vta,$vc,$vl,$vs,$vf,$vto,$reg,$area){
+		$taxprop = new OverAllMonthproperties;
+		$taxprop->VAL_TAX = $vta;
+		$taxprop->VAL_CASE = $vc;
+		$taxprop->VAL_LIC = $vl;
+		$taxprop->VAL_STAMP = $vs;
+		$taxprop->VAL_FAC = $vf;
+		$taxprop->VAL_TOTAL = $vto;
+		$taxprop->REG_CODE = $reg;
+		$taxprop->AREA_CODE = $area;
+		$this->properties = $taxprop;
+	}
+}
+
 class TaxAreaObj{
 	public $type;
 	public $properties;
@@ -162,6 +192,17 @@ class OverAllproperties{
 	public $REG_CODE;
 }
 
+class OverAllMonthproperties{
+	public $VAL_TAX;
+	public $VAL_CASE;
+	public $VAL_LIC;
+	public $VAL_STAMP;
+	public $VAL_FAC;
+	public $VAL_TOTAL;
+	public $REG_CODE;
+	public $AREA_CODE;
+}
+
 class taxareaproperties{
 	public $AREA_CODE;
 	public $REG_CODE;
@@ -191,8 +232,12 @@ if(isset($_GET["data"])){
 			include("../data/geojson/overall_sum_by_reg_code_month.geojson");
 			die;
 	}elseif($_GET["data"] == "overall_area"){
-			include("../data/geojson/overall_sum_by_area_code.geojson");
-			die;
+			include("taxdataMonthOVA.php");
+			foreach($AreaList as $A){
+				@$x->AddOverAllMonthTax(floatval($data["case"][$A])+floatval($data["stamp"][$A]),intval($data["casec"][$A]),intval($data["lic"][$A]),floatval($data["stamp"][$A]),intval($data["fac"][$A]),$A,intval(substr($A,0,2)),$A);
+			}
+			//include("../data/geojson/overall_sum_by_area_code.geojson");
+			//die;
 	}elseif($_GET["data"] == "tax_reg"){
 		$DB = new exDB;
 		$DB->GetData("SELECT RegionID, (SELECT SUM(stTax) AS S FROM `Stamp`,`Factory` WHERE stFacCode = FactoryID AND YEAR(stReleaseDate + INTERVAL 3 MONTH) = ? AND faRegion = RegionID) AS S FROM Region ORDER BY RegionID",array("i",$year));

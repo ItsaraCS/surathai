@@ -132,6 +132,14 @@
                             });
 
                             $('.nav-menu #area').find('option:eq(1)').prop('selected', true);
+
+                            load_data_region('API/taxmapAPI.php?data=overall_reg&year='+ year);
+                            load_data_region_monthly('API/taxmapAPI.php?data=overall_month&year='+ year);
+                            load_data_area('API/taxmapAPI.php?data=overall_area&year='+ year);
+                            
+                            $('#map_layer_toggler_container .layer_block').find('input[type="checkbox"]').prop('checked', false);
+
+                            load_data_by_year(year);
                         }
                     });
                 }

@@ -175,6 +175,16 @@ function on_page_loaded() {
 	console.log('Done.');
 }
 
+function load_data_by_year(year) {
+	if(year != '' && year != undefined) {
+		load_data_region('API/taxmapAPI.php?data=fac_reg&year='+ year);
+		load_data_region_monthly('API/taxmapAPI.php?data=fac_month&year='+ year);
+		load_data_area('API/taxmapAPI.php?data=fac_area&year='+ year);
+		
+		$('#map_layer_toggler_container .layer_block').find('input[type="checkbox"]').prop('checked', false);
+	}
+}
+
 /**
  * Process data.
  */
@@ -205,13 +215,11 @@ function process_loaded_data() {
 
 	var projection = ol.proj.get('EPSG:3857');
 
-	//ADD By AM
 	window.app = {};
     var app = window.app;
+
     app.defaultZoom = function(opt_options) {
-
         var options = opt_options || {};
-
         var defaultZoomBtn = document.createElement('button');
         defaultZoomBtn.innerHTML = '<i class="fa fa-globe" aria-hidden="true"></i>';
 
@@ -219,18 +227,17 @@ function process_loaded_data() {
             map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
 			map.getView().setZoom(5);
         };
-
         defaultZoomBtn.addEventListener('click', handledefaultZoom, false);
 
         var element = document.createElement('div');
         element.className = 'defaultZoom ol-unselectable ol-control';
+		element.title = 'Zoom Full';
         element.appendChild(defaultZoomBtn);
 
         ol.control.Control.call(this, {
             element: element,
             target: options.target
         });
-
     };
     ol.inherits(app.defaultZoom, ol.control.Control);
 
@@ -243,7 +250,7 @@ function process_loaded_data() {
             new app.defaultZoom()
         ]),
 		layers : [vec_region_polygon],
-		overlays: [overlay],//for popup
+		overlays: [overlay], //--For popup
 		target : 'map',
 		view: new ol.View({
 			center: [100, 13],
@@ -251,7 +258,6 @@ function process_loaded_data() {
 			zoom: 3
 		})
 	});
-	//ADD By AM
 
 	// Map instance.
 	// map = new ol.Map({

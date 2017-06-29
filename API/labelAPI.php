@@ -28,7 +28,7 @@ switch($fn){
 					$sdata->lat = $fdata["faLat"];
         				$sdata->long = $fdata["faLong"];
 					$sdata->picture = "data/label/".$fdata["lbPicture"];
-					$sdata->plan = file_exists("../data/factoryplan/".$fdata["lbPicture"])==true?"data/factoryplan/".$fdata["lbPicture"]:"";
+					$sdata->plan = (($fdata["lbPicture"] != "") && file_exists("../data/factoryplan/".$fdata["lbPicture"])==true)?"data/factoryplan/".$fdata["lbPicture"]:"";
 					array_push($data,$sdata);
 				}
 			break;

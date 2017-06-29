@@ -132,6 +132,8 @@
                             });
 
                             $('.nav-menu #area').find('option:eq(1)').prop('selected', true);
+                            
+                            load_data_by_year(year);
                         }
                     });
                 }

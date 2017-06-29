@@ -60,7 +60,6 @@ while($sdata = $DB->FetchData()){
 	$data["stamp"][$sdata["faRegion"]] = $sdata["S"];
 }
 
-//$DB->GetData("SELECT faRegion, COUNT(FactoryID) AS C FROM `Factory` WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) <= ? GROUP BY faRegion",array("i",$year));
 $DB->GetData("SELECT faRegion, COUNT(faRegion) AS C FROM (SELECT faRegion FROM `Factory` WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) <= ? GROUP BY faName,faLat,faLong) AS X GROUP BY faRegion",array("i",$year));
 while($sdata = $DB->FetchData()){
 	$data["fac"][$sdata["faRegion"]] = $sdata["C"];

@@ -460,7 +460,7 @@ function cal_region_extends(r, f, p) {
 	
 	// manual adjust
 	for( i = 0; i < r.length; i++ ) {
-		console.log(i, r[i]);
+		//console.log(i, r[i]);
 		r[i][0] -= p;
 		r[i][1] -= p;
 		r[i][2] += p;
@@ -756,7 +756,6 @@ function prepare_chart(options) {
 			tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
-						console.log(data);
 						switch(data.datasets[tooltipItem.datasetIndex].label) {
 							case 'ภาษี':
 								return 'มูลค่ารวม: '+ Number(tooltipItem.yLabel).toLocaleString('en', { minimumFractionDigits: 2 }) +' บาท';
@@ -994,7 +993,7 @@ function update_chart_data(ctx, ctn, data, field) {
 		} else if(field == 'VAL_TOTAL') {
 			val = fi.properties.VAL_TOTAL;
 		}
-		console.log(fi.properties.REG_CODE, fi.properties.MONTH, val);
+		//console.log(fi.properties.REG_CODE, fi.properties.MONTH, val);
 		
 		// Accumulate the value
 		monthly_data[fi.properties.MONTH-1] = val;
@@ -1002,8 +1001,10 @@ function update_chart_data(ctx, ctn, data, field) {
 	}
 	
 	// Summary data
-	for( i = 0; i < monthly_sum_data.length; i++ ) {
-		ctn.data.datasets[0].data[i] = monthly_sum_data[i];
+	if(ctn.data.datasets.length > 0) {
+		for( i = 0; i < monthly_sum_data.length; i++ ) {
+			ctn.data.datasets[0].data[i] = monthly_sum_data[i];
+		}
 	}
 	
 	//var dummy = create_linechart_element('รวมssdf', 12, [80,200,255], [80,200,255],1.0, 0.95);
