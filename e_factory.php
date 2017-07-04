@@ -79,23 +79,6 @@
                                     <span class="error-content hide" data-label="สถานที่ตั้ง"></span>
                                 </td>
                             </tr>
-                            <!--<tr>
-                                <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง</p></td>
-                                <td class="col-md-7">
-                                    <div class="col-md-6">
-                                        <div class="row" style="padding-right: 3px;">
-                                            ละติจูด : <input type="text" class="form-control input-sm" id="address">
-                                            <span class="error-content hide" data-label="ละติจูด"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="row" style="padding-left: 3px;">
-                                            ลองติจูด : <input type="text" class="form-control input-sm" id="address">
-                                            <span class="error-content hide" data-label="ลองติจูด"></span>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>-->
                             <tr>
                                 <td class="col-md-5"><p class="data-important">พิกัดที่ตั้ง (ละติจูด)</p></td>
                                 <td class="col-md-7">

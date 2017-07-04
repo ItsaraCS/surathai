@@ -576,12 +576,12 @@ ul.ui-autocomplete li div {
   font-size: 20px;
 }
 
- ul.nav-sec li a:link:hover{
+ ul.nav-sec li a:hover{
   background-color: #f17022;
   color : white;
 }
 
-ul.nav-sec li a:link:active{
+ul.nav-sec li a:active{
   background-color: #f17022;
   color : white;
 }
@@ -637,7 +637,7 @@ ul.nav-sec li a:link:active{
   .user-menu-detail{display: none;}
   .btn-mobile-center{width: 80%; margin-top: 5px;margin-left: 5vh;}
   .map-mobile{height: auto;}
-  .map{border: solid;}
+  .eForm-Zoning-Stamp , .eForm-Zoning-Stamp a{width: 90%;margin-left: 30px;}
 
 }
 
@@ -653,5 +653,6 @@ ul.nav-sec li a:link:active{
   .user-form{height: 70vh;}
   .ul-user-mobile{display:none;}
   .user-menu ul {display:none;}
+  .eForm-Zoning-Stamp{margin-top: 5px;margin-left: 2px;}
 }
 

@@ -376,7 +376,7 @@ switch($fn){
 
 
 					if($data->job == 1){
-						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -385,7 +385,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif($data->job == 2){
-						$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS fYear FROM Illegal GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS fYear FROM Illegal WHERE YEAR(ilActDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -394,7 +394,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif($data->job == 3){
-						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -403,7 +403,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif(($data->job == 4)){
-						$DB->GetData("SELECT YEAR(lbExpireDate + INTERVAL 3 MONTH) AS fYear FROM `Label` GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(stReleaseDate + INTERVAL 3 MONTH) AS fYear FROM `Stamp` WHERE YEAR(stReleaseDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -412,7 +412,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif(($data->job == 5)){
-						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -423,8 +423,8 @@ switch($fn){
 					}else{
 						$sdata = new exItem;
 						$sdata->id = 1;
-						$sdata->value = 2016;
-						$sdata->label = "ปีงบประมาณ 2559";
+						$sdata->value = date("Y");
+						$sdata->label = "ปีงบประมาณ ".(date("Y") + 543);
 						array_push($data->year,$sdata);
 					}
 
@@ -444,48 +444,25 @@ switch($fn){
 						array_push($data->region,$sdata);
 					}
 
-/*					if($data->job == 2){
+					$sdata = new exItem;
+					$sdata->id = 0;
+					$sdata->value = 0;
+					$sdata->label = "ทุกจังหวัด";
+					array_push($data->province,$sdata);
+
+					$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province`");
+					while($fdata = $DB->FetchData()){
 						$sdata = new exItem;
-						$sdata->id = 0;
-						$sdata->value = 0;
-						$sdata->label = "ทุกฑื้นที่";
+						$sdata->id = $fdata["ProvinceID"];
+						$sdata->value = $fdata["ProvinceID"];
+						$sdata->label = $fdata["pvName"];
 						array_push($data->province,$sdata);
-        
-						$DB->GetData("SELECT `AreaID`, `arName` FROM `Area`");
-						while($fdata = $DB->FetchData()){
-							$sdata = new exItem;
-							$sdata->id = $fdata["AreaID"];
-							$sdata->value = $fdata["AreaID"];
-							$sdata->label = $fdata["arName"];
-							array_push($data->province,$sdata);
-						}
-					}else{*/
-						$sdata = new exItem;
-						$sdata->id = 0;
-						$sdata->value = 0;
-						$sdata->label = "ทุกจังหวัด";
-						array_push($data->province,$sdata);
-        
-						$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province`");
-						while($fdata = $DB->FetchData()){
-							$sdata = new exItem;
-							$sdata->id = $fdata["ProvinceID"];
-							$sdata->value = $fdata["ProvinceID"];
-							$sdata->label = $fdata["pvName"];
-							array_push($data->province,$sdata);
-						}
-//					}
+					}
 				}else{
 					$S_region = isset($_POST["value"])?intval($_POST["value"]):0;
 
-/*					if($_POST["job"] == 2){
-						$filterLabel = "ทุกพื้นที่";
-						$DB->GetData("SELECT `AreaID`, `arName` FROM `Area` WHERE ? IN (0,arRegion)",array("i",$S_region));
-					}else{*/
-						$filterLabel = "ทุกจังหวัด";
-						$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province` WHERE ? IN (0,pvRegion)",array("i",$S_region));
-//					}
-					
+					$filterLabel = "ทุกจังหวัด";
+					$DB->GetData("SELECT `ProvinceID`, `pvName` FROM `Province` WHERE ? IN (0,pvRegion)",array("i",$S_region));
 
 					if($DB->GetNumRows()>0){
 						$data = array();

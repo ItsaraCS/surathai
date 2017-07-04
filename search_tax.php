@@ -16,7 +16,7 @@
                             <tbody>
                                 <tr>
                                     <td class="col-md-12" style="padding: 10px !important;">
-                                        <input class="form-control input-sm" id="FactoryName" placeholder="ค้นหาชื่อโรงงาน">
+                                        <input class="form-control input-sm" id="FilterKeySearch" placeholder="ค้นหาชื่อโรงงาน">
                                     </td>
                                 </tr>
                             </tbody>
@@ -367,7 +367,7 @@
                     province: $('.nav-menu #province option:eq(1)').attr('value') || 0,
                     menu: 0,
                     page: 1,
-                    keyword: $('#LicenseNumber').val() || ''
+                    keyword: $('#FilterKeySearch').val() || ''
                 };
             }
             
@@ -449,7 +449,7 @@
                     province: $('.nav-menu #province option:eq(1)').attr('value') || 0,
                     menu: 0,
                     page: 1,
-                    keyword: $('#LicenseNumber').val() || ''
+                    keyword: $('#FilterKeySearch').val() || ''
                 };
             }
             
@@ -602,7 +602,7 @@
             $('.nav-menu #region').find('option:eq(0)').prop('selected', true);
             $('.nav-menu #province option[value!=""]').remove();
             $('.search-detail-table thead tr').attr('data-menu', 0);
-            $('#LicenseNumber').val('');
+            $('#FilterKeySearch').val('');
             
             year = $('.nav-menu #year').val() || 0;
 
@@ -659,7 +659,7 @@
             
             $('.nav-menu #province').find('option[value!=""]').remove();
             $('.search-detail-table thead tr').attr('data-menu', 0);
-            $('#LicenseNumber').val('');
+            $('#FilterKeySearch').val('');
 
             region = $('.nav-menu #region').val() || 0;
             
@@ -710,7 +710,7 @@
             e.preventDefault();
 
             $('.search-detail-table thead tr').attr('data-menu', 0);
-            $('#LicenseNumber').val('');
+            $('#FilterKeySearch').val('');
 
             getTableAll({
                 fn: 'gettable',
@@ -740,7 +740,7 @@
                 province: $('.nav-menu #province').val() || $('.nav-menu #province option:eq(1)').attr('value'),
                 menu: $(this)[0].rowIndex || 0,
                 page: 1,
-                keyword: $('#FactoryName').val() || ''
+                keyword: $('#FilterKeySearch').val() || ''
             });
         });
 
@@ -786,7 +786,7 @@
             console.log(itemSort);*/
         });
         
-        $(document).on('keyup', '#FactoryName', function(e) {
+        $(document).on('keyup', '#FilterKeySearch', function(e) {
             e.preventDefault();
 
             if($(this).val() == '') {
@@ -798,7 +798,7 @@
                     province: $('.nav-menu #province').val() || $('.nav-menu #province option:eq(1)').attr('value'),
                     menu: $('.search-detail-table thead tr').attr('data-menu') || 0,
                     page: 1,
-                    keyword: $('#FactoryName').val() || ''
+                    keyword: $('#FilterKeySearch').val() || ''
                 });
             }
         });
@@ -814,7 +814,7 @@
                 province: $('.nav-menu #province').val() || $('.nav-menu #province option:eq(1)').attr('value'),
                 menu: $('.search-detail-table thead tr').attr('data-menu') || 0,
                 page: $(this).attr('data-page') || 1,
-                keyword: $('#FactoryName').val() || ''
+                keyword: $('#FilterKeySearch').val() || ''
             });
         });
 
@@ -836,7 +836,7 @@
                     province: $('.nav-menu #province').val() || $('.nav-menu #province option:eq(1)').attr('value'),
                     menu: $('.search-detail-table thead tr').attr('data-menu') || 0,
                     page: ($(this).val()).replace(',', '') || 1,
-                    keyword: $('#FactoryName').val() || ''
+                    keyword: $('#FilterKeySearch').val() || ''
                 });
             }
         });
@@ -874,7 +874,7 @@
             });
         });
 
-        $('#FactoryName').autocomplete({ 
+        $('#FilterKeySearch').autocomplete({ 
             source: function(req, res) {
                 params = {
                     fn: 'autocomplete', 

@@ -81,6 +81,9 @@
                 if(res != undefined){
                     var data = JSON.parse(res);
 
+                    var currentYear = data.year[0].value || 2017;
+                    on_page_loaded(currentYear);
+
                     $.each(data.year, function(index, item) {
                         $('.nav-menu #year').append('<option value="'+ item.value +'">'+ item.label +'</option>');
                     });
@@ -98,8 +101,6 @@
                         '.nav-menu #area').find('option:eq(1)').prop('selected', true);
                 }
             });
-
-			on_page_loaded();
         }
         
 		//--Event

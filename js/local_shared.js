@@ -417,6 +417,54 @@ function load_data_area(url) {
 }
 
 /**
+ * Load case data (attribute-only data)
+ */
+function load_data_region_for_change_year(url) {
+	getJSON(
+		url,
+		function(data) {
+			map_data = data;
+			b_map_data_loaded = true;
+			process_loaded_data_for_change_year();
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
+ * Load monthly case data (attribute-only data)
+ */
+function load_data_region_monthly_for_change_year(url) {
+	getJSON(
+		url,
+		function(data) {
+			map_data_monthly = data;
+			b_map_data_monthly_loaded = true;
+			process_loaded_data_for_change_year();
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
+ * Load area data
+ */
+function load_data_area_for_change_year(url) {
+	getJSON(
+		url,
+		function(data) {
+			map_data_area = data;
+			b_map_data_area_loaded = true;
+			process_loaded_data_for_change_year();
+		}, 
+		function(xhr) {
+		}
+	);
+}
+
+/**
  * Calculate extends
  *
  * @param r    Regions

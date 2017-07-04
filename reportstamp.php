@@ -263,12 +263,6 @@
             getChart();
         });
 
-        /*$(document).on('click', '.export-file', function(e) {
-            e.preventDefault();
-
-            window.location.href = 'export/report/reportstamp.xlsx';
-        });*/
-
         $(document).on('click', '#changeChartBtn', function(e) {
             e.preventDefault();
 

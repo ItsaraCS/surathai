@@ -73,7 +73,7 @@ var region_ext = [];
 /**
  * On document loaded.
  */
-function on_page_loaded() {
+function on_page_loaded(currentYear) {
 	// Show progress dialog
 	console.log('Loading...');
 	
@@ -142,19 +142,6 @@ function on_page_loaded() {
 	// Prepare data
 	prepare_region_and_area('data/geojson/excise_area_centroid_compact.geojson');
 	
-	// Insert region list
-	//--EDIT BY ITSARA
-	/*$('#region').append('<option value="01">สรรพสามิตภาคที่ 1</option>');
-	$('#region').append('<option value="02">สรรพสามิตภาคที่ 2</option>');
-	$('#region').append('<option value="03">สรรพสามิตภาคที่ 3</option>');
-	$('#region').append('<option value="04">สรรพสามิตภาคที่ 4</option>');
-	$('#region').append('<option value="05">สรรพสามิตภาคที่ 5</option>');
-	$('#region').append('<option value="06">สรรพสามิตภาคที่ 6</option>');
-	$('#region').append('<option value="07">สรรพสามิตภาคที่ 7</option>');
-	$('#region').append('<option value="08">สรรพสามิตภาคที่ 8</option>');
-	$('#region').append('<option value="09">สรรพสามิตภาคที่ 9</option>');
-	$('#region').append('<option value="10">สรรพสามิตภาคที่ 10</option>');*/
-	
 	// ------------------------------------------------------------
 	// Load map data
 	// ------------------------------------------------------------
@@ -167,9 +154,9 @@ function on_page_loaded() {
 	load_data_factory_point('data/geojson/factory_2126_point.geojson');
 	
 	// Attribute data
-	load_data_region('API/taxmapAPI.php?data=license_reg&year=2017');
-	load_data_region_monthly('API/taxmapAPI.php?data=license_month&year=2017');
-	load_data_area('API/taxmapAPI.php?data=license_area&year=2017');
+	load_data_region('API/taxmapAPI.php?data=license_reg&year='+ currentYear);
+	load_data_region_monthly('API/taxmapAPI.php?data=license_month&year='+ currentYear);
+	load_data_area('API/taxmapAPI.php?data=license_area&year='+ currentYear);
 	
 	// Done
 	console.log('Done.');
@@ -177,11 +164,9 @@ function on_page_loaded() {
 
 function load_data_by_year(year) {
 	if(year != '' && year != undefined) {
-		load_data_region('API/taxmapAPI.php?data=license_reg&year='+ year);
-		load_data_region_monthly('API/taxmapAPI.php?data=license_month&year='+ year);
-		load_data_area('API/taxmapAPI.php?data=license_area&year='+ year);
-		
-		$('#map_layer_toggler_container .layer_block').find('input[type="checkbox"]').prop('checked', false);
+		load_data_region_for_change_year('API/taxmapAPI.php?data=license_reg&year='+ year);
+		load_data_region_monthly_for_change_year('API/taxmapAPI.php?data=license_month&year='+ year);
+		load_data_area_for_change_year('API/taxmapAPI.php?data=license_area&year='+ year);
 	}
 }
 
@@ -320,6 +305,29 @@ function process_loaded_data() {
 					  'COUNT');
 }
 
+/**
+ * Process data for change year
+ */
+function process_loaded_data_for_change_year() {
+	b_data_ready = b_map_data_loaded
+					&& b_map_data_monthly_loaded
+					&& b_map_data_area_loaded
+	
+	if(b_data_ready == false) { 
+		console.log('...still loading...');
+		return; 
+	} else {
+		console.log('data is ready...');
+		$('#dvloading').hide();
+		$('#popup-closer').trigger('click');
+	}
+	
+	// Show chart
+	update_chart_data(chart_context, 
+					  chart_container, 
+					  map_data_monthly,
+					  'COUNT');
+}
 
 // ----------------------------------------------------------------
 // OpenLayer's map style functions.
@@ -543,22 +551,20 @@ function show_feature_info(evt) {
 			ci = map_data.features[i].properties.REG_CODE;
 			
 			// Found
-			if(ci == cj) {
-				f_count = map_data.features[i].properties.COUNT;
-				f_sum = map_data.features[i].properties.SUM;
-				
-				str += "<h3><a href=\"search_tax.php\">สรรพสามิตภาคที่ " + cj + "</a></h3>";
-				str += "<table>";
-					str += "<tr>";
-						str += "<td>จำนวนใบอนุญาต</td>";
-						str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " ใบ</td>";
-					str += "</tr>";
-				str += "</table>";
-				popup_content.innerHTML = str;
-				overlay.setPosition(coordinate);
-				
-				break;
-			}
+			f_count = (ci == cj) ? map_data.features[i].properties.COUNT : 0;
+			f_sum = (ci == cj) ? map_data.features[i].properties.SUM : 0;
+			
+			str += "<h3><a href=\"search_tax.php\">สรรพสามิตภาคที่ " + cj + "</a></h3>";
+			str += "<table>";
+				str += "<tr>";
+					str += "<td>จำนวนใบอนุญาต</td>";
+					str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 0 }) + " ใบ</td>";
+				str += "</tr>";
+			str += "</table>";
+			popup_content.innerHTML = str;
+			overlay.setPosition(coordinate);
+			
+			break;
 		}
 		
 	// User selects a region, check area selector

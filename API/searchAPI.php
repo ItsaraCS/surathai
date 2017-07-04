@@ -255,12 +255,13 @@ switch($fn){
 											$data->AddCell($etcObj->GetShortDate(exETC::C_TH,$fdata["faIssueDate"]));
 											$data->AddCell($fdata["faAddress"]);
 											$data->AddCell($fdata["lbBrand"]);
-											if(file_exists("../data/label/".$fdata["lbPicture"])){
+											
+											if(($fdata["lbPicture"] != "") && file_exists("../data/label/".$fdata["lbPicture"])){
 												$data->AddCell("data/label/".$fdata["lbPicture"],3);
 											}else{
 												$data->AddCell("",3);
 											}
-											if(file_exists("../data/factoryplan/".$fdata["lbPicture"])){
+											if(($fdata["lbPicture"] != "") && file_exists("../data/factoryplan/".$fdata["lbPicture"])){
 												$data->AddCell("data/factoryplan/".$fdata["lbPicture"],3);
 											}else{
 												$data->AddCell("",3);
@@ -296,26 +297,8 @@ switch($fn){
 					$data->job = isset($_POST["job"])?$_POST["job"]:1;
 
 
-					if(($data->job == 1)||($data->job == 4)||($data->job == 3)){
-						$DB->GetData("SELECT YEAR(faIssueDate) AS fYear FROM Factory GROUP BY YEAR(faIssueDate) ORDER BY fYear DESC");
-						for($x=1;$fdata = $DB->FetchData();$x++){
-							$sdata = new exItem;
-							$sdata->id = $x;
-							$sdata->value = $fdata["fYear"];
-							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
-							array_push($data->year,$sdata);
-						}
-					}elseif(($data->job == 5)||($data->job == 31)){
-						$DB->GetData("SELECT YEAR(faIssueDate) AS fYear FROM Factory GROUP BY YEAR(faIssueDate) ORDER BY fYear DESC");
-						for($x=1;$fdata = $DB->FetchData();$x++){
-							$sdata = new exItem;
-							$sdata->id = $x;
-							$sdata->value = $fdata["fYear"];
-							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
-							array_push($data->year,$sdata);
-						}
-					}elseif($data->job == 33){
-						$DB->GetData("SELECT YEAR(slExtendDate) AS fYear FROM `SaleLicense` GROUP BY fYear ORDER BY fYear DESC");
+					if($data->job == 1){
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -324,7 +307,34 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif($data->job == 2){
-						$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS fYear FROM `Illegal` GROUP BY fYear DESC");
+						$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS fYear FROM Illegal WHERE YEAR(ilActDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+					}elseif($data->job == 3){
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+					}elseif(($data->job == 4)){
+						$DB->GetData("SELECT YEAR(stReleaseDate + INTERVAL 3 MONTH) AS fYear FROM `Stamp` WHERE YEAR(stReleaseDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+					}elseif(($data->job == 5)){
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -335,11 +345,54 @@ switch($fn){
 					}else{
 						$sdata = new exItem;
 						$sdata->id = 1;
-						$sdata->value = 2017;
-						$sdata->label = "ปีงบประมาณ 2560";
+						$sdata->value = date("Y");
+						$sdata->label = "ปีงบประมาณ ".(date("Y") + 543);
 						array_push($data->year,$sdata);
 					}
-
+/*					if(($data->job == 1)||($data->job == 4)||($data->job == 3)){
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY YEAR(faIssueDate) ORDER BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+					}elseif(($data->job == 5)||($data->job == 31)){
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY YEAR(faIssueDate) ORDER BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+					}elseif($data->job == 33){
+						$DB->GetData("SELECT YEAR(slExtendDate + INTERVAL 3 MONTH) AS fYear FROM `SaleLicense` WHERE YEAR(slExtendDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+					}elseif($data->job == 2){
+						$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS fYear FROM `Illegal` WHERE YEAR(ilActDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+					}else{
+						$sdata = new exItem;
+						$sdata->id = 1;
+						$sdata->value = date("Y");
+						$sdata->label = "ปีงบประมาณ ".(date("Y")+ 543);
+						array_push($data->year,$sdata);
+					}
+*/
 
 					$sdata = new exItem;
 					$sdata->id = 0;

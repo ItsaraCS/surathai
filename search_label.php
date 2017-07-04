@@ -12,7 +12,7 @@
                             <tbody>
                                 <tr>
                                     <td class="col-md-12" style="padding: 10px !important;">
-                                        <input class="form-control input-sm" id="BrandName" placeholder="ค้นหาชื่อยี่ห้อ">
+                                        <input class="form-control input-sm" id="FilterKeySearch" placeholder="ค้นหาชื่อยี่ห้อ">
                                     </td>
                                 </tr>
                                 <tr>
@@ -123,7 +123,7 @@
 
         //--Function
         function getInit() {
-            $('#BrandName').val('');
+            $('#FilterKeySearch').val('');
             $('#BrandImage').attr('src', 'img/noimages.png');
 
             getMap();
@@ -339,7 +339,7 @@
         }
 
         //--Event
-        $('#BrandName').autocomplete({ 
+        $('#FilterKeySearch').autocomplete({ 
             source: function(req, res) {
                 params = {
                     fn: 'autocomplete', 
@@ -391,7 +391,7 @@
             }
         });
 
-        $(document).on('keyup', '#BrandName', function(e) {
+        $(document).on('keyup', '#FilterKeySearch', function(e) {
             e.preventDefault();
             
             if($(this).val() == '') {

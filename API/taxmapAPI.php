@@ -32,8 +32,8 @@ class taxmap{
 		array_push($this->features,$dat);
 	}
 
-	public function AddOverAllMonthTax($vta,$vc,$vl,$vs,$vf,$vto,$reg,$area){
-		$dat = new OverAllMonthtaxobj;
+	public function AddOverAllAreaTax($vta,$vc,$vl,$vs,$vf,$vto,$reg,$area){
+		$dat = new OverAllAreataxobj;
 		$dat->AddProperties($vta,$vc,$vl,$vs,$vf,$vto,$reg,$area);
 		array_push($this->features,$dat);
 	}
@@ -125,7 +125,7 @@ class OverAlltaxobj{
 	}
 }
 
-class OverAllMonthtaxobj{
+class OverAllAreataxobj{
 	public $type;
 	public $properties;
 	public $geometry;
@@ -136,7 +136,7 @@ class OverAllMonthtaxobj{
 	}
 
 	public function AddProperties($vta,$vc,$vl,$vs,$vf,$vto,$reg,$area){
-		$taxprop = new OverAllMonthproperties;
+		$taxprop = new OverAllAreaproperties;
 		$taxprop->VAL_TAX = $vta;
 		$taxprop->VAL_CASE = $vc;
 		$taxprop->VAL_LIC = $vl;
@@ -192,7 +192,7 @@ class OverAllproperties{
 	public $REG_CODE;
 }
 
-class OverAllMonthproperties{
+class OverAllAreaproperties{
 	public $VAL_TAX;
 	public $VAL_CASE;
 	public $VAL_LIC;
@@ -232,9 +232,9 @@ if(isset($_GET["data"])){
 			include("../data/geojson/overall_sum_by_reg_code_month.geojson");
 			die;
 	}elseif($_GET["data"] == "overall_area"){
-			include("taxdataMonthOVA.php");
+			include("taxdataAreaOVA.php");
 			foreach($AreaList as $A){
-				@$x->AddOverAllMonthTax(floatval($data["case"][$A])+floatval($data["stamp"][$A]),intval($data["casec"][$A]),intval($data["lic"][$A]),floatval($data["stamp"][$A]),intval($data["fac"][$A]),$A,intval(substr($A,0,2)),$A);
+				@$x->AddOverAllAreaTax(floatval($data["case"][$A])+floatval($data["stamp"][$A]),intval($data["casec"][$A]),intval($data["lic"][$A]),floatval($data["stamp"][$A]),intval($data["fac"][$A]),$A,intval(substr($A,0,2)),$A);
 			}
 			//include("../data/geojson/overall_sum_by_area_code.geojson");
 			//die;
@@ -473,9 +473,8 @@ switch($fn){
 					$data->province = array();
 					$data->job = isset($_POST["job"])?$_POST["job"]:1;
 
-
 					if($data->job == 1){
-						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -484,7 +483,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif($data->job == 2){
-						$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS fYear FROM Illegal GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(ilActDate + INTERVAL 3 MONTH) AS fYear FROM Illegal WHERE YEAR(ilActDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -493,7 +492,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif($data->job == 3){
-						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -502,7 +501,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif(($data->job == 4)){
-						$DB->GetData("SELECT YEAR(lbExpireDate + INTERVAL 3 MONTH) AS fYear FROM `Label` GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(stReleaseDate + INTERVAL 3 MONTH) AS fYear FROM `Stamp` WHERE YEAR(stReleaseDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -511,7 +510,7 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}elseif(($data->job == 5)){
-						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory GROUP BY fYear ORDER BY fYear DESC");
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
 						for($x=1;$fdata = $DB->FetchData();$x++){
 							$sdata = new exItem;
 							$sdata->id = $x;
@@ -520,18 +519,20 @@ switch($fn){
 							array_push($data->year,$sdata);
 						}
 					}else{
-						$sdata = new exItem;
+						$DB->GetData("SELECT YEAR(faIssueDate + INTERVAL 3 MONTH) AS fYear FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) BETWEEN 1900 AND YEAR(NOW() + INTERVAL 3 MONTH) GROUP BY fYear ORDER BY fYear DESC");
+						for($x=1;$fdata = $DB->FetchData();$x++){
+							$sdata = new exItem;
+							$sdata->id = $x;
+							$sdata->value = $fdata["fYear"];
+							$sdata->label = "ปีงบประมาณ ".($fdata["fYear"] + 543);
+							array_push($data->year,$sdata);
+						}
+/*						$sdata = new exItem;
 						$sdata->id = 1;
-						$sdata->value = 2017;
-						$sdata->label = "ปีงบประมาณ 2560";
-						array_push($data->year,$sdata);
-						$sdata = new exItem;
-						$sdata->id = 1;
-						$sdata->value = 2016;
-						$sdata->label = "ปีงบประมาณ 2559";
-						array_push($data->year,$sdata);
+						$sdata->value = date("Y");
+						$sdata->label = "ปีงบประมาณ ".(date("Y") + 543);
+						array_push($data->year,$sdata);*/
 					}
-
 
 					$sdata = new exItem;
 					$sdata->id = 0;
