@@ -290,17 +290,7 @@
                 })
             });
             
-			getJSON(
-				'data/geojson/factory_2126_point.geojson',
-				function(data) {
-					var v = create_vector_layer(data, 
-												'EPSG:3857', 
-												search_point_style_function);
-					map.addLayer(v);
-				}, 
-				function(xhr) {
-				}
-			);
+			search_load_point_layers();
 
             $('#dvloading').hide().fadeOut();
 
@@ -310,15 +300,33 @@
             var target = map.getTarget();
             var jTarget = typeof target === 'string' ? $("#" + target) : $(target);
 
-            var element = document.getElementById('label-popup');
+            var labelPopup = document.querySelector('#label-popup');
             var popup = new ol.Overlay({
-                element: element,
+                element: labelPopup,
                 positioning: 'bottom-center',
-                stopEvent: false
+                stopEvent: true
             });
             map.addOverlay(popup);
-            
+
             $(map.getViewport()).on('mousemove', function(e) {
+                var view = map.getView();
+                var resolution = view.getResolution();
+
+                if(resolution < 100) {
+                    var pixel = map.getEventPixel(e.originalEvent);
+                    var hit = map.forEachFeatureAtPixel(pixel, function(feature, layer) {
+                        return feature;
+                    });
+                    
+                    if(hit) {
+                        if(hit.get('FACTORY_TNAME') != undefined) 
+                            jTarget.css('cursor', 'pointer');
+                    } else 
+                        jTarget.css('cursor', '');
+                }
+            });
+            
+            $(map.getViewport()).on('click', function(e) {
                 var view = map.getView();
                 var resolution = view.getResolution();
 
@@ -338,16 +346,41 @@
                         if(hit.get('FACTORY_TNAME') != undefined) {
                             jTarget.css('cursor', 'pointer');
 
-                            $(element).popover({
+                            var contentPopup = '<div class="text-center" style="width: 300px;">' +
+                                    '<div class="text-right" style="width: 240px;"><a href="#" id="popup-closer"><i class="fa fa-close"></i></a></div>' +
+                                    '<h4 style="width: 240px; margin-top: 0; color: #333333;">' + hit.get('FACTORY_TNAME') +'</h4>' +
+                                    '<div class="table-responsive" style="width: 240px;">' +
+                                        '<table class="table table-bordered" style="margin: 0;">' +
+                                            '<thead>' +
+                                                '<th class="text-nowrap text-center" style="font-size: 10px;">ชื่อสถานประกอบการ</th>' +
+                                                /*'<th class="text-nowrap text-center" style="font-size: 10px;">ค่าธรรมเนียมใบอนุญาตก่อสร้าง</th>' +
+                                                '<th class="text-nowrap text-center" style="font-size: 10px;">ค่าธรรมเนียมใบอนุญาตผลิต</th>' +
+                                                '<th class="text-nowrap text-center" style="font-size: 10px;">ค่าธรรมเนียมใบอนุญาตจำหน่าย</th>' +
+                                                '<th class="text-nowrap text-center" style="font-size: 10px;">ค่าธรรมเนียมใบอนุญาตขน</th>' +
+                                                '<th class="text-nowrap text-center" style="font-size: 10px;">จำหน่ายแสตมป์สุรา</th>' +*/
+                                            '</thead>' +
+                                            '<tbody>' +
+                                                '<th class="text-nowrap" style="font-size: 10px;">' + hit.get('FACTORY_TNAME') +'</th>' +
+                                            '</tbody>' +
+                                        '</table>' +
+                                    '</div>' +
+                                '</div>';
+
+                            $(labelPopup).popover({
                                 placement: 'top',
                                 html: true,
-                                content: '<h4 style="width: 200px; color: #333333; margin: 0; font-weight: normal; text-align: center;">' + hit.get('FACTORY_TNAME') +'</h4>'
+                                content: contentPopup
                             });
-                            $(element).popover('show');
+                            $(labelPopup).popover('show');
+
+                            $('#popup-closer').click(function(e) {
+                                jTarget.css('cursor', '');
+                                $(labelPopup).popover('destroy');
+                            });
                         }
                     } else {
                         jTarget.css('cursor', '');
-                        $(element).popover('destroy');
+                        $(labelPopup).popover('destroy');
                     }
                 }
             });
@@ -592,7 +625,9 @@
 
             marker_style = new ol.style.Style();
             marker_feature.setStyle(marker_style);
-            map.getLayers().setAt(3, layers_marker);
+
+            if(map.getLayers().getArray().length == 3)
+                map.getLayers().setAt(3, layers_marker);
         }
 
         //--Event
@@ -758,8 +793,9 @@
 
                 marker_style = new ol.style.Style({
                     image: new ol.style.Icon(({
+                        anchor: [0.5, 1.6],
                         opacity: 1,
-                        scale: 1,
+                        scale: 0.5,
                         src: 'img/marker-search.png'
                     }))
                 });
@@ -771,6 +807,8 @@
                     btnMsg: 'ปิด'
                 });
             }
+
+            $('#label-popup').popover('destroy');
         });
 
         $(document).on('click', '.search-table thead tr th label', function(e) {
@@ -846,7 +884,7 @@
             
             if($(this).find('img').attr('src') != '') {
                 Factory.prototype.utilityService.getPopup({
-                    infoMsg: '<img src="'+ $(this).find('img').attr('src') +'" style="width: 100%;">',
+                    infoMsg: '<div class="text-center"><img src="'+ $(this).find('img').attr('src') +'" style="height: 60vh;"></div>',
                     btnMsg: 'ปิด'
                 });
             } else {

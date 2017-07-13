@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
+    <title>Surathai - ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
     <!--jQuery-->
     <script src="lib/jquery/jquery-11.0.min.js" type="text/javascript"></script>
     <script src="lib/jquery/jquery-ui-1.12.1.custom/jquery-ui.js" type="text/javascript"></script>
@@ -12,6 +12,7 @@
     <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <script src="lib/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
     <!--CSS-->
+    <link href="img/logoheader.png" rel="shortcut icon" type="image/x-icon">
     <link href="css/style_login.css" rel="stylesheet" type="text/css">
     <!--JS-->
     <script src="js/factory.js" type="text/javascript"></script>

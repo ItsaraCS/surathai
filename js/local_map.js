@@ -82,15 +82,10 @@ function on_page_loaded(currentYear) {
 	// Load map data
 	// ------------------------------------------------------------
 	// vector data
-	load_data_region_polygon('data/geojson/excise_region.geojson');
-	load_data_region_point('data/geojson/point_region.geojson');
-	load_data_area_point('data/geojson/excise_area_centroid_compact.geojson');
-	load_data_area_polygon('data/geojson/area_dissolved.geojson');
-	load_data_branch_point('data/geojson/excise_branch_centroid.geojson');
-	load_data_factory_point('data/geojson/factory_2126_point.geojson');
-	load_data_lawbreaker_point('data/geojson/lawbreaker_point.geojson');
-	load_data_store_point('data/geojson/store_point.geojson');
-	load_data_thaiwhisky_point('data/geojson/thaiwhisky_point.geojson');
+	load_data_region_polygon('data/geojson-polygon/region_polygon.geojson');
+	load_data_region_point('data/geojson-point/region_points.geojson');
+	load_data_area_polygon('data/geojson-polygon/area_polygon.geojson');
+	load_data_area_point('data/geojson-point/area_points.geojson');
 	
 	// Attribute data
 	load_data_region('API/taxmapAPI.php?data=overall_reg&year='+ currentYear);
@@ -161,17 +156,12 @@ function load_data_area(url) {
  */
 function process_loaded_data() {
 	b_data_ready = b_region_polygon_loaded
-				&& b_region_point_loaded
-				&& b_area_point_loaded
-				&& b_branch_point_loaded
-				&& b_area_polygon_loaded
-				&& b_map_data_loaded
-				&& b_map_data_monthly_loaded
-				&& b_map_data_area_loaded				
-				&& b_factory_point_loaded
-				&& b_lawbreaker_point_loaded
-				&& b_store_point_loaded
-				&& b_thaiwhisky_point_loaded;
+					&& b_region_point_loaded
+					&& b_area_polygon_loaded
+					&& b_area_point_loaded
+					&& b_map_data_loaded
+					&& b_map_data_monthly_loaded
+					&& b_map_data_area_loaded;
 	
 	if(b_data_ready == false) { 
 		console.log('...still loading...');
@@ -247,22 +237,12 @@ function process_loaded_data() {
 	
 	// Add other layers
 	map.addLayer(vec_area_polygon);
-	map.addLayer(vec_branch_point);
 	map.addLayer(vec_area_point);
 	map.addLayer(vec_region_point);
-	map.addLayer(vec_factory_point);
-	map.addLayer(vec_lawbreaker_point);
-	map.addLayer(vec_store_point);
-	map.addLayer(vec_thaiwhisky_point);
 	
 	// Hide some layers by default
 	toggle_map_layer_visibility(vec_area_polygon, false);
 	toggle_map_layer_visibility(vec_area_point, false);
-	toggle_map_layer_visibility(vec_branch_point, false);
-	toggle_map_layer_visibility(vec_factory_point, false);
-	toggle_map_layer_visibility(vec_lawbreaker_point, false);
-	toggle_map_layer_visibility(vec_store_point, false);
-	toggle_map_layer_visibility(vec_thaiwhisky_point, false);
 	
 	$('#dvloading').hide().fadeOut();
 	
@@ -300,6 +280,41 @@ function process_loaded_data() {
 				      'VAL_TOTAL');
 }
 
+function load_layer_point(layerType, checked) {
+	switch(layerType) {
+		case 'branch':
+			map.addLayer(vec_branch_point);
+			toggle_map_layer_visibility(vec_branch_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'factory':
+			map.addLayer(vec_factory_point);
+			toggle_map_layer_visibility(vec_factory_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'lawbreaker':
+			map.addLayer(vec_lawbreaker_point);
+			toggle_map_layer_visibility(vec_lawbreaker_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'store':
+			map.addLayer(vec_store_point);
+			toggle_map_layer_visibility(vec_store_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'thaiwhisky':
+			map.addLayer(vec_thaiwhisky_point);
+			toggle_map_layer_visibility(vec_thaiwhisky_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+	}
+}
+
 /**
  * Process data for change year
  */
@@ -316,6 +331,9 @@ function process_loaded_data_for_change_year() {
 		$('#dvloading').hide();
 		$('#popup-closer').trigger('click');
 	}
+
+	map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
+	map.getView().setZoom(5);
 	
 	// Show chart
 	update_chart_data(chart_context, 
@@ -554,45 +572,54 @@ function show_feature_info(evt) {
 		cj = parseInt(f[0].get('REG_CODE'));
 		for (i = 0; i < map_data.features.length; i++ ) {
 			ci = map_data.features[i].properties.REG_CODE;
-			f_val_tax = (ci == cj) ? map_data.features[i].properties.VAL_TAX : 0.00;
-			f_val_case = (ci == cj) ? map_data.features[i].properties.VAL_CASE : 0;
-			f_val_lic = (ci == cj) ? map_data.features[i].properties.VAL_LIC : 0;
-			f_val_stamp = (ci == cj) ? map_data.features[i].properties.VAL_STAMP : 0;
-			f_val_fac = (ci == cj) ? map_data.features[i].properties.VAL_FAC : 0;
-			f_val_total = (ci == cj) ? map_data.features[i].properties.VAL_TOTAL : 0;
-			
-			str += "<h3><a href=\"search_tax.php\">สรรพสามิตภาคที่ " + cj + "</a></h3>";
-			str += "<table>";
-				str += "<tr>";
-					str += "<th colspan=\"2\">ประเภท</th>";
-				str += "</tr>";
-				str += "<tr>";
-					str += "<td class=\"left\">ภาษี</td>";
-					str += "<td class=\"right\">" + Number(f_val_tax).toLocaleString('en', { minimumFractionDigits: 2 }) + " บาท</td>";
-				str += "</tr>";
-				str += "<tr>";
-					str += "<td class=\"left\">งานปราบปราม</td>";
-					str += "<td class=\"right\">" + Number(f_val_case).toLocaleString('en', { minimumFractionDigits: 0 }) + " คดี</td>";
-				str += "</tr>";
-				str += "<tr>";
-					str += "<td class=\"left\">ใบอนุญาต</td>";
-					str += "<td class=\"right\">" + Number(f_val_lic).toLocaleString('en', { minimumFractionDigits: 0 }) + " ใบ</td>";
-				str += "</tr>";
-				str += "<tr>";
-					str += "<td class=\"left\">แสตมป์</td>";
-					str += "<td class=\"right\">" + Number(f_val_stamp).toLocaleString('en', { minimumFractionDigits: 0 }) + " บาท</td>";
-				str += "</tr>";
-				str += "<tr>";
-					str += "<td class=\"left\">โรงงาน</td>";
-					str += "<td class=\"right\">" + Number(f_val_fac).toLocaleString('en', { minimumFractionDigits: 0 }) + " แห่ง</td>";
-				str += "</tr>";
-			str += "</table>";
-			//console.log(f_val_tax);
-			popup_content.innerHTML = str;
-			overlay.setPosition(coordinate);
-			
-			break;
+
+			if(cj == ci) {
+				f_val_tax = map_data.features[i].properties.VAL_TAX;
+				f_val_case = map_data.features[i].properties.VAL_CASE;
+				f_val_lic = map_data.features[i].properties.VAL_LIC;
+				f_val_stamp = map_data.features[i].properties.VAL_STAMP;
+				f_val_fac = map_data.features[i].properties.VAL_FAC;
+				f_val_total = map_data.features[i].properties.VAL_TOTAL;
+
+				break;
+			} else {
+				f_val_tax = 0.00;
+				f_val_case = 0;
+				f_val_lic = 0;
+				f_val_stamp = 0;
+				f_val_fac = 0;
+				f_val_total = 0;
+			}
 		}
+			
+		str += "<h3><a href=\"search_tax.php\">สรรพสามิตภาคที่ " + cj + "</a></h3>";
+		str += "<table>";
+			str += "<tr>";
+				str += "<th colspan=\"2\">ประเภท</th>";
+			str += "</tr>";
+			str += "<tr>";
+				str += "<td class=\"left\">ภาษี</td>";
+				str += "<td class=\"right\">" + Number(f_val_tax).toLocaleString('en', { minimumFractionDigits: 2 }) + " บาท</td>";
+			str += "</tr>";
+			str += "<tr>";
+				str += "<td class=\"left\">งานปราบปราม</td>";
+				str += "<td class=\"right\">" + Number(f_val_case).toLocaleString('en', { minimumFractionDigits: 0 }) + " คดี</td>";
+			str += "</tr>";
+			str += "<tr>";
+				str += "<td class=\"left\">ใบอนุญาต</td>";
+				str += "<td class=\"right\">" + Number(f_val_lic).toLocaleString('en', { minimumFractionDigits: 0 }) + " ใบ</td>";
+			str += "</tr>";
+			str += "<tr>";
+				str += "<td class=\"left\">แสตมป์</td>";
+				str += "<td class=\"right\">" + Number(f_val_stamp).toLocaleString('en', { minimumFractionDigits: 0 }) + " บาท</td>";
+			str += "</tr>";
+			str += "<tr>";
+				str += "<td class=\"left\">โรงงาน</td>";
+				str += "<td class=\"right\">" + Number(f_val_fac).toLocaleString('en', { minimumFractionDigits: 0 }) + " แห่ง</td>";
+			str += "</tr>";
+		str += "</table>";
+		popup_content.innerHTML = str;
+		overlay.setPosition(coordinate);
 	// User selects a region, check area selector
 	} else {
 		console.log('zoom to region');
@@ -643,7 +670,6 @@ function show_feature_info(evt) {
 						str += "<td class=\"right\">" + Number(f_val_fac).toLocaleString('en', { minimumFractionDigits: 0 }) + " แห่ง</td>";
 					str += "</tr>";
 				str += "</table>";
-				//console.log(f_val_tax);
 				popup_content.innerHTML = str;
 				overlay.setPosition(coordinate);
 				

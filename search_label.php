@@ -407,11 +407,17 @@
         $(document).on('click', '.show-image', function(e) {
             e.preventDefault();
             
-            Factory.prototype.utilityService.getPopup({
-                titleMsg: '<i class="fa fa-exclamation-circle text-right-indent"></i> รูปผังโรงงาน',
-                infoMsg: '<img src="'+ $(this).find('img').attr('src') +'" style="width: 100%;">',
-                btnMsg: 'ปิด'
-            });
+            if($(this).find('img').attr('src') != '') {
+                Factory.prototype.utilityService.getPopup({
+                    infoMsg: '<div class="text-center"><img src="'+ $(this).find('img').attr('src') +'" style="height: 60vh;"></div>',
+                    btnMsg: 'ปิด'
+                });
+            } else {
+                Factory.prototype.utilityService.getPopup({
+                    infoMsg: 'ไม่พบรูปภาพ',
+                    btnMsg: 'ปิด'
+                });
+            }
         });
 
         $(document).on('click', '.search-table tbody tr', function(e) {

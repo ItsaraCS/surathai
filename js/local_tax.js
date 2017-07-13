@@ -73,15 +73,10 @@ function on_page_loaded(currentYear) {
 	// Load map data
 	// ------------------------------------------------------------
 	// vector data
-	load_data_region_polygon('data/geojson/excise_region.geojson');
-	load_data_region_point('data/geojson/point_region.geojson');
-	load_data_area_point('data/geojson/excise_area_centroid_compact.geojson');
-	load_data_area_polygon('data/geojson/area_dissolved.geojson');
-	load_data_branch_point('data/geojson/excise_branch_centroid.geojson');
-	load_data_factory_point('data/geojson/factory_2126_point.geojson');
-	load_data_lawbreaker_point('data/geojson/lawbreaker_point.geojson');
-	load_data_store_point('data/geojson/store_point.geojson');
-	load_data_thaiwhisky_point('data/geojson/thaiwhisky_point.geojson');
+	load_data_region_polygon('data/geojson-polygon/region_polygon.geojson');
+	load_data_region_point('data/geojson-point/region_points.geojson');
+	load_data_area_polygon('data/geojson-polygon/area_polygon.geojson');
+	load_data_area_point('data/geojson-point/area_points.geojson');
 	
 	// Attribute data
 	load_data_region('API/taxmapAPI.php?data=tax_reg&year='+ currentYear);
@@ -105,17 +100,12 @@ function load_data_by_year(year) {
  */
 function process_loaded_data() {
 	b_data_ready = b_region_polygon_loaded
-				&& b_region_point_loaded
-				&& b_area_point_loaded
-				&& b_branch_point_loaded
-				&& b_area_polygon_loaded
-				&& b_map_data_loaded
-				&& b_map_data_monthly_loaded
-				&& b_map_data_area_loaded
-				&& b_factory_point_loaded
-				&& b_lawbreaker_point_loaded
-				&& b_store_point_loaded
-				&& b_thaiwhisky_point_loaded;
+					&& b_region_point_loaded
+					&& b_area_polygon_loaded
+					&& b_area_point_loaded
+					&& b_map_data_loaded
+					&& b_map_data_monthly_loaded
+					&& b_map_data_area_loaded;
 	
 	if(b_data_ready == false) { 
 		console.log('...still loading...');
@@ -191,22 +181,12 @@ function process_loaded_data() {
 	
 	// Add other layers
 	map.addLayer(vec_area_polygon);
-	map.addLayer(vec_branch_point);
 	map.addLayer(vec_area_point);
 	map.addLayer(vec_region_point);
-	map.addLayer(vec_factory_point);
-	map.addLayer(vec_lawbreaker_point);
-	map.addLayer(vec_store_point);
-	map.addLayer(vec_thaiwhisky_point);
 	
 	// Hide some layers by default
 	toggle_map_layer_visibility(vec_area_polygon, false);
 	toggle_map_layer_visibility(vec_area_point, false);
-	toggle_map_layer_visibility(vec_branch_point, false);
-	toggle_map_layer_visibility(vec_factory_point, false);
-	toggle_map_layer_visibility(vec_lawbreaker_point, false);
-	toggle_map_layer_visibility(vec_store_point, false);
-	toggle_map_layer_visibility(vec_thaiwhisky_point, false);
 	
 	$('#dvloading').hide().fadeOut();
 	
@@ -244,6 +224,41 @@ function process_loaded_data() {
 					  'COUNT');
 }
 
+function load_layer_point(layerType, checked) {
+	switch(layerType) {
+		case 'branch':
+			map.addLayer(vec_branch_point);
+			toggle_map_layer_visibility(vec_branch_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'factory':
+			map.addLayer(vec_factory_point);
+			toggle_map_layer_visibility(vec_factory_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'lawbreaker':
+			map.addLayer(vec_lawbreaker_point);
+			toggle_map_layer_visibility(vec_lawbreaker_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'store':
+			map.addLayer(vec_store_point);
+			toggle_map_layer_visibility(vec_store_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+		case 'thaiwhisky':
+			map.addLayer(vec_thaiwhisky_point);
+			toggle_map_layer_visibility(vec_thaiwhisky_point, checked);
+			$('#dvloading').hide().fadeOut();
+
+			break;
+	}
+}
+
 /**
  * Process data for change year
  */
@@ -260,6 +275,9 @@ function process_loaded_data_for_change_year() {
 		$('#dvloading').hide();
 		$('#popup-closer').trigger('click');
 	}
+
+	map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
+	map.getView().setZoom(5);
 	
 	// Show chart
 	update_chart_data(chart_context, 
@@ -489,23 +507,26 @@ function show_feature_info(evt) {
 		for (i = 0; i < map_data.features.length; i++ ) {
 			ci = map_data.features[i].properties.REG_CODE;
 			
-			// Found
-			f_count = (ci == cj) ? map_data.features[i].properties.COUNT : 0;
-			f_sum = (ci == cj) ? map_data.features[i].properties.SUM : 0.00;
-			
-			str += "<h3><a href=\"search_tax.php\">สรรพสามิตภาคที่ " + cj + "</a></h3>";
-			str += "<table>";
-				str += "<tr>";
-					str += "<td>มูลค่ารวม</td>";
-					str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 2 }) + " บาท</td>";
-				str += "</tr>";
-			str += "</table>";
-			popup_content.innerHTML = str;
-			overlay.setPosition(coordinate);
-			
-			break;
+			if(cj == ci) {
+				f_count = map_data.features[i].properties.COUNT;
+				f_sum = map_data.features[i].properties.SUM;
+
+				break;
+			} else {
+				f_count = 0;
+				f_sum = 0.00;
+			}
 		}
-		
+			
+		str += "<h3><a href=\"search_tax.php\">สรรพสามิตภาคที่ " + cj + "</a></h3>";
+		str += "<table>";
+			str += "<tr>";
+				str += "<td>มูลค่ารวม</td>";
+				str += "<td class=\"center\">" + Number(f_sum).toLocaleString('en', { minimumFractionDigits: 2 }) + " บาท</td>";
+			str += "</tr>";
+		str += "</table>";
+		popup_content.innerHTML = str;
+		overlay.setPosition(coordinate);
 	// User selects a region, check area selector
 	} else {
 		// User do not select any area.

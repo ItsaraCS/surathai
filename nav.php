@@ -19,9 +19,8 @@
                 <li><a href="tax.php" class="btn-primary" style="margin: 2px;padding: 1.3vh;"><span style="font-size: 2.5vh;">งานภาษี</span></a></li> 
                 <li><a href="case.php" class="btn-primary" style="margin: 2px;padding: 1.3vh;"><span style="font-size: 2.5vh;">งานปราบปราม</span></a></li> 
                 <li><a href="license.php" class="btn-primary" style="margin: 2px;padding: 1.3vh;"><span style="font-size: 2.5vh;">ใบอนุญาต</span></a></li> 
-                <li><a href="stamp.php"" class="btn-primary" style="margin: 2px;padding: 1.3vh;"><span style="font-size: 2.5vh;">ข้อมูลสแตมป์</span></a></li> 
-                <li><a href="factory.php" class="btn-primary" style="margin: 2px;padding: 1.3vh;"><span style="font-size: 2.5vh;">ข้อมูลโรงงาน</span></a></li> 
-                  
+                <li><a href="stamp.php" class="btn-primary" style="margin: 2px;padding: 1.3vh;"><span style="font-size: 2.5vh;">ข้อมูลสแตมป์</span></a></li> 
+                <li><a href="factory.php" class="btn-primary" style="margin: 2px;padding: 1.3vh;"><span style="font-size: 2.5vh;">ข้อมูลโรงงาน</span></a></li>        
             </ul>  
         </div>
             <div class="col-md-2 " ><select class="form-control input-md" id="year"><option value="" selected>เลือกปีงบประมาณ</option></select></div>

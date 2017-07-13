@@ -40,10 +40,9 @@ var vec_area_point = null;
 var vec_area_polygon = null;
 var vec_branch_point = null;
 var vec_factory_point = null;
-var vec_lawbreaker_point = false;
-var vec_store_point = false;
-var vec_thaiwhisky_point = false;
-var vec_case_point = null;
+var vec_lawbreaker_point = null;
+var vec_store_point = null;
+var vec_thaiwhisky_point = null;
 
 // Case data
 var map_data = null; // total number of cases, sum by region code
@@ -140,7 +139,7 @@ function prepare_region_and_area(url) {
 				
 				r_code = parseInt(fi.properties.REG_CODE);
 				idx = r_code - 1;
-				
+				regions_info.regions[idx] = [];
 				regions_info.regions[idx].push({
 					REG_CODE:  "",
 					REG_TNAME:  "",
@@ -161,35 +160,43 @@ function prepare_region_and_area(url) {
 /**
  *
  */
-function update_layer_visibility() {
-	// Branches
-	if(vec_branch_point != null) {
-		toggle_map_layer_visibility(vec_branch_point, 
-									document.getElementById('chk_office').checked);
-	}
-	
-	// Factories
-	if(vec_factory_point != null) {
-		toggle_map_layer_visibility(vec_factory_point, 
-									document.getElementById('chk_factory').checked);
-	}
-	
-	// Law breakers
-	if(vec_lawbreaker_point != null) {
-		toggle_map_layer_visibility(vec_lawbreaker_point, 
-									document.getElementById('chk_lawbreaker').checked);
-	}
-	
-	// Stores
-	if(vec_store_point != null) {
-		toggle_map_layer_visibility(vec_store_point, 
-									document.getElementById('chk_store').checked);
-	}
-	
-	// Thai whisky
-	if(vec_thaiwhisky_point != null) {
-		toggle_map_layer_visibility(vec_thaiwhisky_point, 
-									document.getElementById('chk_thaiwhisky').checked);
+function update_layer_visibility(layerType) {
+	switch(layerType) {
+		case 'branch': //--สำนักงานสรรพสามิต
+			if(vec_branch_point != null) 
+				toggle_map_layer_visibility(vec_branch_point, document.getElementById('chk_office').checked);
+			else
+				load_data_branch_point('data/geojson-layer/branch_points.geojson', document.getElementById('chk_office').checked);
+
+			break;
+		case 'factory': //--โรงงานสุรา
+			if(vec_factory_point != null) 
+				toggle_map_layer_visibility(vec_factory_point, document.getElementById('chk_factory').checked);
+			else
+				load_data_factory_point('data/geojson-layer/factory_points.geojson', document.getElementById('chk_factory').checked);
+
+			break;
+		case 'lawbreaker': //--ผู้กระทำผิด
+			if(vec_lawbreaker_point != null) 
+				toggle_map_layer_visibility(vec_lawbreaker_point, document.getElementById('chk_lawbreaker').checked);
+			else
+				load_data_lawbreaker_point('data/geojson-layer/lawbreaker_points.geojson', document.getElementById('chk_lawbreaker').checked);
+
+			break;
+		case 'store': //--ร้านค้า
+			if(vec_store_point != null) 
+				toggle_map_layer_visibility(vec_store_point, document.getElementById('chk_store').checked);
+			else
+				load_data_store_point('data/geojson-layer/store_points.geojson', document.getElementById('chk_store').checked);
+
+			break;
+		case 'thaiwhisky': //--ร้านยาดอง
+			if(vec_thaiwhisky_point != null) 
+				toggle_map_layer_visibility(vec_thaiwhisky_point, document.getElementById('chk_thaiwhisky').checked);
+			else
+				load_data_thaiwhisky_point('data/geojson-layer/thaiwhisky_points.geojson', document.getElementById('chk_thaiwhisky').checked);
+
+			break;
 	}
 }
 
@@ -276,7 +283,7 @@ function load_data_area_point(url) {
 /**
  * Load branch data (polygon centroid)
  */
-function load_data_branch_point(url) {
+function load_data_branch_point(url, checked) {
 	getJSON(
 		url,
 		function(data) {
@@ -285,7 +292,8 @@ function load_data_branch_point(url) {
 											'EPSG:3857',
 											branch_point_style_function);
 			b_branch_point_loaded = true;
-			process_loaded_data();
+			//process_loaded_data();
+			load_layer_point('branch', checked);
 		}, 
 		function(xhr) {
 		}
@@ -295,7 +303,7 @@ function load_data_branch_point(url) {
 /**
  * Load branch data (polygon centroid)
  */
-function load_data_factory_point(url) {
+function load_data_factory_point(url, checked) {
 	getJSON(
 		url,
 		function(data) {
@@ -304,7 +312,8 @@ function load_data_factory_point(url) {
 											'EPSG:3857',
 											factory_point_style_function);
 			b_factory_point_loaded = true;
-			process_loaded_data();
+			//process_loaded_data();
+			load_layer_point('factory', checked);
 		}, 
 		function(xhr) {
 		}
@@ -314,7 +323,7 @@ function load_data_factory_point(url) {
 /**
  * Load branch data (polygon centroid)
  */
-function load_data_lawbreaker_point(url) {
+function load_data_lawbreaker_point(url, checked) {
 	getJSON(
 		url,
 		function(data) {
@@ -323,7 +332,8 @@ function load_data_lawbreaker_point(url) {
 											'EPSG:3857',
 											lawbreaker_point_style_function);
 			b_lawbreaker_point_loaded = true;
-			process_loaded_data();
+			//process_loaded_data();
+			load_layer_point('lawbreaker', checked);
 		}, 
 		function(xhr) {
 		}
@@ -333,7 +343,7 @@ function load_data_lawbreaker_point(url) {
 /**
  * Load branch data (polygon centroid)
  */
-function load_data_store_point(url) {
+function load_data_store_point(url, checked) {
 	getJSON(
 		url,
 		function(data) {
@@ -342,7 +352,8 @@ function load_data_store_point(url) {
 											'EPSG:3857',
 											store_point_style_function);
 			b_store_point_loaded = true;
-			process_loaded_data();
+			//process_loaded_data();
+			load_layer_point('store', checked);
 		}, 
 		function(xhr) {
 		}
@@ -352,7 +363,7 @@ function load_data_store_point(url) {
 /**
  * Load branch data (polygon centroid)
  */
-function load_data_thaiwhisky_point(url) {
+function load_data_thaiwhisky_point(url, checked) {
 	getJSON(
 		url,
 		function(data) {
@@ -361,7 +372,8 @@ function load_data_thaiwhisky_point(url) {
 											'EPSG:3857',
 											thaiwhisky_point_style_function);
 			b_thaiwhisky_point_loaded = true;
-			process_loaded_data();
+			//process_loaded_data();
+			load_layer_point('thaiwhisky', checked);
 		}, 
 		function(xhr) {
 		}
@@ -1070,7 +1082,7 @@ function update_chart_data(ctx, ctn, data, field) {
  * @param data		Chart data
  * @param field		Field to be used
  */
-function update_chart_data_region(ctx, ctn, data, field, reg_code = -999, area_code = '') {
+function update_chart_data_region(ctx, ctn, data, field, reg_code, area_code) {
 	var i;
 	var k;
 	var j;
@@ -1087,6 +1099,8 @@ function update_chart_data_region(ctx, ctn, data, field, reg_code = -999, area_c
 	var areas = 0;
 	var label;
 	var color = [0,0,0];
+	reg_code = reg_code || -999;
+	area_code = area_code || '';
 	
 	console.log('update chart:', reg_code);
 	console.log('c0', categories[1]);

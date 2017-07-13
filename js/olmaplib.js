@@ -577,27 +577,27 @@ function prepare_layer_toggler(e) {
 	// Offices
 	ctn_office = document.createElement("div");
 	ctn_office.className = 'layer_block';
-	ctn_office.innerHTML = '<input type="checkbox" id="chk_office" name="chk_office" onclick="update_layer_visibility();" /> สำนักงานสรรพสามิต';
+	ctn_office.innerHTML = '<input type="checkbox" id="chk_office" name="chk_office" onclick="update_layer_visibility(\'branch\');" /> สำนักงานสรรพสามิต';
 	
 	// Factories
 	ctn_factory = document.createElement("div");
 	ctn_factory.className = 'layer_block';
-	ctn_factory.innerHTML = '<input type="checkbox" id="chk_factory" name="chk_factory" onclick="update_layer_visibility();" /> โรงงานสุรา';
+	ctn_factory.innerHTML = '<input type="checkbox" id="chk_factory" name="chk_factory" onclick="update_layer_visibility(\'factory\');" /> โรงงานสุรา';
 	
 	// Illegal cases
 	ctn_case = document.createElement("div");
 	ctn_case.className = 'layer_block';
-	ctn_case.innerHTML = '<input type="checkbox" id="chk_lawbreaker" name="chk_lawbreaker" onclick="update_layer_visibility();" /> ผู้กระทำผิด';
+	ctn_case.innerHTML = '<input type="checkbox" id="chk_lawbreaker" name="chk_lawbreaker" onclick="update_layer_visibility(\'lawbreaker\');" /> ผู้กระทำผิด';
 	
 	// Stores
 	ctn_store = document.createElement("div");
 	ctn_store.className = 'layer_block';
-	ctn_store.innerHTML = '<input type="checkbox" id="chk_store" name="chk_store" onclick="update_layer_visibility();" /> ร้านค้า';
+	ctn_store.innerHTML = '<input type="checkbox" id="chk_store" name="chk_store" onclick="update_layer_visibility(\'store\');" /> ร้านค้า';
 	
 	// Thai whisky
 	ctn_whisky = document.createElement("div");
 	ctn_whisky.className = 'layer_block';
-	ctn_whisky.innerHTML = '<input type="checkbox" id="chk_thaiwhisky" name="chk_thaiwhisky" onclick="update_layer_visibility();" /> ร้านยาดอง';
+	ctn_whisky.innerHTML = '<input type="checkbox" id="chk_thaiwhisky" name="chk_thaiwhisky" onclick="update_layer_visibility(\'thaiwhisky\');" /> ร้านยาดอง';
 	
 	// Add children
 	ele.appendChild(ctn_office);

@@ -289,17 +289,7 @@
                 })
             });
             
-			getJSON(
-				'data/geojson/factory_2126_point.geojson',
-				function(data) {
-					var v = create_vector_layer(data, 
-												'EPSG:3857', 
-												search_point_style_function);
-					map.addLayer(v);
-				}, 
-				function(xhr) {
-				}
-			);
+			search_load_point_layers();
 
             $('#dvloading').hide().fadeOut();
 
@@ -585,7 +575,9 @@
 
             marker_style = new ol.style.Style();
             marker_feature.setStyle(marker_style);
-            map.getLayers().setAt(3, layers_marker);
+
+            if(map.getLayers().getArray().length == 3)
+                map.getLayers().setAt(3, layers_marker);
         }
 
         //--Event
@@ -751,8 +743,9 @@
 
                 marker_style = new ol.style.Style({
                     image: new ol.style.Icon(({
+                        anchor: [0.5, 1.6],
                         opacity: 1,
-                        scale: 1,
+                        scale: 0.5,
                         src: 'img/marker-search.png'
                     }))
                 });
@@ -764,6 +757,8 @@
                     btnMsg: 'ปิด'
                 });
             }
+
+            $('#label-popup').popover('destroy');
         });
         
         $(document).on('keyup', '#FilterKeySearch', function(e) {
@@ -826,7 +821,7 @@
             
             if($(this).find('img').attr('src') != '') {
                 Factory.prototype.utilityService.getPopup({
-                    infoMsg: '<img src="'+ $(this).find('img').attr('src') +'" style="width: 100%;">',
+                    infoMsg: '<div class="text-center"><img src="'+ $(this).find('img').attr('src') +'" style="height: 60vh;"></div>',
                     btnMsg: 'ปิด'
                 });
             } else {
