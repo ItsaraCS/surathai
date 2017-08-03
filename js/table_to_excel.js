@@ -1,13 +1,7 @@
 // NC
 function tableToExcel(){
     // Get Title
-    var exportTitle;
-    $(".nav .nav-menu .col-sm-5 a").each(function( index, el ) {
-        if($(el).find('.active')) { 
-            exportTitle = $(".active").text();
-        }
-    });
-    
+    var exportTitle = $('.nav .nav-menu ul li a.active').text() || '';
 
     // Get Year
     var yearInt = parseInt($( ".nav .nav-menu #year").val())+543;

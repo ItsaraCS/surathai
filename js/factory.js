@@ -752,38 +752,174 @@ Factory.prototype.dataService = {
                             }
                         }
 
-                        params = {
-                            funcName: 'exportSearchForPDF',
-                            params: exportData
+                        switch(params.type) {
+                            case 'pdf':
+                                params = {
+                                    funcName: 'exportSearchForPDF',
+                                    params: exportData
+                                };
+
+                                factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
+                                    if(res != undefined) {
+                                        var data = JSON.parse(res);
+                                        var winCur = window.open(data['pdf'], '_blank');
+
+                                        if(winCur) {
+                                            params = {
+                                                funcName: 'removeFilePath',
+                                                params: [
+                                                    '../'+ data['pdf'], 
+                                                    data['map']
+                                                ]
+                                            };
+
+                                            setTimeout(function() {
+                                                factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
+                                                    if(res != undefined) {
+                                                        if(res)
+                                                            console.log('Open and remove file success');
+                                                        else
+                                                            console.log(res);
+                                                    }
+                                                });
+                                            }, 1000);
+                                        }
+                                    }
+                                });
+
+                                break;
+                            case 'word':
+                                params = {
+                                    funcName: 'exportSearchForWord',
+                                    params: exportData
+                                };
+
+                                factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
+                                    if(res != undefined) {
+                                        var data = JSON.parse(res);
+                                        var winCur = window.open(data['word'], '_blank');
+
+                                        if(winCur) {
+                                            params = {
+                                                funcName: 'removeFilePath',
+                                                params: [
+                                                    '../'+ data['word'], 
+                                                    data['map']
+                                                ]
+                                            };
+
+                                            setTimeout(function() {
+                                                factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
+                                                    if(res != undefined) {
+                                                        if(res)
+                                                            console.log('Open and remove file success');
+                                                        else
+                                                            console.log(res);
+                                                    }
+                                                });
+                                            }, 1000);
+                                        }
+                                    }
+                                });
+
+                                break;
+                        }
+                    }
+                });
+
+                break;
+            case 'report':
+                html2canvas($('#myChart'), {
+                    onrendered: function(canvas) {
+                        var exportData = {
+                            title: params.title || 'ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน',
+                            menu: params.menu || 'ค้นหา',
+                            year: ($('.nav-menu #year').val() != '') ? (Number($('.nav-menu #year').val()) + 543) : (Number($('.nav-menu #year option:eq(1)').attr('value')) + 543),
+                            region: ($('.nav-menu #region').val() != '') ? $('.nav-menu #region option[value="'+ $('.nav-menu #region').val() +'"]').text() : $('.nav-menu #region option:eq(1)').text(),
+                            province: ($('.nav-menu #province').val() != '') ? $('.nav-menu #province option[value="'+ $('.nav-menu #province').val() +'"]').text() : $('.nav-menu #province option:eq(1)').text(),
+                            detailTableData: {},
+                            chartImage: canvas.toDataURL('image/png')
                         };
 
-                        factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
-                            if(res != undefined) {
-                                var data = JSON.parse(res);
-                                var winCur = window.open(data['pdf'], '_blank');
-
-                                if(winCur) {
-                                    params = {
-                                        funcName: 'removeFilePath',
-                                        params: [
-                                            '../'+ data['pdf'], 
-                                            data['map']
-                                        ]
-                                    };
-
-                                    setTimeout(function() {
-                                        factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
-                                            if(res != undefined) {
-                                                if(res)
-                                                    console.log('Open and remove file success');
-                                                else
-                                                    console.log(res);
-                                            }
-                                        });
-                                    }, 1000);
+                        //--detailTableData
+                        if($('.table-report tbody tr').length > 1) {
+                            var detailTableDataHeader = [];
+                            var detailTableDataBody = [];
+                            var detailTableDataAlign = [];
+                            var detailTableDataSizeWidth = [];
+                            $.each($('.table-report thead .th-report'), function(index, item) {
+                                if($(item).find('.select-export').is(':checked')) {
+                                    detailTableDataHeader.push($(item).find('label').html());
+                                    detailTableDataSizeWidth.push(($(item).innerWidth() / 4));
                                 }
-                            }
-                        });
+                            });
+
+                            var bodyData = [];
+                            var alignData = [];
+                            $.each($('.table-report tbody tr'), function(tblRptIndex, tblRptItem) {
+                                bodyData = [];
+                                alignData = [];
+
+                                $.each($(tblRptItem).find('td'), function(tdIndex, tdItem) {
+                                    if($('thead .th-report:eq('+ tdIndex +')').find('.select-export').is(':checked')) {
+                                        bodyData.push($(tdItem).html());
+                                        alignData[tdIndex] = ({
+                                            'text-left': 'left',
+                                            'text-right': 'right',
+                                            'text-center': 'center'
+                                        })[$(tdItem).attr('class')];
+                                    }
+                                });
+
+                                detailTableDataBody.push(bodyData);
+                                detailTableDataAlign.push(alignData);
+                            });
+                            
+                            exportData.detailTableData = {
+                                header: detailTableDataHeader,
+                                body: detailTableDataBody,
+                                align: detailTableDataAlign,
+                                sizeWidth: detailTableDataSizeWidth
+                            };
+                        }
+
+                        switch(params.type) {
+                            case 'word':
+                                params = {
+                                    funcName: 'exportReportForWord',
+                                    params: exportData
+                                };
+
+                                factory.connectDBService.sendJSONStr('API/exportAPI.php', params).done(function(res) {
+                                    if(res != undefined) {
+                                        var data = JSON.parse(res);
+                                        var winCur = window.open(data['word'], '_blank');
+
+                                        if(winCur) {
+                                            params = {
+                                                funcName: 'removeFilePath',
+                                                params: [
+                                                    '../'+ data['word'], 
+                                                    data['chart']
+                                                ]
+                                            };
+
+                                            setTimeout(function() {
+                                                factory.connectDBService.sendJSONStr('API/exportAPI.php', params, false).done(function(res) {
+                                                    if(res != undefined) {
+                                                        if(res)
+                                                            console.log('Open and remove file success');
+                                                        else
+                                                            console.log(res);
+                                                    }
+                                                });
+                                            }, 1000);
+                                        }
+                                    }
+                                });
+
+                                break;
+                        }
                     }
                 });
 

@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="theme-color" content="#428bca">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surathai - ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
     <!--jQuery-->

@@ -98,9 +98,9 @@
 
                         var theadContent = '';
                         $.each(data.label, function(index, item) {
-                            theadContent += '<th class="text-center text-nowrap bg-primary">' +
+                            theadContent += '<th class="text-center text-nowrap bg-primary th-report">' +
                                     '<div class="checkbox checkbox-success" style="margin: 0 auto;">' +
-                                        '<input id="'+ item +'" type="checkbox" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
+                                        '<input id="'+ item +'" type="checkbox" class="select-export" checked="checked"><label for="'+ item +'" style="font-weight: bold;">'+ item +'</label>' +
                                     '</div>' +
                                 '</th>';
                         });
@@ -261,6 +261,33 @@
 
             getTable();
             getChart();
+        });
+
+        $(document).on('click', '.export-file', function(e) {
+            e.preventDefault();
+
+            var exportType = $(this).text() || '';
+            var typeParam = '';
+
+            if(exportType != '') {
+                switch(exportType) {
+                    case 'Excel':
+                        typeParam = 'excel';
+
+                        break;
+                    case 'Word':
+                        typeParam = 'word';
+
+                        break;
+                }
+
+                if(typeParam != '') {
+                    factory.dataService.exportFile('report', {
+                        menu: 'รายงานข้อมูลโรงงาน',
+                        type: typeParam
+                    });
+                }
+            }
         });
 
         $(document).on('click', '#changeChartBtn', function(e) {

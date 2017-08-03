@@ -1,5 +1,16 @@
+@media screen and (min-width: 0px) and (max-width: 680px) {
+
+	
+}
+
+
+@media screen and (min-width: 680px) and (max-width: 9999px) {
+
 #map_layer_toggler_container {
 position: absolute;
 top: 8px;
 right: 20px;
 }
+
+}
+

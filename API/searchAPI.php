@@ -8,7 +8,7 @@ $fn = isset($_POST["fn"])?$_POST["fn"]:"";
 
 switch($fn){
 	case "gettable" :
-				$RPP = 5;
+				$RPP = isset($_POST["rpp"])?$_POST["rpp"]:5;
 				$year = isset($_POST["year"])?$_POST["year"]:0;
 				$region = isset($_POST["region"])?$_POST["region"]:0;
 				$province = isset($_POST["province"])?$_POST["province"]:0;
@@ -62,14 +62,14 @@ switch($fn){
 					switch($job){
 						case 1:
 								$DB = new exDB;
-								list($s1,$s2,$s3,$s4,$s5,$c1,$c2,$c3,$c4,$c5) = $DB->GetDataOneRow("SELECT SUM(BIL), SUM(PRL), SUM(SAL), SUM(TPL), SUM(STL), COUNT(BIL), COUNT(PRL), COUNT(SAL), COUNT(TPL), COUNT(STL)  FROM (SELECT ? AS Y, 0 AS BIL, 0 AS PRL, 0 AS SAL, 0 AS TPL, (SELECT SUM(stTax) FROM `Stamp` WHERE YEAR(stReleaseDate - INTERVAL 3 MONTH) = Y AND stFacCode = FactoryID) AS STL FROM `Factory` WHERE ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ?) AS XX",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+								list($s1,$s2,$s3,$s4,$s5,$c1,$c2,$c3,$c4,$c5) = $DB->GetDataOneRow("SELECT SUM(BIL), SUM(PRL), SUM(SAL), SUM(TPL), SUM(STL), COUNT(BIL), COUNT(PRL), COUNT(SAL), COUNT(TPL), COUNT(STL)  FROM (SELECT ? AS Y, 0 AS BIL, (SELECT 2000 FROM `Label` WHERE lbFacCode = FactoryID AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS PRL, (SELECT 2000 FROM SaleLicense WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS SAL, 0 AS TPL, (SELECT SUM(stTax) FROM `Stamp` WHERE YEAR(stReleaseDate - INTERVAL 3 MONTH) = Y AND stFacCode = FactoryID) AS STL FROM `Factory` WHERE ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ?) AS XX",array("iiis",$year,$region,$province,"%".$Keyword."%"));
         
 								$total = max($c1,$c2,$c3,$c4,$c5);
         
         
-								$DB->GetData("SELECT ? AS Y, faName, 0 AS BIL, 0 AS PRL, 0 AS SAL, 0 AS TPL, (SELECT SUM(stTax) FROM `Stamp` WHERE YEAR(stReleaseDate - INTERVAL 3 MONTH) = Y AND stFacCode = FactoryID) AS STL, faLat, faLong FROM `Factory` WHERE ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+								$DB->GetData("SELECT ? AS Y, faName, 0 AS BIL, (SELECT 2000 FROM `Label` WHERE lbFacCode = FactoryID AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y LIMIT 1)  AS PRL,  (SELECT 2000 FROM SaleLicense WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS SAL, 0 AS TPL, (SELECT SUM(stTax) FROM `Stamp` WHERE YEAR(stReleaseDate - INTERVAL 3 MONTH) = Y AND stFacCode = FactoryID) AS STL, faLat, faLong FROM `Factory` WHERE ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
         
-        
+
 								$data = new exSearch_Table;
 								$data->Init(1,$page+1,$RPP,$total,array($s1,$s2,$s3,$s4,$s5,($s1+$s2+$s3+$s4+$s5)));
 								if($total > 0){
@@ -91,20 +91,23 @@ switch($fn){
 							break;
 						case 2:
 								$DB = new exDB;
-								$DB->GetData("SELECT ilCase, COUNT(IllegalID) AS C FROM Illegal WHERE YEAR(ilActDate + INTERVAL 3 MONTH) = ? AND ? IN (0,ilRegion) AND ? IN (0,MOD(FLOOR(ilArea/10),100)) AND CONCAT(ilOrator,'#',ilSuspect) LIKE ? GROUP BY ilCase ORDER BY ilCase",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+								$DB->GetData("SELECT ilCase, COUNT(IllegalID) AS C FROM Illegal WHERE ? IN (-9999,YEAR(ilActDate + INTERVAL 3 MONTH)) AND ? IN (0,ilRegion) AND ? IN (0,MOD(FLOOR(ilArea/10),100)) AND CONCAT(ilOrator,'#',ilSuspect) LIKE ? GROUP BY ilCase ORDER BY ilCase",array("iiis",$year,$region,$province,"%".$Keyword."%"));
                                                         
 								$ldata = array();
 								while ($tdata = $DB->FetchData()) {
 									$ldata[$tdata["ilCase"]-1] = $tdata["C"];
 								}
+								for($i=0;$i<4;$i++){
+									if(!isset($ldata[$i])) $ldata[$i]=0;
+								}
                                                         
-								$total = $DB->GetDataOneField("SELECT COUNT(IllegalID) FROM `Illegal` WHERE YEAR(ilActDate + INTERVAL 3 MONTH) = ? AND ? IN (0,ilRegion) AND ? IN (0,MOD(FLOOR(ilArea/10),100)) AND ? IN (0,ilCase) AND CONCAT(ilOrator,'#',ilSuspect) LIKE ?",array("iiiis",$year,$region,$province,$menu,"%".$Keyword."%"));
+								$total = $DB->GetDataOneField("SELECT COUNT(IllegalID) FROM `Illegal` WHERE ? IN (-9999,YEAR(ilActDate + INTERVAL 3 MONTH))  AND ? IN (0,ilRegion) AND ? IN (0,MOD(FLOOR(ilArea/10),100)) AND ? IN (0,ilCase) AND CONCAT(ilOrator,'#',ilSuspect) LIKE ?",array("iiiis",$year,$region,$province,$menu,"%".$Keyword."%"));
                                                         
 								array_push($ldata,$total);
 //								array_shift($ldata);
                                                         
                                                         
-								$DB->GetData("SELECT acName,ilActDate,CONCAT('\(ก\)',ilOrator,'/\(ต\)',ilSuspect) AS Person,ilAddress,ilAllegation,ilMaterial,ilComparativeMoney,ilFine,ilOfficer,ilBribe,IlReward,ilReturn,ilLat,ilLong FROM `Illegal`,`Act` WHERE ilActType = ActID AND YEAR(ilActDate + INTERVAL 3 MONTH) =  ? AND ? IN (0,ilRegion) AND ? IN (0,MOD(FLOOR(ilArea/10),100)) AND ? IN (0,ilCase) AND CONCAT(ilOrator,'#',ilSuspect) LIKE ? LIMIT ?,?",array("iiiisii",$year,$region,$province,$menu,"%".$Keyword."%",$page*$RPP,$RPP));
+								$DB->GetData("SELECT acName,ilActDate,CONCAT('\(ก\)',ilOrator,'/\(ต\)',ilSuspect) AS Person,ilAddress,ilAllegation,ilMaterial,ilComparativeMoney,ilFine,ilOfficer,ilBribe,IlReward,ilReturn,ilLat,ilLong FROM `Illegal`,`Act` WHERE ilActType = ActID AND ? IN (-9999,YEAR(ilActDate + INTERVAL 3 MONTH)) AND ? IN (0,ilRegion) AND ? IN (0,MOD(FLOOR(ilArea/10),100)) AND ? IN (0,ilCase) AND CONCAT(ilOrator,'#',ilSuspect) LIKE ? LIMIT ?,?",array("iiiisii",$year,$region,$province,$menu,"%".$Keyword."%",$page*$RPP,$RPP));
                                                         
 								$data = new exSearch_Table;
 								$data->Init(2,$page+1,$RPP,$total,$ldata);
@@ -137,7 +140,6 @@ switch($fn){
         
 								$ldata = array();
         
-								//list($total,$ldata[0],$ldata[1],$ldata[2],$ldata[3]) = $DB->GetDataOneRow("SELECT COUNT(faName), COUNT(FL), SUM(IF(ISNULL(PL),0,1)), SUM(IF(ISNULL(TL),0,1)), SUM(IF(ISNULL(SL),0,1))  FROM (SELECT ? AS Y, faName, faCode, '' AS FL,(SELECT lbLicense FROM `Label` WHERE lbFacCode = FactoryID AND YEAR(lbExpireDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS PL,(SELECT tpLicense FROM Transport WHERE tpFactory = FactoryID AND YEAR(tpDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS TL, (SELECT SaleLicenseID FROM SaleLicense WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = Y LIMIT 1) AS SL FROM Factory WHERE ? IN (0,faRegion) AND ? IN (0,faProvince)) AS AllData WHERE CONCAT(FL,'@',IF(ISNULL(PL),'',PL),'@',IF(ISNULL(TL),'',TL),'@',IF(ISNULL(SL),'',SL)) LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
 								$ldata[0] = $DB->GetDataOneField("SELECT COUNT(FactoryID) FROM Factory WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND  ? IN (0,faProvince) AND faCode LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
 								$ldata[1] = $DB->GetDataOneField("SELECT COUNT(LabelID) FROM Label WHERE YEAR(lbIssueDate+ INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND  ? IN (0,lbProvince) AND lbLicense LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
 								$ldata[2] = $DB->GetDataOneField("SELECT COUNT(SaleLicenseID) FROM SaleLicense, Factory WHERE slFactoryID = FactoryID AND YEAR(slExtendDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND  ? IN (0,faProvince) AND SaleLicenseID LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
@@ -188,7 +190,7 @@ switch($fn){
 							break;
 						case 4:
 								$DB = new exDB;
-								$total = $DB->GetDataOneField("SELECT count(StampID) FROM `Stamp`,`Label` WHERE stLabel = LabelID AND ? IN (0,lbType) AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ?",array("iiiis",$menu,$year,$region,$province,"%".$Keyword."%"));
+								$total = $DB->GetDataOneField("SELECT count(StampID) FROM `Stamp`,`Label` WHERE stLabel = LabelID AND ? IN (0,lbType) AND ? IN (-9999,YEAR(stReleaseDate)) AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ?",array("iiiis",$menu,$year,$region,$province,"%".$Keyword."%"));
 								$tdata = array(0,0,0,0,0,0,0,0,0,0,0);
 								$psum = array("128"=>0,"130"=>1,"135"=>2,"140"=>3,"150"=>4,"228"=>5,"230"=>6,"235"=>7,"240"=>8,"250"=>9);
 								$DB->GetData("SELECT lbDegree, lbType, SUM(stAmount) AS S FROM `Stamp` LEFT JOIN Label ON stLabel = LabelID WHERE lbDegree IN (28,30,35,40) GROUP BY lbDegree, lbType");
@@ -198,7 +200,7 @@ switch($fn){
 								$tdata[4] = $tdata[0] + $tdata[1] + $tdata[2] + $tdata[3];
 								$tdata[9] = $tdata[5] + $tdata[6] + $tdata[7] + $tdata[8];
 
-								$DB->GetData("SELECT lbFacName, stFacCode, stNumber, lbBrand, lbDegree, stAmount, stSize, stPrice, stVolume, stTax, stBookNo, stReleaseDate, faLat, faLong FROM `Stamp` INNER JOIN `Label` ON stLabel = LabelID LEFT JOIN `Factory` ON FactoryID = stFacCode WHERE ? IN (0,lbType) AND YEAR(stReleaseDate) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ? LIMIT ?,?",array("iiiisii",$menu,$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+								$DB->GetData("SELECT lbFacName, stFacCode, stNumber, lbBrand, lbDegree, stAmount, stSize, stPrice, stVolume, stTax, stBookNo, stReleaseDate, faLat, faLong FROM `Stamp` INNER JOIN `Label` ON stLabel = LabelID LEFT JOIN `Factory` ON FactoryID = stFacCode WHERE ? IN (0,lbType) AND ? IN(-9999,YEAR(stReleaseDate)) AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND stBookNo LIKE ? LIMIT ?,?",array("iiiisii",$menu,$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
                 
 								$data = new exSearch_Table;
 								$data->Init(4,$page+1,$RPP,$total,$tdata);
@@ -227,14 +229,14 @@ switch($fn){
 							break;
 						case 5:
 									$DB = new exDB;
-									$totalfac = $DB->GetDataOneField("SELECT count(FactoryID) FROM `Factory` INNER JOIN SuraType ON SuraTypeID = faSuraType LEFT JOIN `Label` ON lbFacCode = FactoryID WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
-									$totallabel = $DB->GetDataOneField("SELECT count(LabelID) FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID WHERE YEAR(lbExpireDate + INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+									$totalfac = $DB->GetDataOneField("SELECT count(FactoryID) FROM `Factory` INNER JOIN SuraType ON SuraTypeID = faSuraType LEFT JOIN `Label` ON lbFacCode = FactoryID WHERE ? IN (-9999,YEAR(faIssueDate + INTERVAL 3 MONTH)) AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
+									$totallabel = $DB->GetDataOneField("SELECT count(LabelID) FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID WHERE ? IN (-9999,YEAR(lbExpireDate + INTERVAL 3 MONTH)) AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ?",array("iiis",$year,$region,$province,"%".$Keyword."%"));
 									if($menu < 2){
 										$total = $totalfac;
-										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, IF(ISNULL(lbBrand),'',lbBrand) AS lbBrand,IF(ISNULL(lbPicture),'',lbPicture) AS lbPicture, faLat, faLong FROM `Factory` INNER JOIN SuraType ON SuraTypeID = faSuraType LEFT JOIN `Label` ON lbFacCode = FactoryID WHERE YEAR(faIssueDate + INTERVAL 3 MONTH) = ? AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, IF(ISNULL(lbBrand),'',lbBrand) AS lbBrand,IF(ISNULL(lbPicture),'',lbPicture) AS lbPicture, faLat, faLong FROM `Factory` INNER JOIN SuraType ON SuraTypeID = faSuraType LEFT JOIN `Label` ON lbFacCode = FactoryID WHERE ? IN (-9999,YEAR(faIssueDate + INTERVAL 3 MONTH)) AND ? IN (0,faRegion) AND ? IN (0,faProvince) AND faName LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
 									}else{
 										$total = $totallabel;
-										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, lbBrand, lbPicture, faLat, faLong FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID LEFT JOIN SuraType ON SuraTypeID = faSuraType WHERE YEAR(lbExpireDate + INTERVAL 3 MONTH) = ? AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
+										$DB->GetData("SELECT faName, FactoryID, faContact, faLicenseNo, faIssueDate, faAddress,suName, lbBrand, lbPicture, faLat, faLong FROM `Label` LEFT JOIN `Factory` ON lbFacCode = FactoryID LEFT JOIN SuraType ON SuraTypeID = faSuraType WHERE ? IN (-9999,YEAR(lbExpireDate + INTERVAL 3 MONTH)) AND ? IN (0,lbRegion) AND ? IN (0,lbProvince) AND lbBrand LIKE ? LIMIT ?,?",array("iiisii",$year,$region,$province,"%".$Keyword."%",$page*$RPP,$RPP));
 									}
 
 
@@ -295,6 +297,12 @@ switch($fn){
 					$data->region = array();
 					$data->province = array();
 					$data->job = isset($_POST["job"])?$_POST["job"]:1;
+
+					$sdata = new exItem;
+					$sdata->id = 0;
+					$sdata->value = -9999;
+					$sdata->label = "ทุกปีงบประมาณ ";
+					array_push($data->year,$sdata);
 
 
 					if($data->job == 1){

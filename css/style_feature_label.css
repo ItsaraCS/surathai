@@ -1,12 +1,15 @@
-#map_feature_name {
-background-color: rgba(0, 0, 0, 0.7);
-border: 1px solid rgba(0, 0, 0, 0.3);
-color: rgba(255, 255, 255, 0.8);
-text-align: center;
-vertical-align: middle;
-padding: 6px 6px 6px 6px;
-position: relative;
-left: 0px;
-top: -1000px;
-display: none;
+@media screen and (min-width: 1268px) and (max-width: 2560px) {
+	#map_feature_name {
+		background-color: rgba(0, 0, 0, 0.7);
+		border: 1px solid rgba(0, 0, 0, 0.3);
+		color: rgba(255, 255, 255, 0.8);
+		text-align: center;
+		vertical-align: middle;
+		padding: 6px 6px 6px 6px;
+		position: relative;
+		left: 0px;
+		top: -1000px;
+		display: none;
+	}
+
 }

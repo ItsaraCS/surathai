@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="theme-color" content="#428bca">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surathai - ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</title>
     <!--jQuery-->
     <script src="lib/jquery/jquery-11.0.min.js" type="text/javascript"></script>
@@ -18,17 +20,18 @@
     <script src="js/factory.js" type="text/javascript"></script>
 </head>
 <body>
-    <div class="container">
+        <div class="container">
+            <div class="col-md-12 col-md-offset-1">
+                <div class="title" style="margin-top: 1.5vh;">
+                <img src="img/logo-main.png" class="img-responsive center-block"  style="width: 11vh;" />
+                </div>  
+            </div>
             <div class="container">
                 <div class="col-md-6"><img src="img/logo.png" class="img-responsive center-block" width="80%"/></div>
                 <div class="col-md-6">   
-                <div class="title" style="margin-top: 1.5vh;">
-                <img src="img/logoheader.png" class="img-responsive center-block img-logo-title-mobile"   />
-                </div>
-                    <h6 style="color: white; font-size: 3.7vh;">ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน
-                    </h6>
+                    <h6 style="color: white; font-size: 2.5em;">ระบบฐานข้อมูลผู้ประกอบการสุราชุมชน</h6>
                     <form name="loginForm" novalidate>
-                        <div class="form-group row ">
+                        <div class="form-group row">
                             <div class="col-md-9">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -37,7 +40,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-9 ">
+                            <div class="col-md-9 position-center">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                     <input type="password" class="form-control input-lg" id="password" name="password" placeholder="รหัสผ่าน">
@@ -45,14 +48,13 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-offset-6 col-md-3">
+                            <div class="col-md-offset- col-md-5">
                                 <input type="submit" class="form-control btn-info input-lg" id="loginBtn" value="เข้าสู่ระบบ">
                             </div>
                         </div>
                     </form>
                 </div>
-            </div>
-<!--JS-->
+            </div><!--JS-->
 <script type="text/javascript">
     $(document).ready(function(e) {
         //--Page load

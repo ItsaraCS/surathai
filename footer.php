@@ -57,9 +57,15 @@
                     if(res != undefined) {
                         var data = JSON.parse(res);
                         
-                        if(data.id == 0)
-                            window.open('login.php', '_self');
-                        else {
+                        if(data.id == 0) {
+                            factory.utilityService.getPopup({
+                                infoMsg: 'บัญชีผู้ใช้ไม่ถูกต้อง',
+                                btnMsg: 'ปิด'
+                            });
+
+                            $('form[name="loginForm"] #username, ' +
+                                'form[name="loginForm"] #password').val('');
+                        } else {
                             sessionStorage.setItem('userID', data.id);
                             window.open('map.php', '_self');
                         }

@@ -25,8 +25,9 @@ function search_load_point_layers() {
 		case 'search_license.php': //--ใบอนุญาต
 		case 'search_stamp.php': //--ข้อมูลแสตมป์
 		case 'search_factory.php': //--ข้อมูลโรงงาน
+		case 'search_label.php': //--ฉลาก
 			getJSON(
-				'data/geojson-layer/factory_points.geojson', //--งานปราบปราม
+				'data/geojson-layer/factory_points.geojson', 
 				function(data) {
 					vec_factory_point = create_vector_layer(data, 'EPSG:3857', factory_point_style_function);
 					map.addLayer(vec_factory_point);
@@ -39,7 +40,7 @@ function search_load_point_layers() {
 			break;
 		case 'search_case.php': //--งานปราบปราม
 			getJSON(
-				'data/geojson-layer/factory_points.geojson', //--งานปราบปราม
+				'data/geojson-layer/factory_points.geojson', 
 				function(data) {
 					vec_factory_point = create_vector_layer(data, 'EPSG:3857', lawbreaker_point_style_function);
 					map.addLayer(vec_factory_point);

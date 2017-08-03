@@ -188,7 +188,7 @@ function process_loaded_data() {
         defaultZoomBtn.innerHTML = '<i class="fa fa-globe" aria-hidden="true"></i>';
 
         var handledefaultZoom = function(e) {
-            map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
+            map.getView().setCenter(ol.proj.transform([100, 13], 'EPSG:4326', 'EPSG:3857'));
 			map.getView().setZoom(5);
         };
         defaultZoomBtn.addEventListener('click', handledefaultZoom, false);
@@ -246,7 +246,7 @@ function process_loaded_data() {
 	
 	$('#dvloading').hide().fadeOut();
 	
-	map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
+	map.getView().setCenter(ol.proj.transform([100, 13], 'EPSG:4326', 'EPSG:3857'));
 	map.getView().setZoom(5);
 	
 	// Add mouse event listeners
@@ -332,7 +332,7 @@ function process_loaded_data_for_change_year() {
 		$('#popup-closer').trigger('click');
 	}
 
-	map.getView().setCenter(ol.proj.transform([103.0, 8.5], 'EPSG:4326', 'EPSG:3857'));
+	map.getView().setCenter(ol.proj.transform([100, 13], 'EPSG:4326', 'EPSG:3857'));
 	map.getView().setZoom(5);
 	
 	// Show chart

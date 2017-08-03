@@ -1,47 +1,78 @@
+		#map_legend:hover {
+		background-color: rgba(250,250,250,1.0);
+		}
 
-#map_legend {
-background-color: rgba(250,250,250,1.0);
-border: 5px solid rgba(255,255,255,0.2);
-position: absolute;
-left: 10px;
-top: 270px;
-padding: 4px;
-box-shadow: 0px 5px 5px rgba(0,0,0,0.2);
-opacity: 1.0;
+		#map_legend b {
+		border: 0px solid green;
+		font-weight: bold;
+		color: rgba(80, 200, 80, 1.0);
+		padding: 0px;
+		}
+
+		.map_legend_box {
+		background-color: rgba(250,250,250,0.3);
+		border: 0px solid green;
+		padding: 0px;
+		width: 100% !important;
+		height: 25px !important;
+		}
+		.map_legend_legend_box {
+		background-color: rgba(250,250,250,0.3);
+		border: 0px solid red;
+		float: left;
+		width: 12px !important;
+		height: 12px !important;
+		}
+		.map_legend_legend_text {
+		border: 0px solid blue;
+		font-size: 0.8em;
+		float: right;
+		text-align: right;
+		margin-left: 3px;
+		vertical-align: top;
+		/*width: 130px !important;*/
+		/*height: 30px !important;*/
+		}
+
+
+@media screen and (min-width: 0px) and (max-width: 680px) {
+
+
+		#map_legend {
+		padding: 10px;
+		padding-top: 0px;
+		opacity: 1.0;
+		position: relative;
+		float: left;
+		border: solid 2px #dddddd;
+		border-radius: 5px;
+		background-color: #F5F5F5;
+		width: 49%;
+		text-align: center;
+		height: 203px;
+
+		}
+
 }
 
-#map_legend:hover {
-background-color: rgba(250,250,250,1.0);
+@media screen and (min-width: 680px) and (max-width: 9999px) {
+
+		
+
+		#map_legend {
+		background-color: rgba(250,250,250,1.0);
+		border: 5px solid rgba(255,255,255,0.2);	
+		padding: 4px;
+		box-shadow: 0px 5px 5px rgba(0,0,0,0.2);
+		opacity: 1.0;
+		position: absolute;
+		top: 20vh;
+		left: 20px;
+		}
+
+
 }
 
-#map_legend b {
-border: 0px solid green;
-font-weight: bold;
-color: rgba(80, 200, 80, 1.0);
-padding: 0px;
-}
 
-.map_legend_box {
-background-color: rgba(250,250,250,0.3);
-border: 0px solid green;
-padding: 0px;
-width: 100% !important;
-height: 25px !important;
-}
-.map_legend_legend_box {
-background-color: rgba(250,250,250,0.3);
-border: 0px solid red;
-float: left;
-width: 12px !important;
-height: 12px !important;
-}
-.map_legend_legend_text {
-border: 0px solid blue;
-font-size: 0.8em;
-float: right;
-text-align: right;
-margin-left: 3px;
-vertical-align: top;
-/*width: 130px !important;*/
-/*height: 30px !important;*/
-}
+
+

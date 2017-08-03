@@ -275,17 +275,7 @@
                 })
             });
             
-			getJSON(
-				'data/geojson/factory_2126_point.geojson',
-				function(data) {
-					var v = create_vector_layer(data, 
-												'EPSG:3857', 
-												search_point_style_function);
-					map.addLayer(v);
-				}, 
-				function(xhr) {
-				}
-			);
+			search_load_point_layers();
 
             $('#dvloading').hide().fadeOut();
 
@@ -385,6 +375,11 @@
                                     '</tr>';
                             });
                             $('.search-table tbody').append(tbodyContent);
+                        } else {
+                            Factory.prototype.utilityService.getPopup({
+                                infoMsg: 'ไม่พบข้อมูล',
+                                btnMsg: 'ปิด'
+                            });
                         }
                     }
                 });
@@ -443,8 +438,9 @@
                 });
                 marker_style = new ol.style.Style({
                     image: new ol.style.Icon(({
+                        anchor: [0.5, 1.6],
                         opacity: 1,
-                        scale: 1,
+                        scale: 0.5,
                         src: 'img/marker-search.png'
                     }))
                 });

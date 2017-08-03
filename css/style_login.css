@@ -19,15 +19,3 @@ h1, h2, h3, h4, h5, h6 {
 	
 
 .text-white {color: #FFF; }
-
-
-@media screen and (min-width: 0px) and (max-width: 680px) {
-
-
-}
-
-@media screen and (min-width: 680px) and (max-width: 9999px) {
-    .img-logo-title-mobile{margin-left: 2vh;}
-    .container{margin-top: 10vh;}
-
-}
