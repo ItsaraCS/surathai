@@ -89,5 +89,6 @@
             });
         });
     </script>
+    <?php require('popup.php'); ?>
 </body>
 </html>
